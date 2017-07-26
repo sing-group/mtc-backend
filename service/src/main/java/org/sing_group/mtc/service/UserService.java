@@ -22,7 +22,7 @@
 package org.sing_group.mtc.service;
 
 import static org.apache.commons.lang3.Validate.notBlank;
-import static org.sing_group.mtc.domain.entities.User.haveSameRole;
+import static org.sing_group.mtc.domain.entities.user.User.haveSameRole;
 
 import java.util.stream.Stream;
 
@@ -35,7 +35,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.resource.spi.SecurityException;
 
-import org.sing_group.mtc.domain.entities.User;
+import org.sing_group.mtc.domain.entities.user.User;
 
 /**
  * EJB for the RegularUsers. Only administrators have access to this class.
@@ -80,8 +80,9 @@ public class UserService {
   }
 
   public Stream<User> list() {
-    return em.createQuery("SELECT user FROM User user", User.class)
-      .getResultList().stream();
+    return em.createQuery("SELECT u FROM User u", User.class)
+      .getResultList()
+    .stream();
   }
 
   public User create(User user) {

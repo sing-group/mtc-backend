@@ -23,7 +23,7 @@ package org.sing_group.mtc.domain.entities;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-import org.sing_group.mtc.domain.entities.Patient;
+import org.sing_group.mtc.domain.entities.user.Patient;
 
 public class IsEqualToPatient extends IsEqualToEntity<Patient> {
   public IsEqualToPatient(Patient owner) {

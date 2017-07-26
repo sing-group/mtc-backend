@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.domain.entities;
+package org.sing_group.mtc.domain.entities.user;
 
 import java.io.Serializable;
 
@@ -27,20 +27,20 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 /**
- * A patient.
+ * An administrator of the application.
  * 
- * @author Miguel Reboiro-Jato
+ * @author Miguel Reboiro Jato
  */
 @Entity
-@DiscriminatorValue("PATIENT")
-public class Patient extends User implements Serializable {
+@DiscriminatorValue("ADMIN")
+public class Administrator extends User implements Serializable {
   private static final long serialVersionUID = 1L;
 
   // Required for JPA
-  Patient() {}
+  Administrator() {}
 
   /**
-   * Creates a new instance of {@code Patient} without pets.
+   * Creates a new instance of {@code Administrator}.
    * 
    * @param email
    *          the email that identifies the user. This parameter must be a non
@@ -56,19 +56,19 @@ public class Patient extends User implements Serializable {
    *           if value provided for any parameter is not valid according to its
    *           description.
    */
-  public Patient(String email, String password, String name, String surname, boolean encodePassword) {
+  public Administrator(String email, String password, String name, String surname, boolean encodePassword) {
     super(email, password, name, surname, encodePassword);
   }
 
-  public Patient(Long id, String email, String password, String name, String surname, boolean encodePassword) {
+  public Administrator(Long id, String email, String password, String name, String surname, boolean encodePassword) {
     super(id, email, password, name, surname, encodePassword);
   }
 
-  public Patient(Long id, String email, String password, String name, String surname) {
+  public Administrator(Long id, String email, String password, String name, String surname) {
     super(id, email, password, name, surname);
   }
 
-  public Patient(String email, String password, String name, String surname) {
+  public Administrator(String email, String password, String name, String surname) {
     super(email, password, name, surname);
   }
   

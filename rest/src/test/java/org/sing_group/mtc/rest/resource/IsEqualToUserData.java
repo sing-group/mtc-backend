@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
-import org.sing_group.mtc.domain.entities.User;
+import org.sing_group.mtc.domain.entities.user.User;
 import org.sing_group.mtc.rest.resource.entity.UserData;
 
 public class IsEqualToUserData extends IsEqualToEntity<UserData> {

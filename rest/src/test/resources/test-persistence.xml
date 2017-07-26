@@ -30,9 +30,13 @@
   <persistence-unit name="test">
     <jta-data-source>java:jboss/datasources/mtc</jta-data-source>
 
-    <class>org.sing_group.mtc.domain.entities.Patient</class>
-    <class>org.sing_group.mtc.domain.entities.Administrator</class>
-    <class>org.sing_group.mtc.domain.entities.User</class>
+    <class>org.sing_group.mtc.domain.entities.game.Game</class>
+    <class>org.sing_group.mtc.domain.entities.i18n.I18N</class>
+    <class>org.sing_group.mtc.domain.entities.session.Session</class>
+    <class>org.sing_group.mtc.domain.entities.session.SessionGame</class>
+    <class>org.sing_group.mtc.domain.entities.user.Administrator</class>
+    <class>org.sing_group.mtc.domain.entities.user.Patient</class>
+    <class>org.sing_group.mtc.domain.entities.user.User</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
     <properties>

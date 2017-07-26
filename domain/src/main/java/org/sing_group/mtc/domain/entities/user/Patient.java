@@ -19,30 +19,28 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.domain.entities;
+package org.sing_group.mtc.domain.entities.user;
 
 import java.io.Serializable;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * An administrator of the application.
+ * A patient.
  * 
- * @author Miguel Reboiro Jato
+ * @author Miguel Reboiro-Jato
  */
 @Entity
-@DiscriminatorValue("ADMIN")
-@XmlRootElement(name = "admin", namespace = "http://entity.domain.javaee.sing-group.org")
-public class Administrator extends User implements Serializable {
+@DiscriminatorValue("PATIENT")
+public class Patient extends User implements Serializable {
   private static final long serialVersionUID = 1L;
 
   // Required for JPA
-  Administrator() {}
+  Patient() {}
 
   /**
-   * Creates a new instance of {@code Administrator}.
+   * Creates a new instance of {@code Patient} without pets.
    * 
    * @param email
    *          the email that identifies the user. This parameter must be a non
@@ -58,19 +56,19 @@ public class Administrator extends User implements Serializable {
    *           if value provided for any parameter is not valid according to its
    *           description.
    */
-  public Administrator(String email, String password, String name, String surname, boolean encodePassword) {
+  public Patient(String email, String password, String name, String surname, boolean encodePassword) {
     super(email, password, name, surname, encodePassword);
   }
 
-  public Administrator(Long id, String email, String password, String name, String surname, boolean encodePassword) {
+  public Patient(Long id, String email, String password, String name, String surname, boolean encodePassword) {
     super(id, email, password, name, surname, encodePassword);
   }
 
-  public Administrator(Long id, String email, String password, String name, String surname) {
+  public Patient(Long id, String email, String password, String name, String surname) {
     super(id, email, password, name, surname);
   }
 
-  public Administrator(String email, String password, String name, String surname) {
+  public Patient(String email, String password, String name, String surname) {
     super(email, password, name, surname);
   }
   

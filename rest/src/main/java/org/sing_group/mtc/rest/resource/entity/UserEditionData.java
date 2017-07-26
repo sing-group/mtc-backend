@@ -27,9 +27,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.sing_group.mtc.domain.entities.Administrator;
-import org.sing_group.mtc.domain.entities.Patient;
-import org.sing_group.mtc.domain.entities.User;
+import org.sing_group.mtc.domain.entities.user.Administrator;
+import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.domain.entities.user.User;
 
 @XmlRootElement(name = "user-edition-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)

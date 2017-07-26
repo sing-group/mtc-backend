@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.domain.entities;
+package org.sing_group.mtc.domain.entities.user;
 
 import static java.util.Objects.requireNonNull;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -38,9 +38,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
-@Entity(name = "User")
+@Entity
+@Table(name = "user")
 @Inheritance
 @DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING, length = 7)
 public abstract class User implements Serializable {

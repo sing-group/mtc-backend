@@ -35,7 +35,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.sing_group.mtc.domain.entities.User;
+import org.sing_group.mtc.domain.entities.user.User;
 import org.sing_group.mtc.rest.resource.entity.UserData;
 import org.sing_group.mtc.service.UserService;
 

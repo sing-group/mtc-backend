@@ -48,7 +48,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sing_group.mtc.domain.entities.User;
+import org.sing_group.mtc.domain.entities.user.User;
 import org.sing_group.mtc.rest.resource.entity.UserData;
 
 @RunWith(Arquillian.class)

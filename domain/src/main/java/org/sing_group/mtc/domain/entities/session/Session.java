@@ -69,8 +69,15 @@ public class Session implements Serializable {
   )
   private Set<I18N> messages;
   
+  @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
+  private Set<AssignedSession> assigned;
+  
   public Therapist getTherapist() {
     return therapist;
+  }
+  
+  public Stream<AssignedSession> getAssigned() {
+    return this.assigned.stream();
   }
   
   public Stream<SessionGame> getGames() {

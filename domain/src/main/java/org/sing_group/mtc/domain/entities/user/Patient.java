@@ -22,12 +22,17 @@
 package org.sing_group.mtc.domain.entities.user;
 
 import java.io.Serializable;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import org.sing_group.mtc.domain.entities.session.AssignedSession;
 
 /**
  * A patient.
@@ -42,6 +47,9 @@ public class Patient extends User implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "therapistId", referencedColumnName = "id")
   private Therapist therapist;
+
+  @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
+  private Set<AssignedSession> assigned;
 
   // Required for JPA
   Patient() {}
@@ -81,5 +89,9 @@ public class Patient extends User implements Serializable {
   
   public Therapist getTherapist() {
     return therapist;
+  }
+  
+  public Stream<AssignedSession> getAssigned() {
+    return this.assigned.stream();
   }
 }

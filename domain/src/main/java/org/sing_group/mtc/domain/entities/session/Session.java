@@ -33,11 +33,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.sing_group.mtc.domain.entities.i18n.I18N;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Entity
 @Table(name = "session")
@@ -47,6 +49,10 @@ public class Session implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
+  
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "therapistId", referencedColumnName = "id")
+  private Therapist therapist;
   
   @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
   @OrderBy("gameOrder ASC")
@@ -62,6 +68,10 @@ public class Session implements Serializable {
     }
   )
   private Set<I18N> messages;
+  
+  public Therapist getTherapist() {
+    return therapist;
+  }
   
   public Stream<SessionGame> getGames() {
     return this.games.stream();

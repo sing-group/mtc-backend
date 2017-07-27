@@ -25,6 +25,9 @@ import java.io.Serializable;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 /**
  * A patient.
@@ -35,12 +38,16 @@ import javax.persistence.Entity;
 @DiscriminatorValue("PATIENT")
 public class Patient extends User implements Serializable {
   private static final long serialVersionUID = 1L;
+  
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "therapistId", referencedColumnName = "id")
+  private Therapist therapist;
 
   // Required for JPA
   Patient() {}
 
   /**
-   * Creates a new instance of {@code Patient} without pets.
+   * Creates a new instance of {@code Patient}.
    * 
    * @param email
    *          the email that identifies the user. This parameter must be a non
@@ -56,12 +63,12 @@ public class Patient extends User implements Serializable {
    *           if value provided for any parameter is not valid according to its
    *           description.
    */
-  public Patient(String email, String password, String name, String surname, boolean encodePassword) {
-    super(email, password, name, surname, encodePassword);
+  public Patient(String email, String password, String name, String surname, boolean encodedPassword) {
+    super(email, password, name, surname, encodedPassword);
   }
 
-  public Patient(Long id, String email, String password, String name, String surname, boolean encodePassword) {
-    super(id, email, password, name, surname, encodePassword);
+  public Patient(Long id, String email, String password, String name, String surname, boolean encodedPassword) {
+    super(id, email, password, name, surname, encodedPassword);
   }
 
   public Patient(Long id, String email, String password, String name, String surname) {
@@ -72,4 +79,7 @@ public class Patient extends User implements Serializable {
     super(email, password, name, surname);
   }
   
+  public Therapist getTherapist() {
+    return therapist;
+  }
 }

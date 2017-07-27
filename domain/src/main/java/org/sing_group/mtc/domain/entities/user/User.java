@@ -38,13 +38,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 @Entity
 @Table(name = "user")
-@Inheritance
-@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING, length = 7)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING, length = 9)
 public abstract class User implements Serializable {
   private static final long serialVersionUID = 1L;
   
@@ -85,12 +86,12 @@ public abstract class User implements Serializable {
     this(email, password, name, surname, true);
   }
   
-  public User(Long id, String email, String password, String name, String surname, boolean encodePassword) {
+  public User(Long id, String email, String password, String name, String surname, boolean encodedPassword) {
     this.id = id;
     this.setEmail(email);
     
     if (password != null) {
-      if (encodePassword)
+      if (encodedPassword)
         this.changePassword(password);
       else
         this.setPassword(password);
@@ -117,8 +118,8 @@ public abstract class User implements Serializable {
    *           if value provided for any parameter is not valid according to its
    *           description.
    */
-  public User(String email, String password, String name, String surname, boolean encodePassword) {
-    this(null, email, password, name, surname, encodePassword);
+  public User(String email, String password, String name, String surname, boolean encodedPassword) {
+    this(null, email, password, name, surname, encodedPassword);
   }
 
   /**

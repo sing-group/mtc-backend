@@ -22,25 +22,38 @@
 package org.sing_group.mtc.domain.entities.user;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+
+import org.sing_group.mtc.domain.entities.session.Session;
 
 /**
- * An administrator of the application.
+ * A therapist.
  * 
- * @author Miguel Reboiro Jato
+ * @author Miguel Reboiro-Jato
  */
 @Entity
-@DiscriminatorValue("ADMIN")
-public class Administrator extends User implements Serializable {
+@DiscriminatorValue("THERAPIST")
+public class Therapist extends User implements Serializable {
   private static final long serialVersionUID = 1L;
 
+  @OneToMany(mappedBy = "therapist", fetch = FetchType.LAZY)
+  private Set<Patient> patients;
+  
+  @OneToMany(mappedBy = "therapist", fetch = FetchType.LAZY)
+  private Set<Session> sessions;
+  
   // Required for JPA
-  Administrator() {}
+  Therapist() {}
 
   /**
-   * Creates a new instance of {@code Administrator}.
+   * Creates a new instance of {@code Therapist}.
    * 
    * @param email
    *          the email that identifies the user. This parameter must be a non
@@ -56,20 +69,39 @@ public class Administrator extends User implements Serializable {
    *           if value provided for any parameter is not valid according to its
    *           description.
    */
-  public Administrator(String email, String password, String name, String surname, boolean encodedPassword) {
+  public Therapist(String email, String password, String name, String surname, boolean encodedPassword) {
     super(email, password, name, surname, encodedPassword);
+    
+    this.patients = new HashSet<>();
+    this.sessions = new HashSet<>();
   }
 
-  public Administrator(Long id, String email, String password, String name, String surname, boolean encodedPassword) {
+  public Therapist(Long id, String email, String password, String name, String surname, boolean encodedPassword) {
     super(id, email, password, name, surname, encodedPassword);
+    
+    this.patients = new HashSet<>();
+    this.sessions = new HashSet<>();
   }
 
-  public Administrator(Long id, String email, String password, String name, String surname) {
+  public Therapist(Long id, String email, String password, String name, String surname) {
     super(id, email, password, name, surname);
+    
+    this.patients = new HashSet<>();
+    this.sessions = new HashSet<>();
   }
 
-  public Administrator(String email, String password, String name, String surname) {
+  public Therapist(String email, String password, String name, String surname) {
     super(email, password, name, surname);
+    
+    this.patients = new HashSet<>();
+    this.sessions = new HashSet<>();
   }
   
+  public Stream<Patient> getPatients() {
+    return patients.stream();
+  }
+  
+  public Stream<Session> getSessions() {
+    return sessions.stream();
+  }
 }

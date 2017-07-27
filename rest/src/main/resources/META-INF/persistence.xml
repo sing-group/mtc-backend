@@ -39,6 +39,7 @@
     <class>org.sing_group.mtc.domain.entities.session.SessionGame</class>
     <class>org.sing_group.mtc.domain.entities.user.Administrator</class>
     <class>org.sing_group.mtc.domain.entities.user.Patient</class>
+    <class>org.sing_group.mtc.domain.entities.user.Therapist</class>
     <class>org.sing_group.mtc.domain.entities.user.User</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
 

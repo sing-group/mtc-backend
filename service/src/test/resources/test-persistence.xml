@@ -31,6 +31,9 @@
     <jta-data-source>java:jboss/datasources/mtc</jta-data-source>
 
     <class>org.sing_group.mtc.domain.entities.game.Game</class>
+    <class>org.sing_group.mtc.domain.entities.game.parameter.GameParameter</class>
+    <class>org.sing_group.mtc.domain.entities.game.parameter.IntegerParameter</class>
+    <class>org.sing_group.mtc.domain.entities.game.parameter.SecondsParameter</class>
     <class>org.sing_group.mtc.domain.entities.i18n.I18N</class>
     <class>org.sing_group.mtc.domain.entities.session.Session</class>
     <class>org.sing_group.mtc.domain.entities.session.SessionGame</class>

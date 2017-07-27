@@ -22,9 +22,10 @@
 package org.sing_group.mtc.domain.entities.game;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -32,14 +33,19 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.sing_group.mtc.domain.entities.game.parameter.GameParameter;
 
 @Entity
 @Table(name = "game")
+@Cacheable
 public class Game implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @Id
+  @Column(name = "id", length = 255)
   private String id;
   
   @ElementCollection(fetch = FetchType.LAZY)
@@ -47,26 +53,46 @@ public class Game implements Serializable {
     name = "game_type",
     joinColumns = @JoinColumn(name = "gameId", referencedColumnName = "id")
   )
-  @Column(name = "name")
+  @Column(name = "name", length = 255, nullable = false)
   private Set<GameTaskType> types;
   
-  @ElementCollection
-  @CollectionTable(
-    name = "game_parameter",
-    joinColumns = @JoinColumn(name = "gameId", referencedColumnName = "id")
-  )
-  @Column(name = "value")
-  private List<String> parameters;
+  @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
+  private Set<GameParameter<?>> parameters;
   
   public String getId() {
     return id;
   }
   
-  public Set<GameTaskType> getTypes() {
-    return types;
+  public Stream<GameTaskType> getTypes() {
+    return this.types.stream();
   }
   
-  public List<String> getParameters() {
-    return parameters;
+  public Stream<GameParameter<?>> getParameters() {
+    return this.parameters.stream();
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Game other = (Game) obj;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
   }
 }

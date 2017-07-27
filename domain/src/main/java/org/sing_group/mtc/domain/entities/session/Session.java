@@ -21,12 +21,10 @@
  */
 package org.sing_group.mtc.domain.entities.session;
 
-import static java.util.Collections.unmodifiableList;
-import static java.util.Collections.unmodifiableSortedSet;
-
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 import java.util.SortedSet;
+import java.util.stream.Stream;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -63,13 +61,13 @@ public class Session implements Serializable {
       @JoinColumn(name = "i18nKey", referencedColumnName = "messageKey")
     }
   )
-  private List<I18N> messages;
+  private Set<I18N> messages;
   
-  public SortedSet<SessionGame> getGames() {
-    return unmodifiableSortedSet(games);
+  public Stream<SessionGame> getGames() {
+    return this.games.stream();
   }
   
-  public List<I18N> getMessages() {
-    return unmodifiableList(messages);
+  public Stream<I18N> getMessages() {
+    return this.messages.stream();
   }
 }

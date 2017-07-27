@@ -99,6 +99,7 @@
     <maven.resources.plugin.version>3.0.2</maven.resources.plugin.version>
     <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
     <maven.surefire.plugin.version>2.20</maven.surefire.plugin.version>
+    <maven.failsafe.plugin.version>2.20</maven.failsafe.plugin.version>
     <wildfly.maven.plugin.version>1.2.0.Alpha6</wildfly.maven.plugin.version>
   </properties>
 
@@ -332,6 +333,11 @@
 						<!-- By default, only tests suites are executed -->
             <includes>**/*TestSuite.java</includes>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven.failsafe.plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>

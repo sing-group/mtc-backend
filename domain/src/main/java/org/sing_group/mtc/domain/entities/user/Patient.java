@@ -21,10 +21,13 @@
  */
 package org.sing_group.mtc.domain.entities.user;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -48,7 +51,7 @@ public class Patient extends User implements Serializable {
   @JoinColumn(name = "therapistId", referencedColumnName = "id")
   private Therapist therapist;
 
-  @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<AssignedSession> assigned;
 
   // Required for JPA
@@ -75,11 +78,11 @@ public class Patient extends User implements Serializable {
     super(email, password, name, surname, encodedPassword);
   }
 
-  public Patient(Long id, String email, String password, String name, String surname, boolean encodedPassword) {
+  public Patient(Integer id, String email, String password, String name, String surname, boolean encodedPassword) {
     super(id, email, password, name, surname, encodedPassword);
   }
 
-  public Patient(Long id, String email, String password, String name, String surname) {
+  public Patient(Integer id, String email, String password, String name, String surname) {
     super(id, email, password, name, surname);
   }
 
@@ -88,7 +91,33 @@ public class Patient extends User implements Serializable {
   }
   
   public Therapist getTherapist() {
+    if (this.therapist == null) 
+      throw new IllegalStateException(
+        "This entity does not have a therapist assigned. "
+        + "This should happen only when it will be removed."
+      );
+    
     return therapist;
+  }
+  
+  public void setTherapist(Therapist therapist) {
+    requireNonNull(therapist, "'therapist' can't be null");
+    
+    if (therapist.addPatient(this)) {
+      this.therapist = therapist;
+    }
+  }
+  
+  public void removeTherapist() {
+    if (this.therapist == null) 
+      throw new IllegalStateException(
+        "This entity does not have a therapist assigned. "
+        + "This should happen only when it will be removed."
+      );
+    
+    if (this.therapist.removePatient(this)) {
+      this.therapist = null;
+    }
   }
   
   public Stream<AssignedSession> getAssigned() {

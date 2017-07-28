@@ -80,7 +80,7 @@ public class UserResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     users().forEach(expectedUser -> {
-      final Response response = webTarget.path(Long.toString(expectedUser.getId()))
+      final Response response = webTarget.path(Integer.toString(expectedUser.getId()))
         .request()
       .get();
       
@@ -179,7 +179,7 @@ public class UserResourceIntegrationTest {
     final User user = modifiedUser();
     final UserEditionData userData = UserEditionData.of(user);
     
-    final Response response = webTarget.path(Long.toString(user.getId()))
+    final Response response = webTarget.path(Integer.toString(user.getId()))
       .request()
     .put(json(userData));
     
@@ -190,7 +190,7 @@ public class UserResourceIntegrationTest {
 
   @Test
   @InSequence(32)
-  @ShouldMatchDataSet({ "user-update-patient.xml" })
+  @ShouldMatchDataSet(value = "user-update-patient.xml", orderBy = "id")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterUpdateUser() {}
 
@@ -208,7 +208,7 @@ public class UserResourceIntegrationTest {
   ) {
     final User user = patientToDelete();
     
-    final Response response = webTarget.path(Long.toString(user.getId()))
+    final Response response = webTarget.path(Integer.toString(user.getId()))
       .request()
     .delete();
     

@@ -24,12 +24,14 @@ package org.sing_group.mtc.rest.resource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.sing_group.fluent.checker.Checks;
 
 public final class Deployments {
   private Deployments() {}
   
   public static WebArchive createDeployment() {
     return ShrinkWrap.create(WebArchive.class, "test.war")
+      .addClass(Checks.class)
       .addPackages(true, "org.sing_group.mtc")
       .addAsResource("arquillian.extension.persistence.properties")
       .addAsResource("arquillian.extension.persistence.dbunit.properties")

@@ -100,7 +100,7 @@ public class UserEditionData implements Serializable {
     return toUser(null);
   }
   
-  public User toUser(Long id) {
+  public User toUser(Integer id) {
     if (this.getRole().equals("ADMIN")) {
       return new Administrator(id, email, password, name, surname, false);
     } else {

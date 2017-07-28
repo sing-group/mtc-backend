@@ -30,6 +30,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -49,8 +50,12 @@ public class AssignedSession implements Serializable {
   private int sessionId;
   
   @Id
+  @Column(name = "sessionVersion", insertable = false, updatable = false)
+  private int sessionVersion;
+  
+  @Id
   @Column(name = "patientId", insertable = false, updatable = false)
-  private Long patientId;
+  private int patientId;
   
   @Id
   @Column(name = "assignmentDate")
@@ -66,14 +71,17 @@ public class AssignedSession implements Serializable {
   private Date endDate;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "sessionId", referencedColumnName = "id", nullable = false)
-  private Session session;
+  @JoinColumns({
+    @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false),
+    @JoinColumn(name = "sessionVersion", referencedColumnName = "version", nullable = false)
+  })
+  private SessionVersion session;
   
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patientId", referencedColumnName = "id", nullable = false)
   private Patient patient;
   
-  public Session getSession() {
+  public SessionVersion getSession() {
     return session;
   }
 
@@ -98,16 +106,22 @@ public class AssignedSession implements Serializable {
   
     private int sessionId;
     
-    private Long patientId;
+    private int sessionVersion;
+    
+    private int patientId;
     
     private Date assignmentDate;
 
-    public Long getPatientId() {
+    public int getPatientId() {
       return patientId;
     }
 
     public int getSessionId() {
       return sessionId;
+    }
+    
+    public int getSessionVersion() {
+      return sessionVersion;
     }
     
     public Date getAssignmentDate() {
@@ -119,8 +133,9 @@ public class AssignedSession implements Serializable {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((assignmentDate == null) ? 0 : assignmentDate.hashCode());
-      result = prime * result + ((patientId == null) ? 0 : patientId.hashCode());
+      result = prime * result + patientId;
       result = prime * result + sessionId;
+      result = prime * result + sessionVersion;
       return result;
     }
 
@@ -138,12 +153,11 @@ public class AssignedSession implements Serializable {
           return false;
       } else if (!assignmentDate.equals(other.assignmentDate))
         return false;
-      if (patientId == null) {
-        if (other.patientId != null)
-          return false;
-      } else if (!patientId.equals(other.patientId))
+      if (patientId != other.patientId)
         return false;
       if (sessionId != other.sessionId)
+        return false;
+      if (sessionVersion != other.sessionVersion)
         return false;
       return true;
     }

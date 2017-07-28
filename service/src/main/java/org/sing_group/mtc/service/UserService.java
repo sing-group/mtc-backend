@@ -21,7 +21,7 @@
  */
 package org.sing_group.mtc.service;
 
-import static org.apache.commons.lang3.Validate.notBlank;
+import static org.sing_group.fluent.checker.Checks.requireEmail;
 import static org.sing_group.mtc.domain.entities.user.User.haveSameRole;
 
 import java.util.stream.Stream;
@@ -57,7 +57,7 @@ public class UserService {
 
   @RolesAllowed({ "ADMIN", "PATIENT" })
   public User get(String email) throws SecurityException {
-    notBlank(email, "Email can't be null or empty");
+    requireEmail(email, 100, "email should have and email format with a maximum length of 100 characters");
     
     if (this.isAdminOrUser(email)) {
       return em.createQuery("SELECT u FROM User u WHERE upper(email) = upper(:email)", User.class)
@@ -69,7 +69,7 @@ public class UserService {
   }
 
   @RolesAllowed({ "ADMIN", "PATIENT" })
-  public User get(long id) throws SecurityException {
+  public User get(int id) throws SecurityException {
     final User patient = em.find(User.class, id);
 
     if (this.isAdminOrUser(patient.getEmail())) {
@@ -113,18 +113,23 @@ public class UserService {
     if (user == null)
       throw new IllegalArgumentException("user can't be null");
     
+    System.err.println("ID: " + user.getId());
     final User currentUser = this.em.find(User.class, user.getId());
-    if (user.getPassword() == null) {
-      user.setPassword(currentUser.getPassword());
-    }
-    
+
     if (!haveSameRole(user, currentUser))
       throw new IllegalArgumentException("User's role can't be changed");
+    
+    currentUser.setEmail(user.getEmail());
+    currentUser.setName(user.getName());
+    currentUser.setSurname(user.getSurname());
+    if (user.getPassword() != null) {
+      currentUser.setPassword(user.getPassword());
+    }
 
-    return em.merge(user);
+    return currentUser;
   }
 
-  public void remove(long id) {
+  public void remove(int id) {
     em.remove(this.em.find(User.class, id));
   }
 }

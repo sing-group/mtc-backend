@@ -65,7 +65,7 @@ public class UserResource {
 
   @Path("{id}")
   @GET
-  public Response get(@PathParam("id") long id) throws SecurityException {
+  public Response get(@PathParam("id") int id) throws SecurityException {
     final User user = this.service.get(id);
 
     if (user == null)
@@ -89,7 +89,7 @@ public class UserResource {
       final User user = this.service.create(userData.toUser());
       
       final URI userUri = uriInfo.getAbsolutePathBuilder()
-        .path(Long.toString(user.getId()))
+        .path(Integer.toString(user.getId()))
       .build();
 
       return Response.created(userUri).build();
@@ -103,7 +103,7 @@ public class UserResource {
   @PUT
   @Path("{id}")
   public Response update(
-    @PathParam("id") long id,
+    @PathParam("id") int id,
     UserEditionData userData
   ) {
     this.service.update(userData.toUser(id));
@@ -113,7 +113,7 @@ public class UserResource {
 
   @Path("{id}")
   @DELETE
-  public Response delete(@PathParam("id") long id) {
+  public Response delete(@PathParam("id") int id) {
     this.service.remove(id);
 
     return Response.ok().build();

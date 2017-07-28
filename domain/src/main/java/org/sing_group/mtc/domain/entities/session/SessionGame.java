@@ -35,6 +35,7 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
@@ -59,24 +60,32 @@ public class SessionGame implements Comparable<SessionGame>, Serializable {
   @Id
   @Column(name = "sessionId", updatable = false, insertable = false)
   private int sessionId;
-  
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "sessionId", referencedColumnName = "id")
-  private Session session;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "gameId", referencedColumnName = "id")
+  @Id
+  @Column(name = "sessionVersion", updatable = false, insertable = false)
+  private int sessionVersion;
+  
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumns({
+    @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false),
+    @JoinColumn(name = "sessionVersion", referencedColumnName = "version", nullable = false)
+  })
+  private SessionVersion session;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "gameId", referencedColumnName = "id", nullable = false)
   private Game game;
 
   @ElementCollection
-  @MapKeyColumn(name = "param")
+  @MapKeyColumn(name = "param", nullable = false)
   @Column(name = "value", nullable = false)
   @CollectionTable(
     name = "session_game_param_value",
     joinColumns = {
-      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder"),
-      @JoinColumn(name = "sessionId", referencedColumnName = "sessionId"),
-      @JoinColumn(name = "gameId", referencedColumnName = "gameId")
+      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", nullable = false),
+      @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false),
+      @JoinColumn(name = "sessionVersion", referencedColumnName = "sessionVersion", nullable = false),
+      @JoinColumn(name = "gameId", referencedColumnName = "gameId", nullable = false)
     }
   )
   private Map<String, String> paramValues;
@@ -89,7 +98,7 @@ public class SessionGame implements Comparable<SessionGame>, Serializable {
     return game;
   }
   
-  public Session getSession() {
+  public SessionVersion getSession() {
     return session;
   }
   
@@ -107,6 +116,8 @@ public class SessionGame implements Comparable<SessionGame>, Serializable {
     private static final long serialVersionUID = 1L;
 
     private int sessionId;
+    
+    private int sessionVersion;
 
     private String gameId;
 
@@ -119,6 +130,7 @@ public class SessionGame implements Comparable<SessionGame>, Serializable {
       result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
       result = prime * result + gameOrder;
       result = prime * result + sessionId;
+      result = prime * result + sessionVersion;
       return result;
     }
 
@@ -139,6 +151,8 @@ public class SessionGame implements Comparable<SessionGame>, Serializable {
       if (gameOrder != other.gameOrder)
         return false;
       if (sessionId != other.sessionId)
+        return false;
+      if (sessionVersion != other.sessionVersion)
         return false;
       return true;
     }

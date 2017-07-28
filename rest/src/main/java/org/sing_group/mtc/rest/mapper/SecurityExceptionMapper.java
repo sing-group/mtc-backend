@@ -25,12 +25,21 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.resource.spi.SecurityException;
 
 @Provider
-public class SecurityExceptionMapper implements ExceptionMapper<SecurityException> {
+public class SecurityExceptionMapper
+implements ExceptionMapper<SecurityException> {
+  private final static Logger LOG = LoggerFactory.getLogger(IllegalArgumentException.class);
+  
   @Override
   public Response toResponse(SecurityException e) {
+    LOG.error("Exception catched", e);
+    
     return Response.status(Response.Status.FORBIDDEN)
       .entity(e.getMessage())
       .type(MediaType.TEXT_PLAIN)

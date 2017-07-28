@@ -49,7 +49,7 @@ public class Therapist extends User implements Serializable {
   @OneToMany(mappedBy = "therapist", fetch = FetchType.LAZY)
   private Set<Session> sessions;
   
-  // Required for JPA
+  // For JPA
   Therapist() {}
 
   /**
@@ -76,14 +76,14 @@ public class Therapist extends User implements Serializable {
     this.sessions = new HashSet<>();
   }
 
-  public Therapist(Long id, String email, String password, String name, String surname, boolean encodedPassword) {
+  public Therapist(Integer id, String email, String password, String name, String surname, boolean encodedPassword) {
     super(id, email, password, name, surname, encodedPassword);
     
     this.patients = new HashSet<>();
     this.sessions = new HashSet<>();
   }
 
-  public Therapist(Long id, String email, String password, String name, String surname) {
+  public Therapist(Integer id, String email, String password, String name, String surname) {
     super(id, email, password, name, surname);
     
     this.patients = new HashSet<>();
@@ -100,8 +100,78 @@ public class Therapist extends User implements Serializable {
   public Stream<Patient> getPatients() {
     return patients.stream();
   }
+
+  public boolean hasPatient(Patient patient) {
+    return this.patients.contains(patient);
+  }
+  
+  public boolean addPatient(Patient patient) {
+    if (this.hasPatient(patient)) {
+      return false;
+    } else {
+      patient.getTherapist().directRemovePatient(patient);
+      
+      this.directAddPatient(patient);
+      patient.setTherapist(this);
+      
+      return true;
+    }
+  }
+
+  public boolean removePatient(Patient patient) {
+    if (this.hasPatient(patient)) {
+      patient.removeTherapist();
+      
+      return this.directRemovePatient(patient);
+    } else {
+      return false;
+    }
+  }
+
+  protected boolean directRemovePatient(Patient patient) {
+    return this.patients.remove(patient);
+  }
+
+  protected boolean directAddPatient(Patient patient) {
+    return this.patients.remove(patient);
+  }
   
   public Stream<Session> getSessions() {
     return sessions.stream();
+  }
+  
+  public boolean hasSession(Session session) {
+    return this.sessions.contains(session);
+  }
+  
+  public boolean addSession(Session session) {
+    if (this.hasSession(session)) {
+      return false;
+    } else {
+      session.getTherapist().directRemoveSession(session);
+      
+      this.directAddSession(session);
+      session.setTherapist(this);
+      
+      return true;
+    }
+  }
+  
+  public boolean removeSession(Session session) {
+    if (this.hasSession(session)) {
+      session.removeTherapist();
+      
+      return this.directRemoveSession(session);
+    } else {
+      return false;
+    }
+  }
+  
+  protected boolean directAddSession(Session session) {
+    return this.sessions.add(session);
+  }
+  
+  protected boolean directRemoveSession(Session session) {
+    return this.sessions.remove(session);
   }
 }

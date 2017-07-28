@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -45,18 +46,18 @@ public class Game implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @Id
-  @Column(name = "id", length = 255)
+  @Column(name = "id", length = 255, columnDefinition = "VARCHAR(255)")
   private String id;
   
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(
     name = "game_type",
-    joinColumns = @JoinColumn(name = "gameId", referencedColumnName = "id")
+    joinColumns = @JoinColumn(name = "gameId", referencedColumnName = "id", nullable = false)
   )
   @Column(name = "name", length = 255, nullable = false)
   private Set<GameTaskType> types;
   
-  @OneToMany(mappedBy = "game", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "game", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<GameParameter<?>> parameters;
   
   public String getId() {

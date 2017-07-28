@@ -23,8 +23,9 @@ package org.sing_group.mtc.domain.entities.user;
 
 import static java.util.Objects.requireNonNull;
 import static javax.persistence.GenerationType.IDENTITY;
-import static org.apache.commons.lang3.Validate.inclusiveBetween;
-import static org.apache.commons.lang3.Validate.matchesPattern;
+import static org.sing_group.fluent.checker.Checks.requireEmail;
+import static org.sing_group.fluent.checker.Checks.requireMD5;
+import static org.sing_group.fluent.checker.Checks.requireStringSize;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
@@ -62,7 +63,7 @@ public abstract class User implements Serializable {
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
-  protected Long id;
+  protected Integer id;
   
   @Column(length = 100, nullable = false, unique = true)
   protected String email;
@@ -78,7 +79,7 @@ public abstract class User implements Serializable {
 
   User() {}
   
-  public User(Long id, String email, String password, String name, String surname) {
+  public User(Integer id, String email, String password, String name, String surname) {
     this(id, email, password, name, surname, true);
   }
   
@@ -86,7 +87,7 @@ public abstract class User implements Serializable {
     this(email, password, name, surname, true);
   }
   
-  public User(Long id, String email, String password, String name, String surname, boolean encodedPassword) {
+  public User(Integer id, String email, String password, String name, String surname, boolean encodedPassword) {
     this.id = id;
     this.setEmail(email);
     
@@ -122,6 +123,10 @@ public abstract class User implements Serializable {
     this(null, email, password, name, surname, encodedPassword);
   }
 
+  public int getId() {
+    return id;
+  }
+
   /**
    * Returns the email of this user.
    * 
@@ -143,14 +148,7 @@ public abstract class User implements Serializable {
    *           if the length of the string passed is not valid.
    */
   public void setEmail(String email) {
-    requireNonNull(email, "email can't be null");
-    inclusiveBetween(1, 100, email.length(), "email must have a length between 1 and 100: " + email);
-
-    this.email = email;
-  }
-
-  public long getId() {
-    return id;
+    this.email = requireEmail(email, 100, "'email' should have email format and a length between 1 and 100");
   }
   
   public String getName() {
@@ -158,7 +156,7 @@ public abstract class User implements Serializable {
   }
 
   public void setName(String name) {
-    this.name = name;
+    this.name = requireStringSize(name, 1, 100, "'name' should have a length between 1 and 100");
   }
 
   public String getSurname() {
@@ -166,7 +164,7 @@ public abstract class User implements Serializable {
   }
 
   public void setSurname(String surname) {
-    this.surname = surname;
+    this.surname = requireStringSize(surname, 1, 100, "'surname' should have a length between 1 and 100");
   }
 
   /**
@@ -193,10 +191,7 @@ public abstract class User implements Serializable {
    *           if the string passed is not a valid MD5 string.
    */
   public void setPassword(String password) {
-    requireNonNull(password, "password can't be null");
-    matchesPattern(password, "[a-zA-Z0-9]{32}", "password must be a valid MD5 string: " + password);
-
-    this.password = password.toUpperCase();
+    this.password = requireMD5(password, "'password' should be a valid MD5 string").toUpperCase();
   }
 
   /**

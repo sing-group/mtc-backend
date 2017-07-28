@@ -21,24 +21,23 @@
  */
 package org.sing_group.mtc.domain.entities.session;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.stream.Stream;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
-import org.sing_group.mtc.domain.entities.i18n.I18N;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Entity
@@ -50,41 +49,44 @@ public class Session implements Serializable {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "therapistId", referencedColumnName = "id")
   private Therapist therapist;
   
-  @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
-  @OrderBy("gameOrder ASC")
-  private SortedSet<SessionGame> games;
+  @OneToMany(mappedBy = "session", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<SessionVersion> versions;
   
-  @OneToMany(fetch = FetchType.LAZY)
-  @JoinTable(
-    name = "session_i18n",
-    joinColumns = @JoinColumn(name = "sessionId", referencedColumnName = "id"),
-    inverseJoinColumns = {
-      @JoinColumn(name = "i18nLocale", referencedColumnName = "locale"),
-      @JoinColumn(name = "i18nKey", referencedColumnName = "messageKey")
-    }
-  )
-  private Set<I18N> messages;
-  
-  @OneToMany(mappedBy = "session", fetch = FetchType.LAZY)
-  private Set<AssignedSession> assigned;
+  public Stream<SessionVersion> getVersions() {
+    return versions.stream();
+  }
   
   public Therapist getTherapist() {
+    if (this.therapist == null) 
+      throw new IllegalStateException(
+        "This entity does not have a therapist assigned. "
+        + "This should happen only when it will be removed."
+      );
+    
     return therapist;
   }
   
-  public Stream<AssignedSession> getAssigned() {
-    return this.assigned.stream();
+  public void setTherapist(Therapist therapist) {
+    requireNonNull(therapist, "'therapist' can't be null");
+    
+    if (therapist.addSession(this)) {
+      this.therapist = therapist;
+    }
   }
   
-  public Stream<SessionGame> getGames() {
-    return this.games.stream();
-  }
-  
-  public Stream<I18N> getMessages() {
-    return this.messages.stream();
+  public void removeTherapist() {
+    if (this.therapist == null) 
+      throw new IllegalStateException(
+        "This entity does not have a therapist assigned. "
+        + "This should happen only when it will be removed."
+      );
+    
+    if (this.therapist.removeSession(this)) {
+      this.therapist = null;
+    }
   }
 }

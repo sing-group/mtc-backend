@@ -60,11 +60,11 @@ public class Administrator extends User implements Serializable {
     super(email, password, name, surname, encodedPassword);
   }
 
-  public Administrator(Long id, String email, String password, String name, String surname, boolean encodedPassword) {
+  public Administrator(Integer id, String email, String password, String name, String surname, boolean encodedPassword) {
     super(id, email, password, name, surname, encodedPassword);
   }
 
-  public Administrator(Long id, String email, String password, String name, String surname) {
+  public Administrator(Integer id, String email, String password, String name, String surname) {
     super(id, email, password, name, surname);
   }
 

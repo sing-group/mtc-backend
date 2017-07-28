@@ -46,26 +46,19 @@ import org.sing_group.mtc.domain.entities.game.parameter.GameParameter.GameParam
 @IdClass(GameParameterId.class)
 public abstract class GameParameter<T> {
   @Id
-  @Column(name = "gameId", updatable = false, insertable = false)
+  @Column(name = "gameId", length = 255, columnDefinition = "VARCHAR(255)", updatable = false, insertable = false)
   private String gameId;
   
   @Id
-  private String name;
+  @Column(name = "id", length = 255, columnDefinition = "VARCHAR(255)", updatable = false, insertable = false)
+  private String id;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "gameId", referencedColumnName = "id")
   private Game game;
   
-  protected GameParameter() {}
-  
-  protected GameParameter(Game game, String name) {
-    this.game = game;
-    this.gameId = game.getId();
-    this.name = name;
-  }
-  
-  public String getName() {
-    return name;
+  public String getId() {
+    return id;
   }
   
   public abstract T getDefaultValue();
@@ -78,14 +71,22 @@ public abstract class GameParameter<T> {
     
     private String gameId;
     
-    private String name;
+    private String id;
+
+    public String getGameId() {
+      return gameId;
+    }
+
+    public String getId() {
+      return id;
+    }
 
     @Override
     public int hashCode() {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       return result;
     }
 
@@ -103,10 +104,10 @@ public abstract class GameParameter<T> {
           return false;
       } else if (!gameId.equals(other.gameId))
         return false;
-      if (name == null) {
-        if (other.name != null)
+      if (id == null) {
+        if (other.id != null)
           return false;
-      } else if (!name.equals(other.name))
+      } else if (!id.equals(other.id))
         return false;
       return true;
     }

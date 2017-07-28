@@ -46,17 +46,17 @@ public class UsersDataset {
   }
   
   public static Administrator admin() {
-    return new Administrator(1L, "admin@email.com", EMAIL_TO_PASSWORDS.get("admin@email.com"), "Admin", "Administrator");
+    return new Administrator(1, "admin@email.com", EMAIL_TO_PASSWORDS.get("admin@email.com"), "Admin", "Administrator");
   }
   
   public static Stream<User> users() {
     return Stream.of(
       admin(),
       
-      new Patient(2L, "patient1@email.com", EMAIL_TO_PASSWORDS.get("patient1@email.com"), "Patient1", "One"),
+      new Patient(2, "patient1@email.com", EMAIL_TO_PASSWORDS.get("patient1@email.com"), "Patient1", "One"),
       patientToDelete(),
-      new Patient(4L, "patient3@email.com", EMAIL_TO_PASSWORDS.get("patient3@email.com"), "Patient3", "Three"),
-      new Patient(5L, "patient4@email.com", EMAIL_TO_PASSWORDS.get("patient4@email.com"), "Patient4", "Four")
+      new Patient(4, "patient3@email.com", EMAIL_TO_PASSWORDS.get("patient3@email.com"), "Patient3", "Three"),
+      new Patient(5, "patient4@email.com", EMAIL_TO_PASSWORDS.get("patient4@email.com"), "Patient4", "Four")
     );
   }
   
@@ -65,11 +65,11 @@ public class UsersDataset {
   }
   
   public static User modifiedUser() {
-    return new Patient(2L, "patientChanged@email.com", EMAIL_TO_PASSWORDS.get("patientChanged@email.com"), "Changed", "User");
+    return new Patient(2, "patientChanged@email.com", EMAIL_TO_PASSWORDS.get("patientChanged@email.com"), "Changed", "User");
   }
   
   public static User patientToDelete() {
-    return new Patient(3L, "patient2@email.com", EMAIL_TO_PASSWORDS.get("patient2@email.com"), "Patient2", "Two");
+    return new Patient(3, "patient2@email.com", EMAIL_TO_PASSWORDS.get("patient2@email.com"), "Patient2", "Two");
   }
   
   public static String getAdminHttpBasicAuthenticationToken() {

@@ -26,11 +26,18 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Provider
 public class IllegalArgumentExceptionMapper
-  implements ExceptionMapper<IllegalArgumentException> {
+implements ExceptionMapper<IllegalArgumentException> {
+  private final static Logger LOG = LoggerFactory.getLogger(IllegalArgumentException.class);
+  
   @Override
   public Response toResponse(IllegalArgumentException e) {
+    LOG.error("Exception catched", e);
+    
     return Response.status(Response.Status.BAD_REQUEST)
       .entity(e.getMessage())
       .type(MediaType.TEXT_PLAIN)

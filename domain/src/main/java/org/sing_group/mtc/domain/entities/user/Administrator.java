@@ -29,7 +29,7 @@ import javax.persistence.Entity;
 /**
  * An administrator of the application.
  * 
- * @author Miguel Reboiro Jato
+ * @author Miguel Reboiro-Jato
  */
 @Entity
 @DiscriminatorValue("ADMIN")

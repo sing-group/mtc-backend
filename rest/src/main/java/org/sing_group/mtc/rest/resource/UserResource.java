@@ -23,8 +23,8 @@ package org.sing_group.mtc.rest.resource;
 
 import java.net.URI;
 
+import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.resource.spi.SecurityException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -38,16 +38,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.sing_group.mtc.domain.dao.DuplicateEmailException;
 import org.sing_group.mtc.domain.entities.user.User;
 import org.sing_group.mtc.rest.resource.entity.UserData;
 import org.sing_group.mtc.rest.resource.entity.UserEditionData;
-import org.sing_group.mtc.service.DuplicateEmailException;
+import org.sing_group.mtc.rest.resource.entity.mapper.UserMapper;
 import org.sing_group.mtc.service.UserService;
 
 /**
  * Resource that represents the users in the application.
  * 
- * @author Miguel Reboiro Jato
+ * @author Miguel Reboiro-Jato
  */
 @Path("user")
 @Produces({
@@ -56,16 +57,20 @@ import org.sing_group.mtc.service.UserService;
 @Consumes({
   MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
 })
+@Stateless
 public class UserResource {
   @Inject
   private UserService service;
 
   @Context
   private UriInfo uriInfo;
+  
+  @Inject
+  private UserMapper mapper;
 
   @Path("{id}")
   @GET
-  public Response get(@PathParam("id") int id) throws SecurityException {
+  public Response get(@PathParam("id") int id) {
     final User user = this.service.get(id);
 
     if (user == null)
@@ -86,7 +91,7 @@ public class UserResource {
   @POST
   public Response create(UserEditionData userData) {
     try {
-      final User user = this.service.create(userData.toUser());
+      final User user = this.service.create(mapper.toUser(userData));
       
       final URI userUri = uriInfo.getAbsolutePathBuilder()
         .path(Integer.toString(user.getId()))
@@ -106,7 +111,7 @@ public class UserResource {
     @PathParam("id") int id,
     UserEditionData userData
   ) {
-    this.service.update(userData.toUser(id));
+    this.service.update(mapper.toUser(id, userData));
 
     return Response.ok().build();
   }

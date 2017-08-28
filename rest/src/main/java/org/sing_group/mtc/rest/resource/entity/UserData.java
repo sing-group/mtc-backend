@@ -38,7 +38,7 @@ public class UserData implements Serializable {
     return new UserData(user.getId(), user.getEmail(), user.getName(), user.getSurname(), User.getRole(user));
   }
 
-  private long id;
+  private int id;
   private String email;
   private String name;
   private String surname;
@@ -46,7 +46,7 @@ public class UserData implements Serializable {
 
   UserData() {}
 
-  public UserData(long id, String email, String name, String surname, String role) {
+  public UserData(int id, String email, String name, String surname, String role) {
     this.id = id;
     this.email = email;
     this.name = name;
@@ -74,7 +74,7 @@ public class UserData implements Serializable {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(int id) {
     this.id = id;
   }
 
@@ -99,7 +99,7 @@ public class UserData implements Serializable {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((email == null) ? 0 : email.hashCode());
-    result = prime * result + (int) (id ^ (id >>> 32));
+    result = prime * result + id;
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     result = prime * result + ((role == null) ? 0 : role.hashCode());
     result = prime * result + ((surname == null) ? 0 : surname.hashCode());

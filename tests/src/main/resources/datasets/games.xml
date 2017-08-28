@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
-  Service
+  Tests
   %%
   Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
   %%
@@ -21,6 +21,16 @@
   #L%
   -->
 
-<jboss-web>
-     <security-domain>mtc-security-domain</security-domain>
-</jboss-web>
+<dataset>
+  <game id="recognition"/>
+  <game id="verbalFluency"/>
+  
+  <game_type gameId="recognition" name="RECOGNITION"/>
+  <game_type gameId="verbalFluency" name="VERBAL_FLUENCY"/>
+
+  <integer_parameter gameId="recognition" id="maxRepetitions" defaultValue="1"
+    max="1" min="2"/>
+  <integer_parameter gameId="recognition" id="numOfStimuli" defaultValue="6"
+    max="1" min="12"/>
+  <seconds_parameter gameId="recognition" id="diceShowTime" defaultValue="5"/>
+</dataset>

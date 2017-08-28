@@ -155,10 +155,10 @@
                 <datasource jta="true" jndi-name="java:jboss/datasources/mtc" pool-name="mtc-mysql" enabled="true" use-ccm="true">
                     <connection-url>jdbc:mysql://localhost:3306/mtc</connection-url>
                     <driver-class>com.mysql.jdbc.Driver</driver-class>
-                    <driver>mysql-connector-java-${mysql.version}.jar</driver>
+                    <driver>mysql-connector-java-5.1.21.jar</driver>
                     <security>
                         <user-name>mtc</user-name>
-                        <password>mtc</password>
+                        <password>mtcpass</password>
                     </security>
                 </datasource>
                 <drivers>
@@ -342,12 +342,12 @@
 						<login-module code="Database" flag="required">
 							<module-option name="dsJndiName" value="java:jboss/datasources/mtc" />
 							<module-option name="principalsQuery"
-								value="SELECT password FROM User WHERE login=?" />
+								value="SELECT password FROM user WHERE email=?" />
 							<module-option name="rolesQuery"
-								value="SELECT role, 'Roles' FROM User WHERE login=?" />
-                            <module-option name="hashAlgorithm" value="MD5"/>
-                            <module-option name="hashEncoding" value="hex"/>
-                            <module-option name="ignorePasswordCase" value="true"/>
+								value="SELECT role, 'Roles' FROM user WHERE email=?" />
+              <module-option name="hashAlgorithm" value="MD5"/>
+              <module-option name="hashEncoding" value="hex"/>
+              <module-option name="ignorePasswordCase" value="true"/>
 						</login-module>
 					</authentication>
 				</security-domain>

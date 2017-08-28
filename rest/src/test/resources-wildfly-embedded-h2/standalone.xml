@@ -400,9 +400,9 @@
               <module-option name="dsJndiName"
                 value="java:jboss/datasources/mtc" />
               <module-option name="principalsQuery"
-                value="SELECT password FROM User WHERE email=?" />
+                value="SELECT password FROM user WHERE email=?" />
               <module-option name="rolesQuery"
-                value="SELECT role, 'Roles' FROM User WHERE email=?" />
+                value="SELECT role, 'Roles' FROM user WHERE email=?" />
               <module-option name="hashAlgorithm" value="MD5" />
               <module-option name="hashEncoding" value="hex" />
               <module-option name="ignorePasswordCase" value="true" />

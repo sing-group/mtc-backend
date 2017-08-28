@@ -46,19 +46,45 @@ import org.sing_group.mtc.domain.entities.game.parameter.GameParameter.GameParam
 @IdClass(GameParameterId.class)
 public abstract class GameParameter<T> {
   @Id
-  @Column(name = "gameId", length = 255, columnDefinition = "VARCHAR(255)", updatable = false, insertable = false)
+  @Column(name = "gameId", length = 255, columnDefinition = "VARCHAR(255)")
   private String gameId;
   
   @Id
-  @Column(name = "id", length = 255, columnDefinition = "VARCHAR(255)", updatable = false, insertable = false)
+  @Column(name = "id", length = 255, columnDefinition = "VARCHAR(255)")
   private String id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "gameId", referencedColumnName = "id")
+  @JoinColumn(name = "gameId", referencedColumnName = "id", updatable = false, insertable = false)
   private Game game;
   
+  // For JPA
+  GameParameter() {}
+  
+  public GameParameter(String id, Game game) {
+    this.id = id;
+    this.setGame(game);
+  }
+
   public String getId() {
     return id;
+  }
+  
+  public Game getGame() {
+    return game;
+  }
+  
+  public void setGame(Game game) {
+    if (this.game != null) {
+      this.game.removeParameter(this);
+      this.game = null;
+      this.gameId = null;
+    }
+    
+    if (game != null) {
+      this.game = game;
+      this.gameId = this.game.getId();
+      this.game.addParameter(this);
+    }
   }
   
   public abstract T getDefaultValue();
@@ -76,9 +102,17 @@ public abstract class GameParameter<T> {
     public String getGameId() {
       return gameId;
     }
+    
+    public void setGameId(String gameId) {
+      this.gameId = gameId;
+    }
 
     public String getId() {
       return id;
+    }
+    
+    public void setId(String id) {
+      this.id = id;
     }
 
     @Override

@@ -19,17 +19,17 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource;
+package org.sing_group.mtc.rest.resource.entity;
 
 import java.util.stream.Stream;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-import org.sing_group.mtc.domain.entities.IsEqualToEntity;
+import org.sing_group.mtc.domain.entities.IsEqualToEntityOfSameType;
 import org.sing_group.mtc.domain.entities.user.User;
 import org.sing_group.mtc.rest.resource.entity.UserData;
 
-public class IsEqualToUserData extends IsEqualToEntity<UserData> {
+public class IsEqualToUserData extends IsEqualToEntityOfSameType<UserData> {
   public IsEqualToUserData(UserData owner) {
     super(owner);
   }
@@ -39,7 +39,7 @@ public class IsEqualToUserData extends IsEqualToEntity<UserData> {
     this.clearDescribeTo();
 
     if (actual == null) {
-      this.addTemplatedDescription("actual", expected.toString());
+      this.addTemplatedValueDescription("actual", expected.toString());
       return false;
     } else {
       return checkAttribute("id", UserData::getId, actual)

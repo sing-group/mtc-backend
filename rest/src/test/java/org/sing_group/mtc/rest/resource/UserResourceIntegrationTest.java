@@ -32,9 +32,9 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.users;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
-import static org.sing_group.mtc.rest.resource.GenericTypes.UserDataListType.USER_DATA_LIST_TYPE;
-import static org.sing_group.mtc.rest.resource.IsEqualToUserData.containsUsersInAnyOrder;
-import static org.sing_group.mtc.rest.resource.IsEqualToUserData.equalToUser;
+import static org.sing_group.mtc.rest.resource.entity.GenericTypes.UserDataListType.USER_DATA_LIST_TYPE;
+import static org.sing_group.mtc.rest.resource.entity.IsEqualToUserData.containsUsersInAnyOrder;
+import static org.sing_group.mtc.rest.resource.entity.IsEqualToUserData.equalToUser;
 
 import java.util.List;
 

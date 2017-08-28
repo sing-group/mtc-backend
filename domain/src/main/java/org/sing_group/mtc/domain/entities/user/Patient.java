@@ -21,8 +21,6 @@
  */
 package org.sing_group.mtc.domain.entities.user;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.Serializable;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -35,7 +33,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
-import org.sing_group.mtc.domain.entities.session.AssignedSession;
+import org.sing_group.mtc.domain.entities.session.AssignedGamesSession;
 
 /**
  * A patient.
@@ -52,7 +50,7 @@ public class Patient extends User implements Serializable {
   private Therapist therapist;
 
   @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<AssignedSession> assigned;
+  private Set<AssignedGamesSession> assigned;
 
   // Required for JPA
   Patient() {}
@@ -74,53 +72,47 @@ public class Patient extends User implements Serializable {
    *           if value provided for any parameter is not valid according to its
    *           description.
    */
-  public Patient(String email, String password, String name, String surname, boolean encodedPassword) {
+  public Patient(String email, String password, String name, String surname, Therapist therapist, boolean encodedPassword) {
     super(email, password, name, surname, encodedPassword);
+    
+    this.setTherapist(therapist);
   }
 
-  public Patient(Integer id, String email, String password, String name, String surname, boolean encodedPassword) {
+  public Patient(Integer id, String email, String password, String name, String surname, Therapist therapist, boolean encodedPassword) {
     super(id, email, password, name, surname, encodedPassword);
+    
+    this.setTherapist(therapist);
   }
 
-  public Patient(Integer id, String email, String password, String name, String surname) {
+  public Patient(Integer id, String email, String password, String name, String surname, Therapist therapist) {
     super(id, email, password, name, surname);
+    
+    this.setTherapist(therapist);
   }
 
-  public Patient(String email, String password, String name, String surname) {
+  public Patient(String email, String password, String name, String surname, Therapist therapist) {
     super(email, password, name, surname);
+    
+    this.setTherapist(therapist);
   }
   
   public Therapist getTherapist() {
-    if (this.therapist == null) 
-      throw new IllegalStateException(
-        "This entity does not have a therapist assigned. "
-        + "This should happen only when it will be removed."
-      );
-    
     return therapist;
   }
   
   public void setTherapist(Therapist therapist) {
-    requireNonNull(therapist, "'therapist' can't be null");
-    
-    if (therapist.addPatient(this)) {
-      this.therapist = therapist;
-    }
-  }
-  
-  public void removeTherapist() {
-    if (this.therapist == null) 
-      throw new IllegalStateException(
-        "This entity does not have a therapist assigned. "
-        + "This should happen only when it will be removed."
-      );
-    
-    if (this.therapist.removePatient(this)) {
+    if (this.therapist != null) {
+      this.therapist.directRemovePatient(this);
       this.therapist = null;
     }
+    
+    if (therapist != null) {
+      this.therapist = therapist;
+      this.therapist.directAddPatient(this);
+    }
   }
   
-  public Stream<AssignedSession> getAssigned() {
+  public Stream<AssignedGamesSession> getAssigned() {
     return this.assigned.stream();
   }
 }

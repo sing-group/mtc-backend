@@ -31,7 +31,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
-import org.sing_group.mtc.domain.entities.session.Session;
+import org.sing_group.mtc.domain.entities.session.GamesSession;
 
 /**
  * A therapist.
@@ -47,7 +47,7 @@ public class Therapist extends User implements Serializable {
   private Set<Patient> patients;
   
   @OneToMany(mappedBy = "therapist", fetch = FetchType.LAZY)
-  private Set<Session> sessions;
+  private Set<GamesSession> sessions;
   
   // For JPA
   Therapist() {}
@@ -109,20 +109,15 @@ public class Therapist extends User implements Serializable {
     if (this.hasPatient(patient)) {
       return false;
     } else {
-      patient.getTherapist().directRemovePatient(patient);
-      
-      this.directAddPatient(patient);
       patient.setTherapist(this);
-      
       return true;
     }
   }
 
   public boolean removePatient(Patient patient) {
     if (this.hasPatient(patient)) {
-      patient.removeTherapist();
-      
-      return this.directRemovePatient(patient);
+      patient.setTherapist(null);
+      return true;
     } else {
       return false;
     }
@@ -136,42 +131,33 @@ public class Therapist extends User implements Serializable {
     return this.patients.remove(patient);
   }
   
-  public Stream<Session> getSessions() {
+  public Stream<GamesSession> getSessions() {
     return sessions.stream();
   }
   
-  public boolean hasSession(Session session) {
+  public boolean hasSession(GamesSession session) {
     return this.sessions.contains(session);
   }
   
-  public boolean addSession(Session session) {
-    if (this.hasSession(session)) {
-      return false;
-    } else {
-      session.getTherapist().directRemoveSession(session);
-      
-      this.directAddSession(session);
-      session.setTherapist(this);
+  public boolean addSession(GamesSession session) {
+    if (this.sessions.add(session)) {
+      if (session.getTherapist() != this)
+        session.setTherapist(this);
       
       return true;
-    }
-  }
-  
-  public boolean removeSession(Session session) {
-    if (this.hasSession(session)) {
-      session.removeTherapist();
-      
-      return this.directRemoveSession(session);
     } else {
       return false;
     }
   }
   
-  protected boolean directAddSession(Session session) {
-    return this.sessions.add(session);
-  }
-  
-  protected boolean directRemoveSession(Session session) {
-    return this.sessions.remove(session);
+  public boolean removeSession(GamesSession session) {
+    if (this.sessions.remove(session)) {
+      if (session.getTherapist() != null)
+        session.setTherapist(null);
+      
+      return true;
+    } else {
+      return false;
+    }
   }
 }

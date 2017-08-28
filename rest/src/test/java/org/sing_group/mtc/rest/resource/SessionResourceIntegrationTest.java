@@ -29,7 +29,7 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.users;
 import static org.sing_group.mtc.domain.entities.UsersDataset.validEmails;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasUnauthorizedStatus;
-import static org.sing_group.mtc.rest.resource.IsEqualToUserData.equalToUser;
+import static org.sing_group.mtc.rest.resource.entity.IsEqualToUserData.equalToUser;
 
 import java.util.Optional;
 import java.util.function.Consumer;

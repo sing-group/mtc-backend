@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource;
+package org.sing_group.mtc.rest.resource.entity;
 
 import java.util.List;
 

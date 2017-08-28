@@ -24,6 +24,7 @@ package org.sing_group.mtc.domain.entities.session;
 import static java.util.Collections.unmodifiableMap;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.persistence.CollectionTable;
@@ -41,12 +42,12 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 
 import org.sing_group.mtc.domain.entities.game.Game;
-import org.sing_group.mtc.domain.entities.session.SessionGame.SessionGameId;
+import org.sing_group.mtc.domain.entities.session.GameConfigurationForSession.SessionGameId;
 
 @Entity
 @Table(name = "session_game")
 @IdClass(SessionGameId.class)
-public class SessionGame implements Comparable<SessionGame>, Serializable {
+public class GameConfigurationForSession implements Comparable<GameConfigurationForSession>, Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -54,60 +55,92 @@ public class SessionGame implements Comparable<SessionGame>, Serializable {
   private int gameOrder;
 
   @Id
-  @Column(name = "gameId", updatable = false, insertable = false)
+  @Column(name = "gameId")
   private String gameId;
 
   @Id
-  @Column(name = "sessionId", updatable = false, insertable = false)
-  private int sessionId;
+  @Column(name = "sessionId")
+  private Integer sessionId;
 
   @Id
-  @Column(name = "sessionVersion", updatable = false, insertable = false)
-  private int sessionVersion;
-  
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumns({
-    @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false),
-    @JoinColumn(name = "sessionVersion", referencedColumnName = "version", nullable = false)
-  })
-  private SessionVersion session;
+  @Column(name = "sessionVersion")
+  private Integer sessionVersion;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @JoinColumn(name = "gameId", referencedColumnName = "id", nullable = false)
+  @JoinColumns({
+    @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false, updatable = false, insertable = false),
+    @JoinColumn(name = "sessionVersion", referencedColumnName = "version", nullable = false, updatable = false, insertable = false)
+  })
+  private GamesSessionVersion session;
+
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "gameId", referencedColumnName = "id", nullable = false, updatable = false, insertable = false)
   private Game game;
 
   @ElementCollection
   @MapKeyColumn(name = "param", nullable = false)
   @Column(name = "value", nullable = false)
   @CollectionTable(
-    name = "session_game_param_value",
-    joinColumns = {
-      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", nullable = false),
-      @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false),
-      @JoinColumn(name = "sessionVersion", referencedColumnName = "sessionVersion", nullable = false),
-      @JoinColumn(name = "gameId", referencedColumnName = "gameId", nullable = false)
+    name = "session_game_param_value", joinColumns = {
+      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", nullable = false, updatable = false, insertable = false),
+      @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false, updatable = false, insertable = false),
+      @JoinColumn(name = "sessionVersion", referencedColumnName = "sessionVersion", nullable = false, updatable = false, insertable = false),
+      @JoinColumn(name = "gameId", referencedColumnName = "gameId", nullable = false, updatable = false, insertable = false)
     }
   )
   private Map<String, String> paramValues;
   
+  // JPA
+  GameConfigurationForSession() {}
+  
+  public GameConfigurationForSession(
+    GamesSessionVersion session,
+    Game game,
+    int gameOrder,
+    Map<String, String> paramValues
+  ) {
+    this.gameOrder = gameOrder;
+    this.game = game;
+    this.gameId = game.getId();
+    
+    this.setSession(session);
+    this.paramValues = new HashMap<>(paramValues);
+  }
+
   public int getGameOrder() {
     return gameOrder;
   }
-  
+
   public Game getGame() {
     return game;
   }
-  
-  public SessionVersion getSession() {
+
+  public GamesSessionVersion getSession() {
     return session;
   }
   
+  public void setSession(GamesSessionVersion session) {
+    if (this.session != null) {
+      this.session.directRemoveGameConfiguration(this);
+      this.session = null;
+      this.sessionId = null;
+      this.sessionVersion = null;
+    }
+    
+    if (session != null) {
+      this.session = session;
+      this.sessionId = this.session.getSession().getId();
+      this.sessionVersion = this.session.getVersion();
+      this.session.directAddGameConfiguration(this);
+    }
+  }
+
   public Map<String, String> getParamValues() {
     return unmodifiableMap(paramValues);
   }
 
   @Override
-  public int compareTo(SessionGame o) {
+  public int compareTo(GameConfigurationForSession o) {
     return this.getGameOrder() - o.getGameOrder();
   }
 
@@ -116,7 +149,7 @@ public class SessionGame implements Comparable<SessionGame>, Serializable {
     private static final long serialVersionUID = 1L;
 
     private int sessionId;
-    
+
     private int sessionVersion;
 
     private String gameId;

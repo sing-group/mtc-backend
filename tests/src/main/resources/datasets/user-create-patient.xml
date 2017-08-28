@@ -23,5 +23,5 @@
 
 
 <dataset>
-  <User id="6" email="patientNew@email.com" name="Patient" surname="New" password="3D00C9D8F9F427F742ACE86696588C98" role="PATIENT" />
+  <User id="7" email="patientNew@email.com" name="Patient" surname="New" password="3D00C9D8F9F427F742ACE86696588C98" role="PATIENT" therapistId="2" />
 </dataset>

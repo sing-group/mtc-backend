@@ -25,7 +25,7 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
-public class IsEqualToPatient extends IsEqualToEntity<Patient> {
+public class IsEqualToPatient extends IsEqualToEntityOfSameType<Patient> {
   public IsEqualToPatient(Patient owner) {
     super(owner);
   }
@@ -35,7 +35,7 @@ public class IsEqualToPatient extends IsEqualToEntity<Patient> {
     this.clearDescribeTo();
 
     if (actual == null) {
-      this.addTemplatedDescription("actual", expected.toString());
+      this.addTemplatedValueDescription("actual", expected.toString());
       return false;
     } else {
       return checkAttribute("email", Patient::getEmail, actual)

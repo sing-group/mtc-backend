@@ -26,6 +26,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.sing_group.mtc.domain.entities.game.Game;
+
 @Entity
 @Table(name = "seconds_parameter")
 @Cacheable
@@ -33,10 +35,17 @@ public class SecondsParameter extends GameParameter<Integer> {
   @Column(name = "defaultValue")
   private int defaultValue;
   
-  public SecondsParameter() {
+  // For JPA
+  SecondsParameter() {
     super();
   }
+  
+  public SecondsParameter(String id, Game game, int defaultValue) {
+    super(id, game);
+    this.defaultValue = defaultValue;
+  }
 
+  @Override
   public Integer getDefaultValue() {
     return defaultValue;
   }

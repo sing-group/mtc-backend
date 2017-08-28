@@ -28,15 +28,18 @@ import java.util.stream.Stream;
 
 import org.sing_group.mtc.domain.entities.user.Administrator;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.domain.entities.user.User;
 
 public class UsersDataset {
   public final static String ADMIN_HTTP_BASIC_AUTH = "Basic YWRtaW5AZW1haWwuY29tOmFkbWlucGFzcw==";
+  public final static String THERAPIST_HTTP_BASIC_AUTH = "Basic dGhlcmFwaXN0QGVtYWlsLmNvbTp0aGVyYXBpc3RwYXNz";
   
   private final static Map<String, String> EMAIL_TO_PASSWORDS = new HashMap<>();
   
   static {
     EMAIL_TO_PASSWORDS.put("admin@email.com", "adminpass");
+    EMAIL_TO_PASSWORDS.put("therapist@email.com", "therapistpass");
     EMAIL_TO_PASSWORDS.put("patient1@email.com", "patient1pass");
     EMAIL_TO_PASSWORDS.put("patient2@email.com", "patient2pass");
     EMAIL_TO_PASSWORDS.put("patient3@email.com", "patient3pass");
@@ -48,28 +51,33 @@ public class UsersDataset {
   public static Administrator admin() {
     return new Administrator(1, "admin@email.com", EMAIL_TO_PASSWORDS.get("admin@email.com"), "Admin", "Administrator");
   }
+
+  public static Therapist therapist() {
+    return new Therapist(2, "therapist@email.com", EMAIL_TO_PASSWORDS.get("therapist@email.com"), "Therap", "Therapist");
+  }
   
   public static Stream<User> users() {
+    final Therapist therapist = therapist();
     return Stream.of(
       admin(),
-      
-      new Patient(2, "patient1@email.com", EMAIL_TO_PASSWORDS.get("patient1@email.com"), "Patient1", "One"),
+      therapist,
+      new Patient(3, "patient1@email.com", EMAIL_TO_PASSWORDS.get("patient1@email.com"), "Patient1", "One", therapist),
       patientToDelete(),
-      new Patient(4, "patient3@email.com", EMAIL_TO_PASSWORDS.get("patient3@email.com"), "Patient3", "Three"),
-      new Patient(5, "patient4@email.com", EMAIL_TO_PASSWORDS.get("patient4@email.com"), "Patient4", "Four")
+      new Patient(5, "patient3@email.com", EMAIL_TO_PASSWORDS.get("patient3@email.com"), "Patient3", "Three", therapist),
+      new Patient(6, "patient4@email.com", EMAIL_TO_PASSWORDS.get("patient4@email.com"), "Patient4", "Four", therapist)
     );
   }
   
   public static Patient newPatient() {
-    return new Patient("patientNew@email.com", EMAIL_TO_PASSWORDS.get("patientNew@email.com"), "Patient", "New");
+    return new Patient("patientNew@email.com", EMAIL_TO_PASSWORDS.get("patientNew@email.com"), "Patient", "New", therapist());
   }
   
   public static User modifiedUser() {
-    return new Patient(2, "patientChanged@email.com", EMAIL_TO_PASSWORDS.get("patientChanged@email.com"), "Changed", "User");
+    return new Patient(3, "patientChanged@email.com", EMAIL_TO_PASSWORDS.get("patientChanged@email.com"), "Changed", "User", therapist());
   }
   
   public static User patientToDelete() {
-    return new Patient(3, "patient2@email.com", EMAIL_TO_PASSWORDS.get("patient2@email.com"), "Patient2", "Two");
+    return new Patient(4, "patient2@email.com", EMAIL_TO_PASSWORDS.get("patient2@email.com"), "Patient2", "Two", therapist());
   }
   
   public static String getAdminHttpBasicAuthenticationToken() {

@@ -36,18 +36,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.sing_group.mtc.domain.entities.session.AssignedSession.AssignedSessionId;
+import org.sing_group.mtc.domain.entities.session.AssignedGamesSession.AssignedSessionId;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 @Entity
 @Table(name = "assigned_session")
 @IdClass(AssignedSessionId.class)
-public class AssignedSession implements Serializable {
+public class AssignedGamesSession implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @Id
   @Column(name = "sessionId", insertable = false, updatable = false)
-  private int sessionId;
+  private Integer sessionId;
   
   @Id
   @Column(name = "sessionVersion", insertable = false, updatable = false)
@@ -75,14 +75,28 @@ public class AssignedSession implements Serializable {
     @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false),
     @JoinColumn(name = "sessionVersion", referencedColumnName = "version", nullable = false)
   })
-  private SessionVersion session;
+  private GamesSessionVersion session;
   
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "patientId", referencedColumnName = "id", nullable = false)
   private Patient patient;
   
-  public SessionVersion getSession() {
+  public GamesSessionVersion getSession() {
     return session;
+  }
+
+  public void setSession(GamesSessionVersion session) {
+    if (this.session != null) {
+      this.session.directRemoveAssigned(this);
+      this.session = null;
+      this.sessionId = null;
+    }
+    
+    if (session != null) {
+      this.session = session;
+      this.sessionId = session.getSession().getId();
+      this.session.directAddAssigned(this);
+    }
   }
 
   public Patient getPatient() {

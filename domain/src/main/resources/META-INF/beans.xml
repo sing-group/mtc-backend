@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
-  REST
+  Service
   %%
   Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
   %%
@@ -21,6 +21,10 @@
   #L%
   -->
 
-<jboss-web>
-     <security-domain>mtc-security-domain</security-domain>
-</jboss-web>
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+       http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
+  bean-discovery-mode="all"
+>
+</beans>
+

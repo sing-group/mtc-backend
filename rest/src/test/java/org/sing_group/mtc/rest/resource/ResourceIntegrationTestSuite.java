@@ -27,7 +27,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @SuiteClasses({
 	SessionResourceIntegrationTest.class,
-	UserResourceIntegrationTest.class
+	UserResourceIntegrationTest.class,
+	GamesSessionResourceIntegrationTest.class
 })
 @RunWith(Suite.class)
 public class ResourceIntegrationTestSuite {

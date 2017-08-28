@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  Tests
+  %%
+  Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<dataset>
+  <session id="1" therapistId="2" />
+  
+  <session_version sessionId="1" version="1" />
+  
+  <session_game gameId="recognition" gameOrder="1" sessionId="1" sessionVersion="1" />
+  <session_game gameId="verbalFluency" gameOrder="2" sessionId="1" sessionVersion="1" />
+
+  <session_game_param_value param="diceShowTime" value="3"
+    gameId="recognition" gameOrder="1" sessionId="1" sessionVersion="1" />
+  <session_game_param_value param="maxRepetitions" value="2"
+    gameId="recognition" gameOrder="1" sessionId="1" sessionVersion="1" />
+  <session_game_param_value param="numOfStimuli" value="6"
+    gameId="recognition" gameOrder="1" sessionId="1" sessionVersion="1" />
+  
+  <i18n messageKey="session.1.version.1.name" locale="en_US" value="Recognition" />
+  <i18n messageKey="session.1.version.1.name" locale="es_ES" value="Reconocimiento" />
+  <i18n messageKey="session.1.version.1.name" locale="gl_ES" value="Recoñecemento" />
+  <i18n messageKey="session.1.version.1.description" locale="en_US" value="Recognition game." />
+  <i18n messageKey="session.1.version.1.description" locale="es_ES" value="Juego de reconocimiento." />
+  <i18n messageKey="session.1.version.1.description" locale="gl_ES" value="Xogo de recoñecemento." />
+    
+  <session_i18n sessionId="1" sessionVersion="1" i18nKey="session.1.version.1.name" i18nLocale="en_US" />
+  <session_i18n sessionId="1" sessionVersion="1" i18nKey="session.1.version.1.name" i18nLocale="es_ES" />
+  <session_i18n sessionId="1" sessionVersion="1" i18nKey="session.1.version.1.name" i18nLocale="gl_ES" />
+  <session_i18n sessionId="1" sessionVersion="1" i18nKey="session.1.version.1.description" i18nLocale="en_US" />
+  <session_i18n sessionId="1" sessionVersion="1" i18nKey="session.1.version.1.description" i18nLocale="es_ES" />
+  <session_i18n sessionId="1" sessionVersion="1" i18nKey="session.1.version.1.description" i18nLocale="gl_ES" />
+</dataset>

@@ -50,6 +50,19 @@
       <role-name>PATIENT</role-name>
 		</auth-constraint>
 	</security-constraint>
+  
+  <!--Defining security constraint for type of roles available -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>session</web-resource-name>
+      <url-pattern>/api/game/session/*</url-pattern>
+      <http-method-omission>OPTIONS</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>THERAPIST</role-name>
+      <role-name>PATIENT</role-name>
+    </auth-constraint>
+  </security-constraint>
 
 	<!--Defining security constraint for type of roles available -->
 
@@ -61,6 +74,10 @@
 	<security-role>
 		<role-name>PATIENT</role-name>
 	</security-role>
+
+  <security-role>
+    <role-name>THERAPIST</role-name>
+  </security-role>
 	<!--Denining security role -->
 	
 	<login-config>

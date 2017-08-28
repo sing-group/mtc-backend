@@ -35,10 +35,10 @@
     <class>org.sing_group.mtc.domain.entities.game.parameter.IntegerParameter</class>
     <class>org.sing_group.mtc.domain.entities.game.parameter.SecondsParameter</class>
     <class>org.sing_group.mtc.domain.entities.i18n.I18N</class>
-    <class>org.sing_group.mtc.domain.entities.session.AssignedSession</class>
-    <class>org.sing_group.mtc.domain.entities.session.Session</class>
-    <class>org.sing_group.mtc.domain.entities.session.SessionGame</class>
-    <class>org.sing_group.mtc.domain.entities.session.SessionVersion</class>
+    <class>org.sing_group.mtc.domain.entities.session.AssignedGamesSession</class>
+    <class>org.sing_group.mtc.domain.entities.session.GameConfigurationForSession</class>
+    <class>org.sing_group.mtc.domain.entities.session.GamesSession</class>
+    <class>org.sing_group.mtc.domain.entities.session.GamesSessionVersion</class>
     <class>org.sing_group.mtc.domain.entities.user.Administrator</class>
     <class>org.sing_group.mtc.domain.entities.user.Patient</class>
     <class>org.sing_group.mtc.domain.entities.user.Therapist</class>

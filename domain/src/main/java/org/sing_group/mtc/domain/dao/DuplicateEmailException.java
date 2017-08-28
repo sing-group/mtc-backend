@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.service;
+package org.sing_group.mtc.domain.dao;
 
 import javax.ejb.EJBException;
 

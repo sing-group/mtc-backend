@@ -25,9 +25,9 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.sing_group.mtc.domain.entities.user.Administrator;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.User;
 
@@ -37,7 +37,11 @@ public class UserEditionData implements Serializable {
   private static final long serialVersionUID = 1L;
   
   public static UserEditionData of(User user) {
-    return new UserEditionData(user.getEmail(), user.getName(), user.getSurname(), user.getPassword(), User.getRole(user));
+    if (user instanceof Patient) {
+      return new UserEditionData(user.getEmail(), user.getName(), user.getSurname(), user.getPassword(), User.getRole(user), ((Patient) user).getTherapist().getId());
+    } else {
+      return new UserEditionData(user.getEmail(), user.getName(), user.getSurname(), user.getPassword(), User.getRole(user));
+    }
   }
   
   private String email;
@@ -45,15 +49,23 @@ public class UserEditionData implements Serializable {
   private String surname;
   private String password;
   private String role;
+  
+  @XmlElement(required = false)
+  private Integer therapistId;
 
   UserEditionData() {}
 
   public UserEditionData(String email, String name, String surname, String password, String role) {
+    this(email, name, surname, password, role, null);
+  }
+
+  public UserEditionData(String email, String name, String surname, String password, String role, Integer therapistId) {
     this.email = email;
     this.name = name;
     this.surname = surname;
     this.password = password;
     this.role = role;
+    this.therapistId = therapistId;
   }
 
   public String getEmail() {
@@ -96,16 +108,12 @@ public class UserEditionData implements Serializable {
     this.surname = surname;
   }
   
-  public User toUser() {
-    return toUser(null);
+  public Integer getTherapistId() {
+    return therapistId;
   }
-  
-  public User toUser(Integer id) {
-    if (this.getRole().equals("ADMIN")) {
-      return new Administrator(id, email, password, name, surname, false);
-    } else {
-      return new Patient(id, email, password, name, surname, false);
-    }
+
+  public void setTherapistId(Integer therapistId) {
+    this.therapistId = therapistId;
   }
 
   @Override
@@ -117,6 +125,7 @@ public class UserEditionData implements Serializable {
     result = prime * result + ((password == null) ? 0 : password.hashCode());
     result = prime * result + ((role == null) ? 0 : role.hashCode());
     result = prime * result + ((surname == null) ? 0 : surname.hashCode());
+    result = prime * result + ((therapistId == null) ? 0 : therapistId.hashCode());
     return result;
   }
 
@@ -153,6 +162,11 @@ public class UserEditionData implements Serializable {
       if (other.surname != null)
         return false;
     } else if (!surname.equals(other.surname))
+      return false;
+    if (therapistId == null) {
+      if (other.therapistId != null)
+        return false;
+    } else if (!therapistId.equals(other.therapistId))
       return false;
     return true;
   }

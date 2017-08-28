@@ -26,6 +26,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.sing_group.mtc.domain.entities.game.Game;
+
 @Entity
 @Table(name = "integer_parameter")
 @Cacheable
@@ -39,8 +41,14 @@ public class IntegerParameter extends GameParameter<Integer> {
   @Column(name = "max")
   private int maxValue;
   
-  public IntegerParameter() {
-    super();
+  // For JPA
+  IntegerParameter() {}
+
+  public IntegerParameter(String id, Game game, int defaultValue, int minValue, int maxValue) {
+    super(id, game);
+    this.defaultValue = defaultValue;
+    this.minValue = minValue;
+    this.maxValue = maxValue;
   }
 
   public Integer getDefaultValue() {

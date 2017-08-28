@@ -22,6 +22,8 @@
 package org.sing_group.mtc.domain.entities.game;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -31,6 +33,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -55,10 +59,26 @@ public class Game implements Serializable {
     joinColumns = @JoinColumn(name = "gameId", referencedColumnName = "id", nullable = false)
   )
   @Column(name = "name", length = 255, nullable = false)
+  @Enumerated(EnumType.STRING)
   private Set<GameTaskType> types;
   
   @OneToMany(mappedBy = "game", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<GameParameter<?>> parameters;
+  
+  // For JPA
+  Game() {}
+  
+  public Game(
+    String id,
+    Collection<GameTaskType> taskTypes,
+    Collection<GameParameter<?>> parameters
+  ) {
+    this.id = id;
+    this.types = new HashSet<>(taskTypes);
+    this.parameters = new HashSet<>();
+    
+    parameters.forEach(this::addParameter);
+  }
   
   public String getId() {
     return id;
@@ -70,6 +90,32 @@ public class Game implements Serializable {
   
   public Stream<GameParameter<?>> getParameters() {
     return this.parameters.stream();
+  }
+  
+  public boolean addParameter(GameParameter<?> parameter) {
+    if (this.parameters.add(parameter)) {
+      if (parameter.getGame() != this)
+        parameter.setGame(this);
+        
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  public boolean removeParameter(GameParameter<?> parameter) {
+    if (this.parameters.remove(parameter)) {
+      if (parameter.getGame() != null)
+        parameter.setGame(null);
+      
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  public boolean hasParameter(GameParameter<?> parameter) {
+    return this.parameters.contains(parameter);
   }
 
   @Override

@@ -22,114 +22,57 @@
 package org.sing_group.mtc.service;
 
 import static org.sing_group.fluent.checker.Checks.requireEmail;
-import static org.sing_group.mtc.domain.entities.user.User.haveSameRole;
 
 import java.util.stream.Stream;
 
-import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.resource.spi.SecurityException;
+import javax.inject.Inject;
 
+import org.sing_group.mtc.domain.dao.spi.UserDAO;
 import org.sing_group.mtc.domain.entities.user.User;
+import org.sing_group.mtc.service.security.SecurityGuard;
 
 /**
  * EJB for the RegularUsers. Only administrators have access to this class.
  * 
- * @author Miguel Reboiro Jato
+ * @author Miguel Reboiro-Jato
  */
 @Stateless
 @RolesAllowed("ADMIN")
 public class UserService {
-  @PersistenceContext
-  private EntityManager em;
+  @Inject
+  private UserDAO dao;
   
-  @Resource
-  private SessionContext ctx;
+  @Inject
+  private SecurityGuard securityManager;
   
-  private boolean isAdminOrUser(String email) {
-    return ctx.isCallerInRole("ADMIN") || ctx.getCallerPrincipal().getName().equalsIgnoreCase(email);
-  }
-
-  @RolesAllowed({ "ADMIN", "PATIENT" })
-  public User get(String email) throws SecurityException {
+  @PermitAll
+  public User get(String email) {
     requireEmail(email, 100, "email should have and email format with a maximum length of 100 characters");
     
-    if (this.isAdminOrUser(email)) {
-      return em.createQuery("SELECT u FROM User u WHERE upper(email) = upper(:email)", User.class)
-        .setParameter("email", email)
-      .getSingleResult();
-    } else {
-      throw new SecurityException("Illegal access");
-    }
+    return this.securityManager.ifAuthorized(new String[] { "ADMIN" }, () -> email, () -> dao.getByEmail(email));
   }
 
-  @RolesAllowed({ "ADMIN", "PATIENT" })
-  public User get(int id) throws SecurityException {
-    final User patient = em.find(User.class, id);
-
-    if (this.isAdminOrUser(patient.getEmail())) {
-      return patient;
-    } else {
-      throw new SecurityException("Illegal access");
-    }
+  @PermitAll
+  public User get(int id) {
+    return this.securityManager.ifAuthorized(new String[] { "ADMIN" }, () -> dao.get(id).getEmail(), () -> dao.get(id));
   }
 
   public Stream<User> list() {
-    return em.createQuery("SELECT u FROM User u", User.class)
-      .getResultList()
-    .stream();
+    return this.dao.list();
   }
 
   public User create(User user) {
-    if (user == null)
-      throw new IllegalArgumentException("user can't be null");
-    
-    if (existsUserWithEmail(user.getEmail())) {
-      throw new DuplicateEmailException("An user with the same email (" + user.getEmail() + ") already exists");
-    }
-
-    this.em.persist(user);
-
-    return user;
-  }
-
-  private boolean existsUserWithEmail(String email) {
-    try {
-      this.get(email);
-      return true;
-    } catch (NoResultException nre) {
-      return false;
-    } catch (SecurityException se) {
-      throw new RuntimeException("Unexpected security exception", se);
-    }
+    return this.dao.create(user);
   }
 
   public User update(User user) {
-    if (user == null)
-      throw new IllegalArgumentException("user can't be null");
-    
-    System.err.println("ID: " + user.getId());
-    final User currentUser = this.em.find(User.class, user.getId());
-
-    if (!haveSameRole(user, currentUser))
-      throw new IllegalArgumentException("User's role can't be changed");
-    
-    currentUser.setEmail(user.getEmail());
-    currentUser.setName(user.getName());
-    currentUser.setSurname(user.getSurname());
-    if (user.getPassword() != null) {
-      currentUser.setPassword(user.getPassword());
-    }
-
-    return currentUser;
+    return this.dao.update(user);
   }
 
   public void remove(int id) {
-    em.remove(this.em.find(User.class, id));
+    this.dao.remove(id);
   }
 }

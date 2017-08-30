@@ -27,10 +27,10 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -50,10 +50,6 @@ public class AssignedGamesSession implements Serializable {
   private Integer sessionId;
   
   @Id
-  @Column(name = "sessionVersion", insertable = false, updatable = false)
-  private int sessionVersion;
-  
-  @Id
   @Column(name = "patientId", insertable = false, updatable = false)
   private int patientId;
   
@@ -71,21 +67,28 @@ public class AssignedGamesSession implements Serializable {
   private Date endDate;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumns({
-    @JoinColumn(name = "sessionId", referencedColumnName = "sessionId", nullable = false),
-    @JoinColumn(name = "sessionVersion", referencedColumnName = "version", nullable = false)
-  })
-  private GamesSessionVersion session;
+  @JoinColumn(
+    name = "sessionId",
+    referencedColumnName = "id",
+    nullable = false,
+    foreignKey = @ForeignKey(name = "FK_assignedsession_gamesession")
+  )
+  private GamesSession session;
   
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "patientId", referencedColumnName = "id", nullable = false)
+  @JoinColumn(
+    name = "patientId",
+    referencedColumnName = "id",
+    nullable = false,
+    foreignKey = @ForeignKey(name = "FK_assignedsession_patient")
+  )
   private Patient patient;
   
-  public GamesSessionVersion getSession() {
+  public GamesSession getSession() {
     return session;
   }
 
-  public void setSession(GamesSessionVersion session) {
+  public void setSession(GamesSession session) {
     if (this.session != null) {
       this.session.directRemoveAssigned(this);
       this.session = null;
@@ -94,7 +97,7 @@ public class AssignedGamesSession implements Serializable {
     
     if (session != null) {
       this.session = session;
-      this.sessionId = session.getSession().getId();
+      this.sessionId = session.getId();
       this.session.directAddAssigned(this);
     }
   }
@@ -119,12 +122,15 @@ public class AssignedGamesSession implements Serializable {
     private static final long serialVersionUID = 1L;
   
     private int sessionId;
-    
-    private int sessionVersion;
-    
     private int patientId;
-    
     private Date assignmentDate;
+    
+    public AssignedSessionId(int sessionId, int patientId, Date assignmentDate) {
+      super();
+      this.sessionId = sessionId;
+      this.patientId = patientId;
+      this.assignmentDate = assignmentDate;
+    }
 
     public int getPatientId() {
       return patientId;
@@ -132,10 +138,6 @@ public class AssignedGamesSession implements Serializable {
 
     public int getSessionId() {
       return sessionId;
-    }
-    
-    public int getSessionVersion() {
-      return sessionVersion;
     }
     
     public Date getAssignmentDate() {
@@ -149,7 +151,6 @@ public class AssignedGamesSession implements Serializable {
       result = prime * result + ((assignmentDate == null) ? 0 : assignmentDate.hashCode());
       result = prime * result + patientId;
       result = prime * result + sessionId;
-      result = prime * result + sessionVersion;
       return result;
     }
 
@@ -170,8 +171,6 @@ public class AssignedGamesSession implements Serializable {
       if (patientId != other.patientId)
         return false;
       if (sessionId != other.sessionId)
-        return false;
-      if (sessionVersion != other.sessionVersion)
         return false;
       return true;
     }

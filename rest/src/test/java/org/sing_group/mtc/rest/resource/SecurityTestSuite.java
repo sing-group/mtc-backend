@@ -1,6 +1,6 @@
 /*
  * #%L
- * Domain
+ * REST
  * %%
  * Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
  * %%
@@ -19,20 +19,14 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.domain.entities.i18n;
+package org.sing_group.mtc.rest.resource;
 
-public enum I18NLocale {
-  EN_US("en_US"),
-  ES_ES("es_ES"),
-  GL_ES("gl_ES");
-  
-  private String value;
-  
-  private I18NLocale(String value) {
-    this.value = value;
-  }
-  
-  public String getValue() {
-    return value;
-  }
-}
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
+
+@SuiteClasses({
+  GamesSessionResourceSecurityTest.class
+})
+@RunWith(Suite.class)
+public class SecurityTestSuite {}

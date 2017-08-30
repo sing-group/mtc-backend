@@ -21,13 +21,18 @@
  */
 package org.sing_group.mtc.domain.entities.i18n;
 
+import static java.util.Objects.requireNonNull;
 import static org.sing_group.fluent.checker.Checks.requireStringSize;
 
 import java.io.Serializable;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
@@ -41,8 +46,9 @@ public class I18N implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @Id
+  @Enumerated(EnumType.STRING)
   @Column(name = "locale", length = 5, columnDefinition = "CHAR(5)")
-  private String locale;
+  private I18NLocale locale;
   
   @Id
   @Column(name = "messageKey", length = 64, columnDefinition = "VARCHAR(64)")
@@ -54,18 +60,18 @@ public class I18N implements Serializable {
   // For JPA
   I18N() {}
   
-  public I18N(String locale, String key, String value) {
-    this.locale = locale;
-    this.key = key;
-    this.value = value;
+  public I18N(I18NLocale locale, String key, String value) {
+    this.setLocale(locale);
+    this.setKey(key);
+    this.setValue(value);
   }
-
-  public String getLocale() {
+  
+  public I18NLocale getLocale() {
     return locale;
   }
   
-  public void setLocale(String locale) {
-    this.locale = locale;
+  public void setLocale(I18NLocale locale) {
+    this.locale = requireNonNull(locale);
   }
   
   public String getKey() {
@@ -84,12 +90,18 @@ public class I18N implements Serializable {
     this.value = requireStringSize(value, 0, 32768);
   }
   
+  public static Stream<I18N> from(String key, Map<I18NLocale, String> messages) {
+    return messages.entrySet().stream()
+      .map(entry -> new I18N(entry.getKey(), key, entry.getValue()));
+  }
+  
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((key == null) ? 0 : key.hashCode());
     result = prime * result + ((locale == null) ? 0 : locale.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
     return result;
   }
 
@@ -107,10 +119,12 @@ public class I18N implements Serializable {
         return false;
     } else if (!key.equals(other.key))
       return false;
-    if (locale == null) {
-      if (other.locale != null)
+    if (locale != other.locale)
+      return false;
+    if (value == null) {
+      if (other.value != null)
         return false;
-    } else if (!locale.equals(other.locale))
+    } else if (!value.equals(other.value))
       return false;
     return true;
   }
@@ -119,18 +133,18 @@ public class I18N implements Serializable {
   public static class I18NId implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private String locale;
+    private I18NLocale locale;
     private String key;
     
     // For JPA
     I18NId() {}
     
-    public I18NId(String locale, String key) {
-      this.locale = requireStringSize(locale, 5, 5);
+    public I18NId(I18NLocale locale, String key) {
+      this.locale = requireNonNull(locale);
       this.key = requireStringSize(key, 1, 64);
     }
     
-    public String getLocale() {
+    public I18NLocale getLocale() {
       return locale;
     }
     
@@ -161,10 +175,7 @@ public class I18N implements Serializable {
           return false;
       } else if (!key.equals(other.key))
         return false;
-      if (locale == null) {
-        if (other.locale != null)
-          return false;
-      } else if (!locale.equals(other.locale))
+      if (locale != other.locale)
         return false;
       return true;
     }

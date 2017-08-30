@@ -22,7 +22,6 @@
 package org.sing_group.mtc.rest.resource;
 
 import java.net.URI;
-import java.util.function.Function;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -38,7 +37,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.entities.session.GamesSession;
-import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.resource.entity.mapper.GamesMapper;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionData;
@@ -59,8 +57,29 @@ public class GamesSessionResource {
   @Inject
   private GamesMapper gamesMapper;
   
+  @Inject
+  private UserResource userResource;
+  
   @Context
   private UriInfo uriInfo;
+  
+  public URI buildUriForGamesSession(GamesSession session) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(Integer.toString(session.getId()))
+    .build();
+  }
+  
+  @GET
+  @Path("{id}")
+  public Response get(@PathParam("id") int sessionId) {
+    final GamesSession session = this.service.get(sessionId);
+    
+    final GamesSessionData sessionData =
+      this.gamesMapper.mapToGameSessionData(session, this.userResource::buildPathForUser);
+    
+    return Response.ok(sessionData).build();
+  }
 
   @POST
   public Response create(GamesSessionCreationData sessionData) {
@@ -68,26 +87,8 @@ public class GamesSessionResource {
       this.gamesMapper.mapToGameSession(sessionData)
     );
 
-    final URI url = this.uriInfo.getAbsolutePathBuilder()
-      .path(Integer.toString(session.getId()))
-    .build();
+    final URI uri = this.buildUriForGamesSession(session);
     
-    return Response.created(url).build();
-  }
-
-  @GET
-  @Path("{id}")
-  public Response get(@PathParam("id") int sessionId) {
-    final GamesSession session = this.service.get(sessionId);
-    
-    final Function<Therapist, String> therapistUriBuilder = therapist -> 
-      uriInfo.getBaseUriBuilder()
-        .path("user")
-        .path(Integer.toString(therapist.getId()))
-      .build().toString();
-    
-    final GamesSessionData sessionData = this.gamesMapper.mapToGameSessionData(session, therapistUriBuilder);
-    
-    return Response.ok(sessionData).build();
+    return Response.created(uri).build();
   }
 }

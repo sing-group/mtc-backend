@@ -22,6 +22,7 @@
 package org.sing_group.mtc.domain.entities.i18n;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toMap;
 import static org.sing_group.fluent.checker.Checks.requireNonEmpty;
 import static org.sing_group.fluent.checker.Checks.requireNonNullCollection;
 
@@ -29,7 +30,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LocalizedMessage implements Serializable {
@@ -68,7 +68,7 @@ public class LocalizedMessage implements Serializable {
   
   public Stream<I18N> toI18N() {
     return this.getLocales()
-      .map(locale -> new I18N(locale.getValue(), this.getId(), this.getMessage(locale)));
+      .map(locale -> new I18N(locale, this.getId(), this.getMessage(locale)));
   }
 
   public static LocalizedMessage from(String key, Collection<I18N> i18ns) {
@@ -76,21 +76,13 @@ public class LocalizedMessage implements Serializable {
     
     final Map<I18NLocale, String> messages = i18ns.stream()
       .filter(i18n -> i18n.getKey().equals(key))
-      .collect(Collectors.toMap(
-        i18n -> I18NLocale.of(i18n.getLocale()),
-        I18N::getValue
-      ));
+    .collect(toMap(
+      I18N::getLocale,
+      I18N::getValue
+    ));
     
     return new LocalizedMessage(key, messages);
   }
-  
-//  private static void checkSameKey(I18N... i18ns) {
-//    requireNonNullArray(i18ns);
-//    
-//    if (stream(i18ns).map(I18N::getKey).distinct().count() == 1) {
-//      throw new IllegalArgumentException("i18ns should have the same key");
-//    }
-//  }
   
   @Override
   public int hashCode() {

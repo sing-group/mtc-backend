@@ -36,6 +36,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -56,9 +57,10 @@ public class Game implements Serializable {
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(
     name = "game_type",
-    joinColumns = @JoinColumn(name = "gameId", referencedColumnName = "id", nullable = false)
+    joinColumns = @JoinColumn(name = "gameId", referencedColumnName = "id", nullable = false),
+    foreignKey = @ForeignKey(name = "FK_game_type")
   )
-  @Column(name = "name", length = 255, nullable = false)
+  @Column(name = "name", length = 18, nullable = false)
   @Enumerated(EnumType.STRING)
   private Set<GameTaskType> types;
   

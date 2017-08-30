@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.domain.entities;
+package org.sing_group.mtc.domain.entities.session;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
@@ -39,24 +39,26 @@ import org.sing_group.mtc.domain.entities.game.parameter.SecondsParameter;
 import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.session.GameConfigurationForSession;
 import org.sing_group.mtc.domain.entities.session.GamesSession;
-import org.sing_group.mtc.domain.entities.session.GamesSessionVersion;
 
 public final class GamesSessionDataset {
   private GamesSessionDataset() {}
-  
+
   public static Game recognitionGame() {
     final IntegerParameter maxRepetitions = new IntegerParameter("maxRepetitions", null, 1, 1, 2);
     final IntegerParameter numOfStimuli = new IntegerParameter("numOfStimuli", null, 6, 1, 12);
     final SecondsParameter diceShowTime = new SecondsParameter("diceShowTime", null, 5);
-    
-    return new Game("recognition", singleton(RECOGNITION), asList(
-      maxRepetitions, numOfStimuli, diceShowTime
-    ));
+
+    return new Game(
+      "recognition", singleton(RECOGNITION), asList(
+        maxRepetitions, numOfStimuli, diceShowTime
+      )
+    );
   }
+
   public static Game verbalFluencyGame() {
     return new Game("verbalFluency", singleton(VERBAL_FLUENCY), emptySet());
   }
-  
+
   public static Stream<GamesSession> sessions() {
     return Stream.of(session1());
   }
@@ -66,75 +68,54 @@ public final class GamesSessionDataset {
     paramValues.put("maxRepetitions", "2");
     paramValues.put("numOfStimuli", "6");
     paramValues.put("diceShowTime", "3");
-    
+
     final Map<I18NLocale, String> nameMessages = new HashMap<>();
     final Map<I18NLocale, String> descriptionMessages = new HashMap<>();
-    
+
     nameMessages.put(I18NLocale.EN_US, "Recognition");
     nameMessages.put(I18NLocale.ES_ES, "Reconocimiento");
     nameMessages.put(I18NLocale.GL_ES, "Recoñecemento");
-    
+
     descriptionMessages.put(I18NLocale.EN_US, "Recognition game.");
     descriptionMessages.put(I18NLocale.ES_ES, "Juego de reconocimiento.");
     descriptionMessages.put(I18NLocale.GL_ES, "Xogo de recoñecemento.");
-    
-    final GamesSession session = new GamesSession(1, therapist(), emptySet());
-    
-    final GamesSessionVersion version = new GamesSessionVersion(
-      session, 1, nameMessages, descriptionMessages, emptySet(), emptySet()
-    );
-    
-    new GameConfigurationForSession(
-      version, recognitionGame(), 1, paramValues
-    );
-    
-    new GameConfigurationForSession(
-      version, verbalFluencyGame(), 2, emptyMap()
-    );
-    
-    return new GamesSession(1, therapist(), singleton(version));
+
+    final GamesSession session = new GamesSession(1, therapist(), nameMessages, descriptionMessages);
+
+    new GameConfigurationForSession(session, recognitionGame(), 1, paramValues);
+    new GameConfigurationForSession(session, verbalFluencyGame(), 2, emptyMap());
+
+    return session;
   }
-  
-  public static GamesSession newSession() {
+
+  public static GamesSession newGamesSession() {
     final Map<String, String> paramValues1 = new HashMap<>();
     paramValues1.put("maxRepetitions", "2");
     paramValues1.put("numOfStimuli", "6");
     paramValues1.put("diceShowTime", "3");
-    
+
     final Map<String, String> paramValues2 = new HashMap<>();
     paramValues2.put("maxRepetitions", "1");
     paramValues2.put("numOfStimuli", "8");
     paramValues2.put("diceShowTime", "5");
-    
+
     final Map<I18NLocale, String> nameMessages = new HashMap<>();
     final Map<I18NLocale, String> descriptionMessages = new HashMap<>();
-    
+
     nameMessages.put(I18NLocale.EN_US, "Recognition 2");
     nameMessages.put(I18NLocale.ES_ES, "Reconocimiento 2");
     nameMessages.put(I18NLocale.GL_ES, "Recoñecemento 2");
-    
+
     descriptionMessages.put(I18NLocale.EN_US, "Recognition game.");
     descriptionMessages.put(I18NLocale.ES_ES, "Juego de reconocimiento.");
     descriptionMessages.put(I18NLocale.GL_ES, "Xogo de recoñecemento.");
-    
-    final GamesSession session = new GamesSession(2, therapist(), emptySet());
-    
-    final GamesSessionVersion version = new GamesSessionVersion(
-      session, 1, nameMessages, descriptionMessages, emptySet(), emptySet()
-    );
-    
-    new GameConfigurationForSession(
-      version, recognitionGame(), 1, paramValues1
-    );
-    
-    new GameConfigurationForSession(
-      version, verbalFluencyGame(), 2, emptyMap()
-    );
-    
-    new GameConfigurationForSession(
-      version, recognitionGame(), 3, paramValues2
-    );
-    
+
+    final GamesSession session = new GamesSession(2, therapist(), nameMessages, descriptionMessages);
+
+    new GameConfigurationForSession(session, recognitionGame(), 1, paramValues1);
+    new GameConfigurationForSession(session, verbalFluencyGame(), 2, emptyMap());
+    new GameConfigurationForSession(session, recognitionGame(), 3, paramValues2);
+
     return session;
   }
 }

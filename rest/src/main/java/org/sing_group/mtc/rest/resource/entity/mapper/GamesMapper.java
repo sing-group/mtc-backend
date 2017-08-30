@@ -41,14 +41,12 @@ import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.session.GameConfigurationForSession;
 import org.sing_group.mtc.domain.entities.session.GamesSession;
-import org.sing_group.mtc.domain.entities.session.GamesSessionVersion;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.resource.entity.LocaleMessages;
 import org.sing_group.mtc.rest.resource.entity.session.GameConfigurationData;
 import org.sing_group.mtc.rest.resource.entity.session.GameParamData;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionData;
-import org.sing_group.mtc.rest.resource.entity.session.GamesSessionVersionData;
 import org.sing_group.mtc.service.GameService;
 
 @Default
@@ -57,18 +55,18 @@ public class GamesMapper {
   @Inject
   private GameService gamesService;
   
+  public void setGamesService(GameService gamesService) {
+    this.gamesService = gamesService;
+  }
+  
   public GamesSession mapToGameSession(GamesSessionCreationData data) {
     final GamesSession session = new GamesSession();
     
-    final Map<I18NLocale, String> nameMessages = extractMessages(data.getName());
-    final Map<I18NLocale, String> descriptionMessages = extractMessages(data.getDescription());
+    session.setNameMessages(extractMessages(data.getName()));
+    session.setDescriptionMessages(extractMessages(data.getDescription()));
     
-    final GamesSessionVersion version = new GamesSessionVersion(nameMessages, descriptionMessages);
-    
-    final SortedSet<GameConfigurationForSession> gameConfigs = mapToGameConfigurationForSession(data.getGames());
-    
-    session.addVersion(version);
-    gameConfigs.forEach(version::addGameConfiguration);
+    mapToGameConfigurationForSession(data.getGames())
+      .forEach(session::addGameConfiguration);
     
     return session;
   }
@@ -76,7 +74,7 @@ public class GamesMapper {
   private Map<I18NLocale, String> extractMessages(LocaleMessages messages) {
     return messages.getMessages().entrySet().stream()
       .collect(toMap(
-        entry -> I18NLocale.of(entry.getKey()),
+        entry -> I18NLocale.valueOf(entry.getKey()),
         Entry::getValue
       ));
   }
@@ -87,7 +85,7 @@ public class GamesMapper {
     return stream(gameConfigurations)
       .map(game -> new GameConfigurationForSession(
         null,
-        gamesService.getGame(game.getId()),
+        gamesService.getGame(game.getGameId()),
         gameOrder.getAndIncrement(),
         game.getParameterValues()
       ))
@@ -98,26 +96,18 @@ public class GamesMapper {
     return new GamesSessionData(
       session.getId(),
       therapistUrlBuilder.apply(session.getTherapist()),
-      session.getVersions()
-        .map(this::mapToGamesSessionVersionData)
-      .toArray(GamesSessionVersionData[]::new)
-    );
-  }
-  
-  public GamesSessionVersionData mapToGamesSessionVersionData(GamesSessionVersion sessionVersion) {
-    return new GamesSessionVersionData(
-      sessionVersion.getVersion(),
-      sessionVersion.getGameConfigurations()
+      session.getGameConfigurations()
         .map(this::mapToGameConfigurationData)
       .toArray(GameConfigurationData[]::new),
-      mapToLocaleMessages(sessionVersion.getName()),
-      mapToLocaleMessages(sessionVersion.getDescription())
+      mapToLocaleMessages(session.getName()),
+      mapToLocaleMessages(session.getDescription())
     );
   }
   
   public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration) {
     return new GameConfigurationData(
-      gameConfiguration.getGame().getId(),
+      gameConfiguration.getGameId(),
+      gameConfiguration.getGameOrder(),
       gameConfiguration.getParamValues().entrySet().stream()
         .map(entry -> new GameParamData(entry.getKey(), entry.getValue()))
       .toArray(GameParamData[]::new)

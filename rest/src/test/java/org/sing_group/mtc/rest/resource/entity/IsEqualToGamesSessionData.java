@@ -21,14 +21,17 @@
  */
 package org.sing_group.mtc.rest.resource.entity;
 
+import java.util.stream.Stream;
+
 import org.hamcrest.Factory;
+import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.session.GamesSession;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionData;
 
 public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData, GamesSession> {
-  public IsEqualToGamesSessionData(GamesSessionData owner) {
-    super(owner);
+  public IsEqualToGamesSessionData(GamesSessionData expected) {
+    super(expected);
   }
 
   @Override
@@ -40,14 +43,15 @@ public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData,
       return false;
     } else {
       return checkAttribute("id", GamesSessionData::getId, GamesSession::getId, actual)
-        && checkAttribute("therapist", GamesSessionData::getTherapist, gs -> Integer.toString(gs.getTherapist().getId()), actual, String::endsWith)
-        && matchIterableAttribute("version",
-          wrapArrayToIterableFunction(GamesSessionData::getGameVersions),
-          wrapStreamToIterableFunction(GamesSession::getVersions),
+        && checkAttribute("therapist", GamesSessionData::getTherapist, gs -> "/user/" + gs.getTherapist().getId(), actual, String::endsWith)
+        && matchAttribute("nameMessages", GamesSessionData::getNameMessage, GamesSession::getName, actual, IsEqualToLocaleMessages::equalToLocaleMessages)
+        && matchAttribute("descriptionMessages", GamesSessionData::getDescriptionMessage, GamesSession::getDescription, actual, IsEqualToLocaleMessages::equalToLocaleMessages)
+        && matchIterableAttribute("gameConfigurations",
+          wrapArrayToIterableFunction(GamesSessionData::getGameConfiguration),
+          wrapStreamToIterableFunction(GamesSession::getGameConfigurations),
           actual,
-          IsEqualToGamesSessionVersionData::containsGamesSessionVersionInAnyOrder
+          IsEqualToGameConfigurationData::containsGameConfigurationDataInAnyOrder
         );
-        //&& checkArrayAttribute("name", GamesSessionData::getGameVersions, gs -> gs.getVersions().toArray(GamesSessionVersion[]::new), actual);
     }
   }
 
@@ -56,39 +60,18 @@ public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData,
     return new IsEqualToGamesSessionData(session);
   }
   
-//  
-//  @Factory
-//  public static IsEqualToGamesSessionData equalToUserData(GamesSessionData user) {
-//    return new IsEqualToGamesSessionData(user);
-//  }
-//
-//  @Factory
-//  public static Matcher<Iterable<? extends UserData>> containsUsersInAnyOrder(User... users) {
-//    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToUser, users);
-//  }
-//
-//  @Factory
-//  public static Matcher<Iterable<? extends UserData>> containsUsersInAnyOrder(Iterable<User> users) {
-//    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToUser, users);
-//  }
-//  
-//  @Factory
-//  public static Matcher<Iterable<? extends UserData>> containsUsersInAnyOrder(Stream<User> users) {
-//    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToUser, users);
-//  }
-//  
-//  @Factory
-//  public static Matcher<Iterable<? extends UserData>> containsUserDatasInAnyOrder(GamesSessionData... users) {
-//    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToUserData, users);
-//  }
-//  
-//  @Factory
-//  public static Matcher<Iterable<? extends UserData>> containsUserDatasInAnyOrder(Iterable<GamesSessionData> users) {
-//    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToUserData, users);
-//  }
-//  
-//  @Factory
-//  public static Matcher<Iterable<? extends UserData>> containsUserDatasInAnyOrder(Stream<GamesSessionData> users) {
-//    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToUserData, users);
-//  }
+  @Factory
+  public static Matcher<Iterable<? extends GamesSession>> containsUserDatasInAnyOrder(GamesSessionData... gameSessions) {
+    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToGameSession, gameSessions);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends GamesSession>> containsUserDatasInAnyOrder(Iterable<GamesSessionData> gameSessions) {
+    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToGameSession, gameSessions);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends GamesSession>> containsUserDatasInAnyOrder(Stream<GamesSessionData> gameSessions) {
+    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToGameSession, gameSessions);
+  }
 }

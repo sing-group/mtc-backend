@@ -28,6 +28,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Inheritance;
@@ -54,7 +55,12 @@ public abstract class GameParameter<T> {
   private String id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "gameId", referencedColumnName = "id", updatable = false, insertable = false)
+  @JoinColumn(
+    name = "gameId",
+    referencedColumnName = "id",
+    updatable = false, insertable = false,
+    foreignKey = @ForeignKey(name = "FK_gameparameter_game")
+  )
   private Game game;
   
   // For JPA

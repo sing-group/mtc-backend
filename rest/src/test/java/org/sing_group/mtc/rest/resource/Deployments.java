@@ -32,7 +32,7 @@ public final class Deployments {
   public static WebArchive createDeployment() {
     return ShrinkWrap.create(WebArchive.class, "test.war")
       .addClass(Checks.class)
-      .addPackages(true, "org.sing_group.mtc")
+      .addPackages(true, "org.sing_group.mtc", "org.sing_group.fluent", "org.hamcrest")
       .addAsResource("arquillian.extension.persistence.properties")
       .addAsResource("arquillian.extension.persistence.dbunit.properties")
       .addAsResource("test-persistence.xml", "META-INF/persistence.xml")

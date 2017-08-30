@@ -34,6 +34,7 @@ import org.sing_group.mtc.domain.entities.user.User;
 public class UsersDataset {
   public final static String ADMIN_HTTP_BASIC_AUTH = "Basic YWRtaW5AZW1haWwuY29tOmFkbWlucGFzcw==";
   public final static String THERAPIST_HTTP_BASIC_AUTH = "Basic dGhlcmFwaXN0QGVtYWlsLmNvbTp0aGVyYXBpc3RwYXNz";
+  public final static String PATIENT1_HTTP_BASIC_AUTH = "Basic cGF0aWVudDFAZW1haWwuY29tOnBhdGllbnQxcGFzcw==";
   
   private final static Map<String, String> EMAIL_TO_PASSWORDS = new HashMap<>();
   

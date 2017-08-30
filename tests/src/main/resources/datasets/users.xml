@@ -20,14 +20,23 @@
   <http://www.gnu.org/licenses/gpl-3.0.html>.
   #L%
   -->
-
+<!--
+  Users' password is the user email without "@email.com" followed by "pass".
+  For example, password for "admin@email.com" is "adminpass".
+-->
 <dataset>
+  <!-- HTTP Basic token: YWRtaW5AZW1haWwuY29tOmFkbWlucGFzcw== -->
   <user id="1" email="admin@email.com" name="Admin" surname="Administrator" password="25E4EE4E9229397B6B17776BFCEAF8E7" role="ADMIN" />
   
+  <!-- HTTP Basic token: dGhlcmFwaXN0QGVtYWlsLmNvbTp0aGVyYXBpc3RwYXNz -->
   <user id="2" email="therapist@email.com" name="Therap" surname="Therapist" password="F15A0A52502E22F1E9D85DF282AACBCA" role="THERAPIST" />
   
+  <!-- HTTP Basic token: cGF0aWVudDFAZW1haWwuY29tOnBhdGllbnQxcGFzcw== -->
   <user id="3" email="patient1@email.com" name="Patient1" surname="One" password="73EDDBD69140354E08DDAA9EBCAC7AD9" role="PATIENT" therapistId="2" />
+  <!-- HTTP Basic token: cGF0aWVudDJAZW1haWwuY29tOnBhdGllbnQycGFzcw== -->
   <user id="4" email="patient2@email.com" name="Patient2" surname="Two" password="22E45EBC9B24AF52E4BACE48CC5AAAED" role="PATIENT" therapistId="2" />
+  <!-- HTTP Basic token: cGF0aWVudDNAZW1haWwuY29tOnBhdGllbnQzcGFzcw== -->
   <user id="5" email="patient3@email.com" name="Patient3" surname="Three" password="E6878164EEC94EA0879F9596865D082F" role="PATIENT" therapistId="2" />
+  <!-- HTTP Basic token: cGF0aWVudDRAZW1haWwuY29tOnBhdGllbnQ0cGFzcw== -->
   <user id="6" email="patient4@email.com" name="Patient4" surname="Four" password="17065C3A36A025B7885BBD30910C8487" role="PATIENT" therapistId="2" />
 </dataset>

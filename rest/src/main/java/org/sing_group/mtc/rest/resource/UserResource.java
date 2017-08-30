@@ -68,6 +68,17 @@ public class UserResource {
   @Inject
   private UserMapper mapper;
 
+  public URI buildUriForUser(User user) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(Integer.toString(user.getId()))
+    .build();
+  }
+
+  public String buildPathForUser(User user) {
+    return this.buildUriForUser(user).toString();
+  }
+  
   @Path("{id}")
   @GET
   public Response get(@PathParam("id") int id) {
@@ -93,9 +104,7 @@ public class UserResource {
     try {
       final User user = this.service.create(mapper.toUser(userData));
       
-      final URI userUri = uriInfo.getAbsolutePathBuilder()
-        .path(Integer.toString(user.getId()))
-      .build();
+      final URI userUri = this.buildUriForUser(user);
 
       return Response.created(userUri).build();
     } catch (DuplicateEmailException eee) {

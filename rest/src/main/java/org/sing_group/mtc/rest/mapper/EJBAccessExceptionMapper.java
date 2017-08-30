@@ -25,8 +25,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.security.Principal;
 
+import javax.ejb.EJBAccessException;
 import javax.inject.Inject;
-import javax.resource.spi.SecurityException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -37,15 +37,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Provider
-public class SecurityExceptionMapper
-implements ExceptionMapper<SecurityException> {
+public class EJBAccessExceptionMapper
+implements ExceptionMapper<EJBAccessException> {
   private final static Logger LOG = LoggerFactory.getLogger(IllegalArgumentException.class);
 
   private Principal principal;
   
-  public SecurityExceptionMapper() {}
+  public EJBAccessExceptionMapper() {}
   
-  public SecurityExceptionMapper(Principal principal) {
+  public EJBAccessExceptionMapper(Principal principal) {
     this.setPrincipal(principal);
   }
   
@@ -53,9 +53,9 @@ implements ExceptionMapper<SecurityException> {
   public void setPrincipal(Principal principal) {
     this.principal = requireNonNull(principal);
   }
-
+  
   @Override
-  public Response toResponse(SecurityException e) {
+  public Response toResponse(EJBAccessException e) {
     LOG.error("Exception catched", e);
     
     final Status status = "anonymous".equals(principal.getName())

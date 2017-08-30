@@ -29,6 +29,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -46,7 +47,7 @@ public class Patient extends User implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "therapistId", referencedColumnName = "id")
+  @JoinColumn(name = "therapistId", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_patient_therapist"))
   private Therapist therapist;
 
   @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

@@ -26,6 +26,7 @@ import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.METHOD_NOT_ALLOWED;
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
+import static javax.ws.rs.core.Response.Status.FORBIDDEN;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.StatusType;
@@ -92,5 +93,9 @@ public class HasHttpStatus extends TypeSafeMatcher<Response> {
 
   public static HasHttpStatus hasUnauthorizedStatus() {
     return new HasHttpStatus(UNAUTHORIZED);
+  }
+
+  public static HasHttpStatus hasForbiddenStatus() {
+    return new HasHttpStatus(FORBIDDEN);
   }
 }

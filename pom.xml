@@ -631,7 +631,7 @@
                     --jndi-name=java:jboss/datasources/mtc
                     --name=mtc
                     --jta=true --use-ccm=true
-                    --connection-url=jdbc:mysql://localhost:3306/mtc
+                    --connection-url=jdbc:mysql://localhost:3306/mtc?useUnicode=yes&amp;characterEncoding=UTF-8
                     --driver-name=mysql-connector-java-${mysql.connector.java.version}.jar
                     --driver-class=com.mysql.jdbc.Driver --user-name=mtc
                     --password=mtcpass</command>

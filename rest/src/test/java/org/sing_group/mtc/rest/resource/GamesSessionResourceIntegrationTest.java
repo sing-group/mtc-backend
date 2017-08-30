@@ -21,11 +21,15 @@
  */
 package org.sing_group.mtc.rest.resource;
 
+import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.sing_group.mtc.domain.entities.GamesSessionDataset.sessions;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
+import static org.sing_group.mtc.domain.entities.session.GamesSessionDataset.sessions;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
+import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
+import static org.sing_group.mtc.rest.resource.entity.GamesSessionDataDataset.newGamesSessionData;
 import static org.sing_group.mtc.rest.resource.entity.IsEqualToGamesSessionData.equalToGameSession;
 
 import javax.ws.rs.core.Response;
@@ -37,6 +41,7 @@ import org.jboss.arquillian.extension.rest.client.Header;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
+import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
@@ -82,31 +87,35 @@ public class GamesSessionResourceIntegrationTest {
 
   @Test
   @InSequence(3)
-  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterGet() {}
 
-//  @Test
-//  @InSequence(5)
-//  @UsingDataSet("users.xml")
-//  public void beforeInvalidPassword() {}
-//
-//  @Test
-//  @InSequence(6)
-//  @RunAsClient
-//  public void testInvalidPassword(
-//    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
-//  ) {
-//    final Consumer<String> testUnathorized = email -> testUnauthorized(webTarget, email, true);
-//    
-//    validEmails().forEach(testUnathorized);
-//  }
-//
-//  @Test
-//  @InSequence(7)
-//  @ShouldMatchDataSet("users.xml")
-//  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
-//  public void afterInvalidPassword() {}
+  @Test
+  @InSequence(5)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
+  public void beforeCreate() {}
+
+  @Test
+  @InSequence(6)
+  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testCreate(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final Response response = webTarget
+      .request()
+    .post(json(newGamesSessionData()));
+    
+    assertThat(response, hasCreatedStatus());
+    assertThat(response, hasHttpHeader("Location", value -> value.endsWith("game/session/2")));
+  }
+
+  @Test
+  @InSequence(7)
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "games-sessions-create.xml" })
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterCreate() {}
 //
 //  @Test
 //  @InSequence(10)

@@ -30,7 +30,7 @@ import org.sing_group.mtc.domain.entities.session.GamesSession;
 import org.sing_group.mtc.service.security.SecurityGuard;
 
 @Stateless
-@RolesAllowed({ "PATIENT", "THERAPIST" })
+@RolesAllowed("THERAPIST")
 public class GamesSessionService {
   @Inject
   private GamesSessionDAO sessionDao;
@@ -38,7 +38,6 @@ public class GamesSessionService {
   @Inject
   private SecurityGuard securityManager;
   
-  @RolesAllowed("THERAPIST")
   public GamesSession createSession(GamesSession gameSession) {
     gameSession.setTherapist(this.securityManager.getLoggedUser());
     

@@ -40,8 +40,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class GameConfigurationData implements Serializable {
   private static final long serialVersionUID = 1L;
   
-  @XmlAttribute(name = "id", required = true)
-  private String id;
+  @XmlAttribute(name = "gameId", required = true)
+  private String gameId;
+  
+  @XmlAttribute(name = "gameOrder", required = true)
+  private int gameOrder;
   
   @XmlElementWrapper(name = "parameters", nillable = false, required = true)
   @XmlElement(name = "parameter", nillable = false, required = true)
@@ -49,17 +52,26 @@ public class GameConfigurationData implements Serializable {
   
   GameConfigurationData() {}
   
-  public GameConfigurationData(String id, GameParamData[] parameters) {
-    this.id = id;
+  public GameConfigurationData(String gameId, int gameOrder, GameParamData[] parameters) {
+    this.gameId = gameId;
+    this.gameOrder = gameOrder;
     this.parameters = parameters;
   }
 
-  public String getId() {
-    return id;
+  public String getGameId() {
+    return gameId;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setGameId(String id) {
+    this.gameId = id;
+  }
+
+  public int getGameOrder() {
+    return gameOrder;
+  }
+
+  public void setGameOrder(int gameOrder) {
+    this.gameOrder = gameOrder;
   }
 
   public GameParamData[] getParameters() {
@@ -82,7 +94,8 @@ public class GameConfigurationData implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+    result = prime * result + gameOrder;
     result = prime * result + Arrays.hashCode(parameters);
     return result;
   }
@@ -96,10 +109,12 @@ public class GameConfigurationData implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     GameConfigurationData other = (GameConfigurationData) obj;
-    if (id == null) {
-      if (other.id != null)
+    if (gameId == null) {
+      if (other.gameId != null)
         return false;
-    } else if (!id.equals(other.id))
+    } else if (!gameId.equals(other.gameId))
+      return false;
+    if (gameOrder != other.gameOrder)
       return false;
     if (!Arrays.equals(parameters, other.parameters))
       return false;

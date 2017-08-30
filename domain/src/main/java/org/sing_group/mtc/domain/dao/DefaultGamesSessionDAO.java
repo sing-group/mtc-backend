@@ -53,23 +53,7 @@ public class DefaultGamesSessionDAO implements GamesSessionDAO {
 
   @Override
   public GamesSession persist(GamesSession session) {
-    final GamesSession gamesSession = this.dh.persist(session);
-    
-    session.getVersions().forEach(version -> {
-      version.setSession(gamesSession);
-      this.em.persist(version);
-    });
-    this.em.flush();
-    
-    session.getVersions().forEach(version -> {
-      version.getGameConfigurations().forEach(config -> {
-        config.setSession(version);
-        this.em.persist(config);
-      });
-    });
-    this.em.flush();
-    
-    return gamesSession;
+    return this.dh.persist(session);
   }
   
   @Override

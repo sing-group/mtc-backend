@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.sing_group.mtc.rest.resource.entity.LocaleMessages;
+
 @XmlRootElement(name = "games-session", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 public class GamesSessionData implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -35,20 +37,30 @@ public class GamesSessionData implements Serializable {
   private int id;
 
   private String therapist;
+  
+  @XmlElementWrapper(name = "configurations", nillable = false, required = true)
+  private GameConfigurationData[] gameConfiguration;
 
-  @XmlElementWrapper(name = "gameVersions", nillable = false, required = true)
-  @XmlElement(name = "gameVersion", nillable = false, required = true)
-  private GamesSessionVersionData[] gameVersions;
+  @XmlElement(name = "name", nillable = false, required = true)
+  private LocaleMessages nameMessage;
+
+  @XmlElement(name = "description", nillable = false, required = true)
+  private LocaleMessages descriptionMessage;
   
   GamesSessionData() {}
 
   public GamesSessionData(
-    int id, String therapist,
-    GamesSessionVersionData[] gameVersions
+    int id,
+    String therapist,
+    GameConfigurationData[] gameConfiguration,
+    LocaleMessages nameMessage,
+    LocaleMessages descriptionMessage
   ) {
     this.id = id;
     this.therapist = therapist;
-    this.gameVersions = gameVersions;
+    this.gameConfiguration = gameConfiguration;
+    this.nameMessage = nameMessage;
+    this.descriptionMessage = descriptionMessage;
   }
 
   public int getId() {
@@ -67,20 +79,38 @@ public class GamesSessionData implements Serializable {
     this.therapist = therapist;
   }
 
-  public GamesSessionVersionData[] getGameVersions() {
-    return gameVersions;
+  public GameConfigurationData[] getGameConfiguration() {
+    return gameConfiguration;
   }
 
-  public void setgameVersions(GamesSessionVersionData[] gameVersions) {
-    this.gameVersions = gameVersions;
+  public void setGameConfiguration(GameConfigurationData[] gameConfiguration) {
+    this.gameConfiguration = gameConfiguration;
+  }
+
+  public LocaleMessages getNameMessage() {
+    return nameMessage;
+  }
+
+  public void setNameMessage(LocaleMessages nameMessage) {
+    this.nameMessage = nameMessage;
+  }
+
+  public LocaleMessages getDescriptionMessage() {
+    return descriptionMessage;
+  }
+
+  public void setDescriptionMessage(LocaleMessages descriptionMessage) {
+    this.descriptionMessage = descriptionMessage;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + Arrays.hashCode(gameVersions);
+    result = prime * result + ((descriptionMessage == null) ? 0 : descriptionMessage.hashCode());
+    result = prime * result + Arrays.hashCode(gameConfiguration);
     result = prime * result + id;
+    result = prime * result + ((nameMessage == null) ? 0 : nameMessage.hashCode());
     result = prime * result + ((therapist == null) ? 0 : therapist.hashCode());
     return result;
   }
@@ -94,9 +124,19 @@ public class GamesSessionData implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     GamesSessionData other = (GamesSessionData) obj;
-    if (!Arrays.equals(gameVersions, other.gameVersions))
+    if (descriptionMessage == null) {
+      if (other.descriptionMessage != null)
+        return false;
+    } else if (!descriptionMessage.equals(other.descriptionMessage))
+      return false;
+    if (!Arrays.equals(gameConfiguration, other.gameConfiguration))
       return false;
     if (id != other.id)
+      return false;
+    if (nameMessage == null) {
+      if (other.nameMessage != null)
+        return false;
+    } else if (!nameMessage.equals(other.nameMessage))
       return false;
     if (therapist == null) {
       if (other.therapist != null)

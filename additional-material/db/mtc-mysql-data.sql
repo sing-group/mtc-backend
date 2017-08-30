@@ -26,16 +26,13 @@ UPDATE user SET therapistId = @therapistId WHERE role = 'PATIENT';
 INSERT INTO `session` (`id`, `therapistId`)
 VALUES (1,3);
 
-INSERT INTO `session_version` (`sessionId`, `version`)
-VALUES (1,1);
+INSERT INTO `session_game` (`gameId`, `gameOrder`, `sessionId`)
+VALUES ('recognition',1,1);
 
-INSERT INTO `session_game` (`gameId`, `gameOrder`, `sessionId`, `sessionVersion`)
-VALUES ('recognition',1,1,1);
-
-INSERT INTO `session_game_param_value` (`gameId`, `gameOrder`, `sessionId`, `sessionVersion`, `value`, `param`)
-VALUES ('recognition',1,1,1,'3','diceShowTime'),
-       ('recognition',1,1,1,'2','maxRepetitions'),
-       ('recognition',1,1,1,'6','numOfStimuli');
+INSERT INTO `session_game_param_value` (`gameId`, `gameOrder`, `sessionId`, `value`, `param`)
+VALUES ('recognition',1,1,'3','diceShowTime'),
+       ('recognition',1,1,'2','maxRepetitions'),
+       ('recognition',1,1,'6','numOfStimuli');
        
 INSERT INTO `integer_parameter` (`gameId`, `id`, `defaultValue`, `max`, `min`)
 VALUES ('recognition','maxRepetitions',1,1,5),
@@ -45,17 +42,17 @@ INSERT INTO `seconds_parameter` (`gameId`, `id`, `defaultValue`)
 VALUES ('recognition','diceShowTime',5);
 
 INSERT INTO `i18n` (`messageKey`, `locale`, `value`)
-VALUES ('session.1.version.1.description','en_US','Recognition game.'),
-       ('session.1.version.1.description','es_ES','Juego de reconocimiento.'),
-       ('session.1.version.1.description','gl_ES','Xogo de recoñecemento.'),
-       ('session.1.version.1.name','en_US','Recognition'),
-       ('session.1.version.1.name','es_ES','Reconocimiento'),
-       ('session.1.version.1.name','gl_ES','Recoñecemento');
+VALUES ('session.1.description','EN_US','Recognition game.'),
+       ('session.1.description','ES_ES','Juego de reconocimiento.'),
+       ('session.1.description','GL_ES','Xogo de recoñecemento.'),
+       ('session.1.name','EN_US','Recognition'),
+       ('session.1.name','ES_ES','Reconocimiento'),
+       ('session.1.name','GL_ES','Recoñecemento');
 
-INSERT INTO `session_i18n` (`sessionId`, `sessionVersion`, `i18nKey`, `i18nLocale`)
-VALUES (1,1,'session.1.version.1.description','en_US'),
-       (1,1,'session.1.version.1.description','es_ES'),
-       (1,1,'session.1.version.1.description','gl_ES'),
-       (1,1,'session.1.version.1.name','en_US'),
-       (1,1,'session.1.version.1.name','es_ES'),
-       (1,1,'session.1.version.1.name','gl_ES');
+INSERT INTO `session_i18n` (`sessionId`, `i18nKey`, `i18nLocale`)
+VALUES (1,'session.1.description','EN_US'),
+       (1,'session.1.description','ES_ES'),
+       (1,'session.1.description','GL_ES'),
+       (1,'session.1.name','EN_US'),
+       (1,'session.1.name','ES_ES'),
+       (1,'session.1.name','GL_ES');

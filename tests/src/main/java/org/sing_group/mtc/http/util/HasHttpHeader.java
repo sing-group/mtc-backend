@@ -23,6 +23,9 @@ package org.sing_group.mtc.http.util;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Objects;
+import java.util.function.Predicate;
+
 import javax.ws.rs.core.Response;
 
 import org.hamcrest.Description;
@@ -31,31 +34,32 @@ import org.hamcrest.TypeSafeMatcher;
 
 public class HasHttpHeader extends TypeSafeMatcher<Response> {
   private final String header;
-  private final String value;
+  private final Predicate<String> valueChecker;
   
   public HasHttpHeader(String header) {
-    this(header, null);
+    this(header, Objects::nonNull);
   }
 
-  public HasHttpHeader(String header, String value) {
+  public HasHttpHeader(String header, String expected) {
+    this(header, actual -> expected.equals(actual));
+    
+    requireNonNull(expected);
+  }
+  
+  public HasHttpHeader(String header, Predicate<String> valueChecker) {
     this.header = requireNonNull(header);
-    this.value = null;
+    this.valueChecker = requireNonNull(valueChecker);
   }
 
   @Override
   public void describeTo(Description description) {
-    description.appendValue(this.header + ": " + this.value);
+    description.appendValue(this.header + ": " + this.valueChecker);
   }
 
   @Override
   protected boolean matchesSafely(Response response) {
-    final String headerValue = response.getHeaderString(this.header);
-    
-    if (this.value == null) {
-      return headerValue != null;
-    } else {
-      return this.value.equals(headerValue);
-    }
+    return response.getHeaders().containsKey(this.header)
+      && this.valueChecker.test(response.getHeaderString(this.header));
   }
 
   @Factory
@@ -66,5 +70,10 @@ public class HasHttpHeader extends TypeSafeMatcher<Response> {
   @Factory
   public static HasHttpHeader hasHttpHeader(String header, String value) {
     return new HasHttpHeader(header, value);
+  }
+  
+  @Factory
+  public static HasHttpHeader hasHttpHeader(String header, Predicate<String> valueChecker) {
+    return new HasHttpHeader(header, valueChecker);
   }
 }

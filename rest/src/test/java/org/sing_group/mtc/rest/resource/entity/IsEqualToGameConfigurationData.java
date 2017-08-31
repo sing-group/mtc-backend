@@ -45,7 +45,7 @@ public class IsEqualToGameConfigurationData extends IsEqualToEntity<GameConfigur
       this.addTemplatedValueDescription("actual", expected.toString());
       return false;
     } else {
-      return checkAttribute("gameId", GameConfigurationData::getGameId, GameConfigurationForSession::getGameId, actualEntity)
+      return checkAttribute("gameId", GameConfigurationData::getGameId, config -> config.getGame().getId(), actualEntity)
           && checkAttribute("gameOrder", GameConfigurationData::getGameOrder, GameConfigurationForSession::getGameOrder, actualEntity)
           && checkAttribute("parameters", GameConfigurationData::getParameterValues, GameConfigurationForSession::getParamValues, actualEntity);
     }

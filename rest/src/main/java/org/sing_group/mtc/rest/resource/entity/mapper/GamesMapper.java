@@ -106,7 +106,7 @@ public class GamesMapper {
   
   public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration) {
     return new GameConfigurationData(
-      gameConfiguration.getGameId(),
+      gameConfiguration.getGame().getId(),
       gameConfiguration.getGameOrder(),
       gameConfiguration.getParamValues().entrySet().stream()
         .map(entry -> new GameParamData(entry.getKey(), entry.getValue()))

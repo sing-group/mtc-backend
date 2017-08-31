@@ -23,36 +23,40 @@
 
 <dataset>
   <session id="2" therapistId="2" />
-  
-  <session_game gameId="recognition" gameOrder="1" sessionId="2" />
-  <session_game gameId="verbalFluency" gameOrder="2" sessionId="2" />
-  <session_game gameId="recognition" gameOrder="3" sessionId="2" />
-  
-  <session_game_param_value param="maxRepetitions" value="2"
-    gameId="recognition" gameOrder="1" sessionId="2" />
+
+  <session_game game="recognition" gameOrder="1" session="2" />
+  <session_game game="verbalFluency" gameOrder="2" session="2" />
+  <session_game game="recognition" gameOrder="3" session="2" />
+
+  <session_game_param_value param="maxRepetitions"
+    value="2" game="recognition" gameOrder="1" session="2" />
   <session_game_param_value param="numOfStimuli" value="6"
-    gameId="recognition" gameOrder="1" sessionId="2" />
+    game="recognition" gameOrder="1" session="2" />
   <session_game_param_value param="diceShowTime" value="3"
-    gameId="recognition" gameOrder="1" sessionId="2" />
-  
-  <session_game_param_value param="maxRepetitions" value="1"
-    gameId="recognition" gameOrder="3" sessionId="2" />
+    game="recognition" gameOrder="1" session="2" />
+
+  <session_game_param_value param="maxRepetitions"
+    value="1" game="recognition" gameOrder="3" session="2" />
   <session_game_param_value param="numOfStimuli" value="8"
-    gameId="recognition" gameOrder="3" sessionId="2" />
+    game="recognition" gameOrder="3" session="2" />
   <session_game_param_value param="diceShowTime" value="5"
-    gameId="recognition" gameOrder="3" sessionId="2" />
-  
+    game="recognition" gameOrder="3" session="2" />
+
   <i18n messageKey="session.2.name" locale="EN_US" value="Recognition 2" />
   <i18n messageKey="session.2.name" locale="ES_ES" value="Reconocimiento 2" />
   <i18n messageKey="session.2.name" locale="GL_ES" value="Recoñecemento 2" />
   <i18n messageKey="session.2.description" locale="EN_US" value="Recognition game." />
-  <i18n messageKey="session.2.description" locale="ES_ES" value="Juego de reconocimiento." />
+  <i18n messageKey="session.2.description" locale="ES_ES"
+    value="Juego de reconocimiento." />
   <i18n messageKey="session.2.description" locale="GL_ES" value="Xogo de recoñecemento." />
-    
-  <session_i18n sessionId="2" i18nKey="session.2.name" i18nLocale="EN_US" />
-  <session_i18n sessionId="2" i18nKey="session.2.name" i18nLocale="ES_ES" />
-  <session_i18n sessionId="2" i18nKey="session.2.name" i18nLocale="GL_ES" />
-  <session_i18n sessionId="2" i18nKey="session.2.description" i18nLocale="EN_US" />
-  <session_i18n sessionId="2" i18nKey="session.2.description" i18nLocale="ES_ES" />
-  <session_i18n sessionId="2" i18nKey="session.2.description" i18nLocale="GL_ES" />
+
+  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="EN_US" />
+  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="ES_ES" />
+  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="GL_ES" />
+  <session_i18n session="2" i18nKey="session.2.description"
+    i18nLocale="EN_US" />
+  <session_i18n session="2" i18nKey="session.2.description"
+    i18nLocale="ES_ES" />
+  <session_i18n session="2" i18nKey="session.2.description"
+    i18nLocale="GL_ES" />
 </dataset>

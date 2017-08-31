@@ -47,18 +47,15 @@ import org.sing_group.mtc.domain.entities.game.parameter.GameParameter.GameParam
 @IdClass(GameParameterId.class)
 public abstract class GameParameter<T> {
   @Id
-  @Column(name = "gameId", length = 255, columnDefinition = "VARCHAR(255)")
-  private String gameId;
-  
-  @Id
   @Column(name = "id", length = 255, columnDefinition = "VARCHAR(255)")
   private String id;
 
+  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(
-    name = "gameId",
+    name = "game",
     referencedColumnName = "id",
-    updatable = false, insertable = false,
+    nullable = false, updatable = false, insertable = false,
     foreignKey = @ForeignKey(name = "FK_gameparameter_game")
   )
   private Game game;
@@ -83,12 +80,10 @@ public abstract class GameParameter<T> {
     if (this.game != null) {
       this.game.removeParameter(this);
       this.game = null;
-      this.gameId = null;
     }
     
     if (game != null) {
       this.game = game;
-      this.gameId = this.game.getId();
       this.game.addParameter(this);
     }
   }
@@ -101,16 +96,16 @@ public abstract class GameParameter<T> {
   public final static class GameParameterId implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private String gameId;
+    private String game;
     
     private String id;
 
-    public String getGameId() {
-      return gameId;
+    public String getGame() {
+      return game;
     }
     
-    public void setGameId(String gameId) {
-      this.gameId = gameId;
+    public void setGame(String game) {
+      this.game = game;
     }
 
     public String getId() {
@@ -125,7 +120,7 @@ public abstract class GameParameter<T> {
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((gameId == null) ? 0 : gameId.hashCode());
+      result = prime * result + ((game == null) ? 0 : game.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       return result;
     }
@@ -139,10 +134,10 @@ public abstract class GameParameter<T> {
       if (getClass() != obj.getClass())
         return false;
       GameParameterId other = (GameParameterId) obj;
-      if (gameId == null) {
-        if (other.gameId != null)
+      if (game == null) {
+        if (other.game != null)
           return false;
-      } else if (!gameId.equals(other.gameId))
+      } else if (!game.equals(other.game))
         return false;
       if (id == null) {
         if (other.id != null)

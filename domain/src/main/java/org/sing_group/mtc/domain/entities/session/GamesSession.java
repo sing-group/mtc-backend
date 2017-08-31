@@ -51,7 +51,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.PostPersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -92,7 +91,7 @@ public class GamesSession implements Serializable {
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinTable(
     name = "session_i18n", joinColumns = {
-      @JoinColumn(name = "sessionId", referencedColumnName = "id", insertable = false, updatable = false)
+      @JoinColumn(name = "session", referencedColumnName = "id", insertable = false, updatable = false)
     },
     inverseJoinColumns = {
       @JoinColumn(name = "i18nLocale", referencedColumnName = "locale"),
@@ -156,7 +155,7 @@ public class GamesSession implements Serializable {
   public void setId(Integer id) {
     this.id = id;
     
-    this.updateWeakEntitiesSessionId();
+    this.updateMessagesKey();
   }
 
   public Therapist getTherapist() {
@@ -277,13 +276,7 @@ public class GamesSession implements Serializable {
     return this.assigned.remove(assigned);
   }
 
-  @PostPersist
-  protected void updateWeakEntitiesSessionId() {
-    this.updateMessages();
-    this.updateConfigurations();
-  }
-  
-  protected void updateMessages() {
+  protected void updateMessagesKey() {
     final Set<I18N> messages = new HashSet<>(this.messages);
     
     this.messages.clear();

@@ -46,14 +46,6 @@ public class AssignedGamesSession implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @Id
-  @Column(name = "sessionId", insertable = false, updatable = false)
-  private Integer sessionId;
-  
-  @Id
-  @Column(name = "patientId", insertable = false, updatable = false)
-  private int patientId;
-  
-  @Id
   @Column(name = "assignmentDate")
   @Temporal(TemporalType.TIMESTAMP)
   private Date assignmentDate;
@@ -66,20 +58,22 @@ public class AssignedGamesSession implements Serializable {
   @Temporal(TemporalType.TIMESTAMP)
   private Date endDate;
 
+  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(
-    name = "sessionId",
+    name = "session",
     referencedColumnName = "id",
-    nullable = false,
+    nullable = false, insertable = false, updatable = false,
     foreignKey = @ForeignKey(name = "FK_assignedsession_gamesession")
   )
   private GamesSession session;
-  
+
+  @Id
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(
-    name = "patientId",
+    name = "patient",
     referencedColumnName = "id",
-    nullable = false,
+    nullable = false, insertable = false, updatable = false,
     foreignKey = @ForeignKey(name = "FK_assignedsession_patient")
   )
   private Patient patient;
@@ -92,12 +86,10 @@ public class AssignedGamesSession implements Serializable {
     if (this.session != null) {
       this.session.directRemoveAssigned(this);
       this.session = null;
-      this.sessionId = null;
     }
     
     if (session != null) {
       this.session = session;
-      this.sessionId = session.getId();
       this.session.directAddAssigned(this);
     }
   }
@@ -121,23 +113,23 @@ public class AssignedGamesSession implements Serializable {
   public final static class AssignedSessionId implements Serializable {
     private static final long serialVersionUID = 1L;
   
-    private int sessionId;
-    private int patientId;
+    private int session;
+    private int patient;
     private Date assignmentDate;
     
     public AssignedSessionId(int sessionId, int patientId, Date assignmentDate) {
       super();
-      this.sessionId = sessionId;
-      this.patientId = patientId;
+      this.session = sessionId;
+      this.patient = patientId;
       this.assignmentDate = assignmentDate;
     }
 
-    public int getPatientId() {
-      return patientId;
+    public int getPatient() {
+      return patient;
     }
 
-    public int getSessionId() {
-      return sessionId;
+    public int getSession() {
+      return session;
     }
     
     public Date getAssignmentDate() {
@@ -149,8 +141,8 @@ public class AssignedGamesSession implements Serializable {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((assignmentDate == null) ? 0 : assignmentDate.hashCode());
-      result = prime * result + patientId;
-      result = prime * result + sessionId;
+      result = prime * result + patient;
+      result = prime * result + session;
       return result;
     }
 
@@ -168,9 +160,9 @@ public class AssignedGamesSession implements Serializable {
           return false;
       } else if (!assignmentDate.equals(other.assignmentDate))
         return false;
-      if (patientId != other.patientId)
+      if (patient != other.patient)
         return false;
-      if (sessionId != other.sessionId)
+      if (session != other.session)
         return false;
       return true;
     }

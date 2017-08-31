@@ -57,7 +57,7 @@ public class Game implements Serializable {
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(
     name = "game_type",
-    joinColumns = @JoinColumn(name = "gameId", referencedColumnName = "id", nullable = false),
+    joinColumns = @JoinColumn(name = "game", referencedColumnName = "id", nullable = false),
     foreignKey = @ForeignKey(name = "FK_game_type")
   )
   @Column(name = "name", length = 18, nullable = false)

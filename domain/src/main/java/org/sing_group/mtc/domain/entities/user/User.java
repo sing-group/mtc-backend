@@ -23,7 +23,7 @@ package org.sing_group.mtc.domain.entities.user;
 
 import static java.util.Objects.requireNonNull;
 import static org.sing_group.fluent.checker.Checks.requireMD5;
-import static org.sing_group.fluent.checker.Checks.requireStringSize;
+import static org.sing_group.fluent.checker.Checks.requirePattern;
 
 import java.io.Serializable;
 import java.security.MessageDigest;
@@ -92,7 +92,7 @@ public abstract class User implements Serializable {
   }
   
   void setLogin(String login) {
-    this.login = requireStringSize(login, 1, 100, "'login' should have a length between 1 and 100");
+    this.login = requirePattern(login, "[a-zA-ZñÑ0-9]{1,100}", "'login' can only contain letters, numbers or underscore and should have a length between 1 and 100");
   }
 
   /**

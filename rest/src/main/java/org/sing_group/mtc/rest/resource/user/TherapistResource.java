@@ -91,7 +91,7 @@ public class TherapistResource {
   public URI buildUriForSession(GamesSession session) {
     return uriInfo.getBaseUriBuilder()
       .path(this.getClass().getAnnotation(Path.class).value())
-      .path(session.getTherapist().getLogin())
+      .path(session.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
       .path("session")
       .path(session.getId().toString())
     .build();

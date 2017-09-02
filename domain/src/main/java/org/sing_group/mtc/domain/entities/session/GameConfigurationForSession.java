@@ -26,6 +26,7 @@ import static java.util.Collections.unmodifiableMap;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -108,8 +109,8 @@ public class GameConfigurationForSession implements Comparable<GameConfiguration
     return gameOrder;
   }
   
-  public Game getGame() {
-    return game;
+  public Optional<Game> getGame() {
+    return Optional.ofNullable(game);
   }
 
   public GamesSession getSession() {

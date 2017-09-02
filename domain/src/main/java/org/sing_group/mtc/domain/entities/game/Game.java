@@ -24,6 +24,7 @@ package org.sing_group.mtc.domain.entities.game;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -96,7 +97,7 @@ public class Game implements Serializable {
   
   public boolean addParameter(GameParameter<?> parameter) {
     if (this.parameters.add(parameter)) {
-      if (parameter.getGame() != this)
+      if (!parameter.getGame().equals(Optional.of(this)))
         parameter.setGame(this);
         
       return true;

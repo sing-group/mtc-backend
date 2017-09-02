@@ -25,6 +25,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -172,7 +173,7 @@ public class Therapist extends IdentifiedUser {
     requireNonNull(session, "session can't be null");
     
     if (this.sessions.add(session)) {
-      if (session.getTherapist() != this)
+      if (!session.getTherapist().equals(Optional.of(this)))
         session.setTherapist(this);
       
       return true;

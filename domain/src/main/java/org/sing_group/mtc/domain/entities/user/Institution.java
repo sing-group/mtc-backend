@@ -131,8 +131,8 @@ public class Institution implements Serializable {
       : requireStringSize(name, 0, 1023, "'address' should be null or have a length between 0 and 1023");
   }
   
-  public Manager getManager() {
-    return manager;
+  public Optional<Manager> getManager() {
+    return Optional.ofNullable(manager);
   }
 
   public void setManager(Manager manager) {

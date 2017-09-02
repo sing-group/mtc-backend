@@ -38,6 +38,7 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 
+import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.session.GameConfigurationForSession;
@@ -96,7 +97,7 @@ public class GamesMapper {
   public GamesSessionData mapToGameSessionData(GamesSession session, Function<Therapist, URI> therapistUrlBuilder) {
     return new GamesSessionData(
       session.getId(),
-      therapistUrlBuilder.apply(session.getTherapist()),
+      therapistUrlBuilder.apply(session.getTherapist().orElseThrow(IllegalStateException::new)),
       session.getGameConfigurations()
         .map(this::mapToGameConfigurationData)
       .toArray(GameConfigurationData[]::new),
@@ -107,7 +108,7 @@ public class GamesMapper {
   
   public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration) {
     return new GameConfigurationData(
-      gameConfiguration.getGame().getId(),
+      gameConfiguration.getGame().map(Game::getId).orElseThrow(IllegalStateException::new),
       gameConfiguration.getGameOrder(),
       gameConfiguration.getParamValues().entrySet().stream()
         .map(entry -> new GameParamData(entry.getKey(), entry.getValue()))

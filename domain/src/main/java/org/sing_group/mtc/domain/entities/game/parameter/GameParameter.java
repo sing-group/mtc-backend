@@ -22,6 +22,7 @@
 package org.sing_group.mtc.domain.entities.game.parameter;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -72,8 +73,8 @@ public abstract class GameParameter<T> {
     return id;
   }
   
-  public Game getGame() {
-    return game;
+  public Optional<Game> getGame() {
+    return Optional.ofNullable(game);
   }
   
   public void setGame(Game game) {

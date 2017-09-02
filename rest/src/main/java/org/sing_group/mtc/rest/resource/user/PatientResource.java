@@ -81,7 +81,7 @@ public class PatientResource {
   public URI buildUriForAssignedSession(AssignedGamesSession session) {
     return uriInfo.getBaseUriBuilder()
       .path(this.getClass().getAnnotation(Path.class).value())
-      .path(session.getPatient().getLogin())
+      .path(session.getPatient().map(Patient::getLogin).orElseThrow(IllegalStateException::new))
       .path("assignedsession")
       .path(Integer.toString(session.getId()))
     .build();

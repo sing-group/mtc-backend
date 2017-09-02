@@ -26,6 +26,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -119,7 +120,7 @@ public class Patient extends User implements Serializable {
     requireNonNull(session, "'session' can't be null");
     
     if (this.assigned.add(session)) {
-      if (session.getPatient() != this)
+      if (!session.getPatient().equals(Optional.of(this)))
         session.setPatient(this);
       
       return true;
@@ -132,7 +133,7 @@ public class Patient extends User implements Serializable {
     requireNonNull(session, "'session' can't be null");
 
     if (this.assigned.remove(session)) {
-      if (session.getPatient() == this)
+      if (session.getPatient().equals(Optional.of(this)))
         session.setPatient(null);
       
       return true;

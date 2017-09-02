@@ -23,9 +23,12 @@ package org.sing_group.mtc.domain.entities.session;
 
 import static java.util.Objects.requireNonNull;
 import static javax.persistence.GenerationType.IDENTITY;
+import static org.sing_group.fluent.checker.Checks.requireAfter;
+import static org.sing_group.fluent.checker.Checks.requireBefore;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -58,7 +61,7 @@ public class AssignedGamesSession implements Serializable {
   @GeneratedValue(strategy = IDENTITY)
   private Integer id;
   
-  @Column(name = "assignmentDate")
+  @Column(name = "assignmentDate", nullable = false)
   @Temporal(TemporalType.TIMESTAMP)
   private Date assignmentDate;
   
@@ -90,13 +93,28 @@ public class AssignedGamesSession implements Serializable {
   
   @OneToMany(mappedBy = "assignedSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<GameResult> gameResults;
+  
+
+  public AssignedGamesSession(Date startDate, Date endDate, GamesSession session, Patient patient) {
+    this(null, startDate, endDate, session, patient);
+  }
+
+  public AssignedGamesSession(Integer id, Date startDate, Date endDate, GamesSession session, Patient patient) {
+    this.id = id;
+    
+    this.assignmentDate = new Date();
+    this.setStartDate(startDate);
+    this.setEndDate(endDate);
+    this.setSession(session);
+    this.setPatient(patient);
+  }
 
   public Integer getId() {
     return id;
   }
   
-  public GamesSession getSession() {
-    return session;
+  public Optional<GamesSession> getSession() {
+    return Optional.ofNullable(session);
   }
 
   public void setSession(GamesSession session) {
@@ -111,8 +129,8 @@ public class AssignedGamesSession implements Serializable {
     }
   }
 
-  public Patient getPatient() {
-    return patient;
+  public Optional<Patient> getPatient() {
+    return Optional.ofNullable(patient);
   }
 
   public void setPatient(Patient patient) {
@@ -134,9 +152,24 @@ public class AssignedGamesSession implements Serializable {
   public Date getStartDate() {
     return startDate;
   }
+  
+  public void setStartDate(Date startDate) {
+    requireAfter(startDate, this.assignmentDate, "startDate should be after assignmentDate");
+    
+    if (this.endDate != null)
+      requireBefore(startDate, this.endDate, "startDate should be before endDate");
+    
+    this.startDate = startDate;
+  }
 
   public Date getEndDate() {
     return endDate;
+  }
+  
+  public void setEndDate(Date endDate) {
+    requireAfter(endDate, this.startDate, "endDate should be after startDate");
+    
+    this.endDate = endDate;
   }
   
   public Stream<GameResult> getGameResults() {

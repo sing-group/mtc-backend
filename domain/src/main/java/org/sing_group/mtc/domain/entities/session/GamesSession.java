@@ -158,8 +158,8 @@ public class GamesSession implements Serializable {
     this.updateMessagesKey();
   }
 
-  public Therapist getTherapist() {
-    return this.therapist;
+  public Optional<Therapist> getTherapist() {
+    return Optional.ofNullable(this.therapist);
   }
 
   public void setTherapist(Therapist therapist) {

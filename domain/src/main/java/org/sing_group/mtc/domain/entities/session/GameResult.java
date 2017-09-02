@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.domain.entities.session;
 
+import static org.sing_group.fluent.checker.Checks.requireAfter;
 import static org.sing_group.fluent.checker.Checks.requirePositive;
 
 import java.io.Serializable;
@@ -46,7 +47,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.session.GameResult.GameResultId;
+import org.sing_group.mtc.domain.entities.user.Patient;
 
 @Entity
 @Table(name = "game_result")
@@ -145,7 +148,7 @@ public class GameResult {
   }
 
   public void setEnd(Date end) {
-    this.end = end;
+    this.end = requireAfter(end, this.start, "end should be after start");
   }
   
   public Optional<AssignedGamesSession> getAssignedSession() {
@@ -166,7 +169,7 @@ public class GameResult {
         throw new IllegalArgumentException("assignedSession should have a patient");
       }
       
-      if (this.gameConfiguration != null && !assignedSession.getSession().getId().equals(this.session)) {
+      if (this.gameConfiguration != null && !assignedSession.getSession().map(GamesSession::getId).equals(Optional.of(this.session))) {
         throw new IllegalArgumentException("assignedSession should have the same session as the assigned gameConfiguration");
       }
     }
@@ -186,9 +189,13 @@ public class GameResult {
       this.assignedSession = assignedSession;
       this.assignedSession.directAddGameResult(this);
       
-      this.session = this.assignedSession.getSession().getId();
+      this.session = this.assignedSession.getSession()
+        .map(GamesSession::getId)
+      .orElseThrow(IllegalStateException::new);
       this.assignmentDate = this.assignedSession.getAssignmentDate();
-      this.patient = this.assignedSession.getPatient().getLogin();
+      this.patient = this.assignedSession.getPatient()
+        .map(Patient::getLogin)
+      .orElseThrow(IllegalStateException::new);
     }
   }
   
@@ -221,7 +228,7 @@ public class GameResult {
         this.session = null;
     } else {
       this.gameOrder = this.gameConfiguration.getGameOrder();
-      this.game = this.gameConfiguration.getGame().getId();
+      this.game = this.gameConfiguration.getGame().map(Game::getId).orElseThrow(IllegalStateException::new);
       this.session = this.gameConfiguration.getSession().getId();
     }
   }

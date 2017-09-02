@@ -30,7 +30,6 @@ import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.resource.entity.IsEqualToLocaleMessages;
-import org.sing_group.mtc.rest.resource.entity.session.GamesSessionData;
 
 public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData, GamesSession> {
   public IsEqualToGamesSessionData(GamesSessionData expected) {
@@ -46,7 +45,7 @@ public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData,
       return false;
     } else {
       return checkAttribute("id", GamesSessionData::getId, GamesSession::getId, actual)
-        && checkAttribute("therapist", GamesSessionData::getTherapist, GamesSession::getTherapist, actual, this::matchUriAndTherapist)
+        && checkAttribute("therapist", GamesSessionData::getTherapist, unwrapOptionalFuncion(GamesSession::getTherapist), actual, this::matchUriAndTherapist)
         && matchAttribute("nameMessages", GamesSessionData::getNameMessage, GamesSession::getName, actual, IsEqualToLocaleMessages::equalToLocaleMessages)
         && matchAttribute("descriptionMessages", GamesSessionData::getDescriptionMessage, GamesSession::getDescription, actual, IsEqualToLocaleMessages::equalToLocaleMessages)
         && matchIterableAttribute("gameConfigurations",

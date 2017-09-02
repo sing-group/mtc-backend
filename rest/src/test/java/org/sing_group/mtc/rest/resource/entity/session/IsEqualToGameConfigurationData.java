@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
+import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.session.GameConfigurationForSession;
-import org.sing_group.mtc.rest.resource.entity.session.GameConfigurationData;
 
 public class IsEqualToGameConfigurationData extends IsEqualToEntity<GameConfigurationData, GameConfigurationForSession> {
 
@@ -45,7 +45,7 @@ public class IsEqualToGameConfigurationData extends IsEqualToEntity<GameConfigur
       this.addTemplatedValueDescription("actual", expected.toString());
       return false;
     } else {
-      return checkAttribute("gameId", GameConfigurationData::getGameId, config -> config.getGame().getId(), actualEntity)
+      return checkAttribute("gameId", GameConfigurationData::getGameId, config -> config.getGame().map(Game::getId).orElse(null), actualEntity)
           && checkAttribute("gameOrder", GameConfigurationData::getGameOrder, GameConfigurationForSession::getGameOrder, actualEntity)
           && checkAttribute("parameters", GameConfigurationData::getParameterValues, GameConfigurationForSession::getParamValues, actualEntity);
     }

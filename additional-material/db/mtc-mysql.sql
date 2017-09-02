@@ -69,6 +69,50 @@ CREATE TABLE `game` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `game_result`
+--
+
+DROP TABLE IF EXISTS `game_result`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `game_result` (
+  `assignmentDate` datetime NOT NULL,
+  `game` varchar(255) NOT NULL,
+  `gameOrder` int(11) NOT NULL,
+  `patient` varchar(255) NOT NULL,
+  `session` int(11) NOT NULL,
+  `attempt` int(11) NOT NULL,
+  `end` datetime DEFAULT NULL,
+  `start` datetime DEFAULT NULL,
+  PRIMARY KEY (`assignmentDate`,`game`,`gameOrder`,`patient`,`session`),
+  KEY `FK_p9hwanlaxhipca4evq90qbi24` (`game`,`gameOrder`,`session`),
+  KEY `FK_89r219c5j4tp0um00vwykglua` (`session`,`patient`,`assignmentDate`),
+  CONSTRAINT `FK_89r219c5j4tp0um00vwykglua` FOREIGN KEY (`session`, `patient`, `assignmentDate`) REFERENCES `assigned_session` (`session`, `patient`, `assignmentDate`),
+  CONSTRAINT `FK_p9hwanlaxhipca4evq90qbi24` FOREIGN KEY (`game`, `gameOrder`, `session`) REFERENCES `session_game` (`game`, `gameOrder`, `session`)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `game_result_value`
+--
+
+DROP TABLE IF EXISTS `game_result_value`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `game_result_value` (
+  `assignmentDate` datetime NOT NULL,
+  `game` varchar(255) NOT NULL,
+  `gameOrder` int(11) NOT NULL,
+  `patient` varchar(255) NOT NULL,
+  `session` int(11) NOT NULL,
+  `value` varchar(255) NOT NULL,
+  `result` varchar(255) NOT NULL,
+  PRIMARY KEY (`assignmentDate`,`game`,`gameOrder`,`patient`,`session`,`result`),
+  CONSTRAINT `FK_9k4u5wreiljo464is0d1a5iua` FOREIGN KEY (`assignmentDate`, `game`, `gameOrder`, `patient`, `session`) REFERENCES `game_result` (`assignmentDate`, `game`, `gameOrder`, `patient`, `session`)
+) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `game_type`
 --
 
@@ -302,4 +346,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-02 13:16:59
+-- Dump completed on 2017-09-02 18:32:00

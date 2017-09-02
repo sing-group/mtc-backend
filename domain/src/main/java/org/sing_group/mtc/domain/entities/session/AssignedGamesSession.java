@@ -21,11 +21,15 @@
  */
 package org.sing_group.mtc.domain.entities.session;
 
+import static java.util.Objects.requireNonNull;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
+import java.util.stream.Stream;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,6 +38,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -82,6 +87,9 @@ public class AssignedGamesSession implements Serializable {
     foreignKey = @ForeignKey(name = "FK_assignedsession_patient")
   )
   private Patient patient;
+  
+  @OneToMany(mappedBy = "assignedSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<GameResult> gameResults;
 
   public Integer getId() {
     return id;
@@ -129,6 +137,44 @@ public class AssignedGamesSession implements Serializable {
 
   public Date getEndDate() {
     return endDate;
+  }
+  
+  public Stream<GameResult> getGameResults() {
+    return gameResults.stream();
+  }
+  
+  public boolean hasGameResult(GameResult gameResult) {
+    return this.gameResults.contains(gameResult);
+  }
+  
+  public boolean addGameResult(GameResult gameResult) {
+    requireNonNull(gameResult, "gameResult can't be null");
+    
+    if (this.hasGameResult(gameResult)) {
+      return false;
+    } else {
+      gameResult.setAssignedSession(this);
+      return true;
+    }
+  }
+  
+  public boolean removeGameResult(GameResult gameResult) {
+    requireNonNull(gameResult, "gameResult can't be null");
+    
+    if (this.hasGameResult(gameResult)) {
+      gameResult.setAssignedSession(null);
+      return true;
+    } else {
+      return true;
+    }
+  }
+
+  protected boolean directRemoveGameResult(GameResult gameResult) {
+    return this.gameResults.remove(gameResult);
+  }
+
+  protected boolean directAddGameResult(GameResult gameResult) {
+    return this.gameResults.remove(gameResult);
   }
   
   @Override

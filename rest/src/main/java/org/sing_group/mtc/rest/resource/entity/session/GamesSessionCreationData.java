@@ -38,13 +38,13 @@ public class GamesSessionCreationData implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @XmlElementWrapper(name = "games", nillable = false, required = true)
-  @XmlElement(name = "game", nillable = false, required = true)
+  @XmlElement(name = "game", required = true)
   private GameConfigurationData[] games;
 
-  @XmlElement(name = "name", nillable = false, required = true)
+  @XmlElement(name = "name", required = true)
   private LocaleMessages name;
   
-  @XmlElement(name = "description", nillable = false, required = true)
+  @XmlElement(name = "description", required = true)
   private LocaleMessages description;
   
   GamesSessionCreationData() {}

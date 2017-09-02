@@ -21,15 +21,13 @@
  */
 package org.sing_group.mtc.rest.resource;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.sing_group.mtc.domain.entities.UsersDataset.invalidEmails;
-import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOfUser;
+import static org.sing_group.mtc.domain.entities.UsersDataset.invalidLogins;
+import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.users;
-import static org.sing_group.mtc.domain.entities.UsersDataset.validEmails;
+import static org.sing_group.mtc.domain.entities.UsersDataset.validLogins;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasUnauthorizedStatus;
-import static org.sing_group.mtc.rest.resource.entity.IsEqualToUserData.equalToUser;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -49,7 +47,6 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.entities.user.User;
-import org.sing_group.mtc.rest.resource.entity.UserData;
 
 @RunWith(Arquillian.class)
 public class SessionResourceIntegrationTest {
@@ -73,7 +70,7 @@ public class SessionResourceIntegrationTest {
   ) {
     final Consumer<User> testAuthorized = user -> testAuthorized(webTarget, user);
     
-    users().forEach(testAuthorized);
+    users().sequential().forEach(testAuthorized);
   }
 
   @Test
@@ -93,9 +90,9 @@ public class SessionResourceIntegrationTest {
   public void testInvalidPassword(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Consumer<String> testUnathorized = email -> testUnauthorized(webTarget, email, true);
+    final Consumer<String> testUnathorized = login -> testUnauthorized(webTarget, login, true);
     
-    validEmails().forEach(testUnathorized);
+    validLogins().forEach(testUnathorized);
   }
 
   @Test
@@ -107,58 +104,54 @@ public class SessionResourceIntegrationTest {
   @Test
   @InSequence(10)
   @UsingDataSet("users.xml")
-  public void beforeInvalidEmails() {}
+  public void beforeInvalidLogins() {}
 
   @Test
   @InSequence(11)
   @RunAsClient
-  public void testInvalidEmails(
+  public void testInvalidLogins(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Consumer<String> testUnathorized = email -> testUnauthorized(webTarget, email);
+    final Consumer<String> testUnathorized = login -> testUnauthorized(webTarget, login);
     
-    invalidEmails().forEach(testUnathorized);
+    invalidLogins().forEach(testUnathorized);
   }
 
   @Test
   @InSequence(12)
   @ShouldMatchDataSet("users.xml")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
-  public void afterInvalidEmails() {}
+  public void afterInvalidLogins() {}
   
   private static void testAuthorized(ResteasyWebTarget webTarget, User expectedUser) {
     Optional<Response> responseRef = Optional.empty();
     
     try {
-      final String password = passwordOfUser(expectedUser);
-      
       final Response response = webTarget
-        .queryParam("email", expectedUser.getEmail())
-        .queryParam("password", password)
+        .queryParam("login", expectedUser.getLogin())
+        .queryParam("password", passwordOf(expectedUser))
         .request()
       .get();
       
+      responseRef = Optional.of(response);
+      
       assertThat(response, hasOkStatus());
-      
-      final UserData user = response.readEntity(UserData.class);
-      
-      assertThat(user, is(equalToUser(expectedUser)));
     } finally {
       responseRef.ifPresent(Response::close);
     }
   }
   
-  private static void testUnauthorized(ResteasyWebTarget webTarget, String email) {
-    testUnauthorized(webTarget, email, false);
+  private static void testUnauthorized(ResteasyWebTarget webTarget, String login) {
+    testUnauthorized(webTarget, login, false);
   }
   
-  private static void testUnauthorized(ResteasyWebTarget webTarget, String email, boolean breakPassword) {
+  private static void testUnauthorized(ResteasyWebTarget webTarget, String login, boolean breakPassword) {
     Optional<Response> responseRef = Optional.empty();
     
     try {
-      final Response response = webTarget.clone()
-        .queryParam("email", email)
-        .queryParam("password", passwordOfUser(email) + (breakPassword ? "break" : ""))
+      final Response response = webTarget
+        .queryParam("login", login)
+        .queryParam("password", passwordOf(login) + (breakPassword ? "break" : ""))
         .request()
       .get();
       

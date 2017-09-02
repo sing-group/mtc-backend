@@ -21,107 +21,216 @@
  */
 package org.sing_group.mtc.domain.entities;
 
-import java.util.Base64;
+import static java.util.Arrays.asList;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import org.sing_group.mtc.domain.entities.user.Administrator;
+import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.domain.entities.user.User;
 
 public class UsersDataset {
-  public final static String ADMIN_HTTP_BASIC_AUTH = "Basic YWRtaW5AZW1haWwuY29tOmFkbWlucGFzcw==";
-  public final static String THERAPIST_HTTP_BASIC_AUTH = "Basic dGhlcmFwaXN0QGVtYWlsLmNvbTp0aGVyYXBpc3RwYXNz";
-  public final static String PATIENT1_HTTP_BASIC_AUTH = "Basic cGF0aWVudDFAZW1haWwuY29tOnBhdGllbnQxcGFzcw==";
+  public final static String ADMIN_HTTP_BASIC_AUTH = "Basic YWRtaW46YWRtaW5wYXNz";
+  public final static String MANAGER_HTTP_BASIC_AUTH = "Basic bWFuYWdlcjptYW5hZ2VycGFzcw==";
+  public final static String THERAPIST_HTTP_BASIC_AUTH = "Basic dGhlcmFwaXN0OnRoZXJhcGlzdHBhc3M=";
+  public final static String PATIENT1_HTTP_BASIC_AUTH = "Basic cGF0aWVudDE6cGF0aWVudDFwYXNz";
   
-  private final static Map<String, String> EMAIL_TO_PASSWORDS = new HashMap<>();
+  private final static Map<String, String> LOGIN_TO_PASSWORD = new HashMap<>();
+  private final static Map<String, String> LOGIN_TO_NEW_PASSWORD = new HashMap<>();
   
   static {
-    EMAIL_TO_PASSWORDS.put("admin@email.com", "adminpass");
-    EMAIL_TO_PASSWORDS.put("therapist@email.com", "therapistpass");
-    EMAIL_TO_PASSWORDS.put("patient1@email.com", "patient1pass");
-    EMAIL_TO_PASSWORDS.put("patient2@email.com", "patient2pass");
-    EMAIL_TO_PASSWORDS.put("patient3@email.com", "patient3pass");
-    EMAIL_TO_PASSWORDS.put("patient4@email.com", "patient4pass");
-    EMAIL_TO_PASSWORDS.put("patientNew@email.com", "patientNewpass");
-    EMAIL_TO_PASSWORDS.put("patientChanged@email.com", "patientChangedpass");
+    LOGIN_TO_PASSWORD.put("admin", "adminpass");
+    LOGIN_TO_PASSWORD.put("admin2", "admin2pass");
+    LOGIN_TO_PASSWORD.put("therapist", "therapistpass");
+    LOGIN_TO_PASSWORD.put("therapist2", "therapist2pass");
+    LOGIN_TO_PASSWORD.put("manager", "managerpass");
+    LOGIN_TO_PASSWORD.put("manager2", "manager2pass");
+    LOGIN_TO_PASSWORD.put("patient1", "patient1pass");
+    LOGIN_TO_PASSWORD.put("patient2", "patient2pass");
+    LOGIN_TO_PASSWORD.put("patient3", "patient3pass");
+    LOGIN_TO_PASSWORD.put("patient4", "patient4pass");
+    LOGIN_TO_PASSWORD.put("adminNew", "adminNewpass");
+    LOGIN_TO_PASSWORD.put("managerNew", "managerNewpass");
+    LOGIN_TO_PASSWORD.put("therapistNew", "therapistNewpass");
+    LOGIN_TO_PASSWORD.put("patientNew", "patientNewpass");
+    
+    LOGIN_TO_NEW_PASSWORD.put("admin", "adminModifiedpass");
+    LOGIN_TO_NEW_PASSWORD.put("manager", "managerModifiedpass");
+    LOGIN_TO_NEW_PASSWORD.put("therapist", "therapistModifiedpass");
+    LOGIN_TO_NEW_PASSWORD.put("patient1", "patient1Modifiedpass");
+  }
+  
+  public static Stream<Institution> institutions() {
+    return managers()
+      .flatMap(Manager::getInstitutions);
+  }
+  
+  public static Institution institution(String name) {
+    return institutions()
+      .filter(institution -> institution.getName().equals(name))
+      .findFirst()
+    .orElseThrow(() -> new IllegalArgumentException("Unknown institution: " + name));
   }
   
   public static Administrator admin() {
-    return new Administrator(1, "admin@email.com", EMAIL_TO_PASSWORDS.get("admin@email.com"), "Admin", "Administrator");
+    return user("admin");
+  }
+  
+  public static Manager manager() {
+    return user("manager");
   }
 
   public static Therapist therapist() {
-    return new Therapist(2, "therapist@email.com", EMAIL_TO_PASSWORDS.get("therapist@email.com"), "Therap", "Therapist");
+    return user("therapist");
+  }
+
+  public static Patient patient() {
+    return user("patient1");
   }
   
   public static Stream<User> users() {
-    final Therapist therapist = therapist();
-    return Stream.of(
-      admin(),
-      therapist,
-      new Patient(3, "patient1@email.com", EMAIL_TO_PASSWORDS.get("patient1@email.com"), "Patient1", "One", therapist),
-      patientToDelete(),
-      new Patient(5, "patient3@email.com", EMAIL_TO_PASSWORDS.get("patient3@email.com"), "Patient3", "Three", therapist),
-      new Patient(6, "patient4@email.com", EMAIL_TO_PASSWORDS.get("patient4@email.com"), "Patient4", "Four", therapist)
+    final List<Institution> institutions = asList(
+      new Institution("Institution 1", null),
+      new Institution("Institution 2", null)
     );
-  }
-  
-  public static Patient newPatient() {
-    return new Patient("patientNew@email.com", EMAIL_TO_PASSWORDS.get("patientNew@email.com"), "Patient", "New", therapist());
-  }
-  
-  public static User modifiedUser() {
-    return new Patient(3, "patientChanged@email.com", EMAIL_TO_PASSWORDS.get("patientChanged@email.com"), "Changed", "User", therapist());
-  }
-  
-  public static User patientToDelete() {
-    return new Patient(4, "patient2@email.com", EMAIL_TO_PASSWORDS.get("patient2@email.com"), "Patient2", "Two", therapist());
-  }
-  
-  public static String getAdminHttpBasicAuthenticationToken() {
-    final Administrator admin = admin();
-    final String adminToken = admin.getEmail() + ":" + admin.getPassword();
     
-    return Base64.getEncoder().encodeToString(adminToken.getBytes());
-  }
-  
-  public static Stream<String> validEmails() {
-    return users().map(User::getEmail);
-  }
-  
-  public static Stream<String> invalidEmails() {
+    final Manager manager = new Manager("manager", "manager@email.com", passwordOf("manager"), "Man", "Manager", institutions);
+    
+    final Therapist therapist = new Therapist("therapist", "therapist@email.com", passwordOf("therapist"), institutions.get(0), "Thera", "Therapist", null, null);
+    
     return Stream.of(
-      "invalid1@email.com",
-      "fake@email.com",
-      "notvalid@email.com"
+      new Administrator("admin", "admin@email.com", passwordOf("admin"), "Admin", "Administrator"),
+      new Administrator("admin2", "admin2@email.com", passwordOf("admin2"), "Admin2", "Administrator2"),
+      manager,
+      new Manager("manager2", "manager2@email.com", passwordOf("manager2"), "Man2", "Manager2", null),
+      therapist,
+      new Therapist("therapist2", "therapist2@email.com", passwordOf("therapist2"), institutions.get(1), "Thera2", "Therapist2", null, null),
+      new Patient("patient1", passwordOf("patient1"), therapist),
+      new Patient("patient2", passwordOf("patient2"), therapist),
+      new Patient("patient3", passwordOf("patient3"), therapist),
+      new Patient("patient4", passwordOf("patient4"), therapist)
     );
   }
   
-  public static User userWithEmail(String email) {
-    return users()
-      .filter(user -> user.getEmail().equals(email))
+  @SuppressWarnings("unchecked")
+  private static <U extends User> Stream<U> users(RoleType role) {
+    return (Stream<U>) users().filter(user -> User.getRole(user).equals(role));
+  }
+  
+  @SuppressWarnings("unchecked")
+  public static <U extends User> U user(String login) {
+    return (U) users()
+      .filter(user -> user.getLogin().equals(login))
       .findFirst()
-    .orElseThrow(() -> new IllegalArgumentException("Invalid email: " + email));
+    .orElseThrow(() -> new IllegalArgumentException("Invalid login: " + login));
   }
-  
-  private static boolean isInvalidEmail(String email) {
-    return invalidEmails().anyMatch(email::equals);
+
+  public static String passwordOf(User user) {
+    return passwordOf(user.getLogin());
   }
-  
-  public static String passwordOfUser(User user) {
-    return passwordOfUser(user.getEmail());
-  }
-  
-  public static String passwordOfUser(String email) {
-    if (EMAIL_TO_PASSWORDS.containsKey(email)) {
-      return EMAIL_TO_PASSWORDS.get(email);
-    } else if (isInvalidEmail(email)) {
-      return email + "pass";
+
+  public static String passwordOf(String login) {
+    if (LOGIN_TO_PASSWORD.containsKey(login)) {
+      return LOGIN_TO_PASSWORD.get(login);
+    } else if (isInvalidLogin(login)) {
+      return login + "pass";
     } else {
-      throw new IllegalArgumentException("Invalid email: " + email);
+      throw new IllegalArgumentException("Invalid email: " + login);
     }
+  }
+
+  public static String newPasswordOf(User user) {
+    return newPasswordOf(user.getLogin());
+  }
+  
+  public static String newPasswordOf(String login) {
+    if (LOGIN_TO_NEW_PASSWORD.containsKey(login)) {
+      return LOGIN_TO_NEW_PASSWORD.get(login);
+    } else {
+      throw new IllegalArgumentException("Invalid user for new password: " + login);
+    }
+  }
+
+  public static Stream<String> validLogins() {
+    return users().map(User::getLogin);
+  }
+
+  public static Stream<String> invalidLogins() {
+    return Stream.of("invalid1", "fake", "notvalid");
+  }
+
+  private static boolean isInvalidLogin(String login) {
+    return invalidLogins().anyMatch(login::equals);
+  }
+  
+  public static Stream<Administrator> admins() {
+    return users(RoleType.ADMIN);
+  }
+
+  public static Administrator newAdministrator() {
+    return new Administrator("adminNew", "adminNew@email.com", passwordOf("adminNew"), "AdminNew", "AdministratorNew");
+  }
+
+  public static Administrator modifiedAdministrator() {
+    return new Administrator("admin", "adminModified@email.com", newPasswordOf("admin"), "AdminModified", "Administrator");
+  }
+
+  public static Administrator administratorToDelete() {
+    return user("admin2");
+  }
+
+  public static Stream<Manager> managers() {
+    return users(RoleType.MANAGER);
+  }
+
+  public static Manager newManager() {
+    return new Manager("managerNew", "managerNew@email.com", passwordOf("managerNew"), "ManagerNew", "ManagerNew", null);
+  }
+
+  public static Manager modifiedManager() {
+    return new Manager("manager", "managerModified@email.com", newPasswordOf("manager"), "ManModified", "Manager", null);
+  }
+
+  public static Manager managerToDelete() {
+    return user("manager");
+  }
+
+  public static Stream<Therapist> therapists() {
+    return users(RoleType.THERAPIST);
+  }
+
+  public static Therapist newTherapist() {
+    return new Therapist("therapistNew", "therapistNew@email.com", passwordOf("therapistNew"), institution("Institution 2"), "TheraNew", "TherapistNew", null, null);
+  }
+
+  public static Therapist modifiedTherapist() {
+    return new Therapist("therapist", "therapistModified@email.com", newPasswordOf("therapist"), institution("Institution 1"), "TheraModified", "Therapist", null, null);
+  }
+
+  public static Therapist therapistToDelete() {
+    return user("therapist");
+  }
+
+  public static Stream<Patient> patients() {
+    return users(RoleType.PATIENT);
+  }
+
+  public static Patient newPatient() {
+    return new Patient("patientNew", passwordOf("patientNew"), therapist());
+  }
+  
+  public static Patient modifiedPatient() {
+    return new Patient("patient1", newPasswordOf("patient1"), therapist());
+  }
+  
+  public static Patient patientToDelete() {
+    return user("patient2");
   }
 }

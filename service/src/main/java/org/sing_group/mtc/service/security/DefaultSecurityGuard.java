@@ -32,12 +32,15 @@ import javax.annotation.security.PermitAll;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import org.sing_group.mtc.domain.dao.spi.UserDAO;
+import org.sing_group.mtc.domain.dao.spi.user.UserDAO;
+import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.User;
 
 @Stateless
+@Default
 @PermitAll
 public class DefaultSecurityGuard implements SecurityGuard {
   @Inject
@@ -48,9 +51,9 @@ public class DefaultSecurityGuard implements SecurityGuard {
 
   @TransactionAttribute(SUPPORTS)
   @Override
-  public void ifAuthorized(String[] roles, Supplier<String> emailSupplier, Runnable action) {
-    if (stream(roles).anyMatch(this.context::isCallerInRole) ||
-      this.context.getCallerPrincipal().getName().equals(emailSupplier.get())
+  public void ifAuthorized(RoleType[] roles, Supplier<String> loginSupplier, Runnable action) {
+    if (stream(roles).map(RoleType::name).anyMatch(this.context::isCallerInRole) ||
+      this.context.getCallerPrincipal().getName().equals(loginSupplier.get())
     ) {
       action.run();
     } else {
@@ -60,9 +63,9 @@ public class DefaultSecurityGuard implements SecurityGuard {
 
   @TransactionAttribute(SUPPORTS)
   @Override
-  public <T> T ifAuthorized(String[] roles, Supplier<String> emailSupplier, Supplier<T> action) {
-    if (stream(roles).anyMatch(this.context::isCallerInRole) ||
-      this.context.getCallerPrincipal().getName().equals(emailSupplier.get())
+  public <T> T ifAuthorized(RoleType[] roles, Supplier<String> loginSupplier, Supplier<T> action) {
+    if (stream(roles).map(RoleType::name).anyMatch(this.context::isCallerInRole) ||
+      this.context.getCallerPrincipal().getName().equals(loginSupplier.get())
     ) {
       return action.get();
     } else {
@@ -70,11 +73,23 @@ public class DefaultSecurityGuard implements SecurityGuard {
     }
   }
 
+  @TransactionAttribute(SUPPORTS)
+  @Override
+  public void ifAuthorized(RoleType role, Supplier<String> loginSupplier, Runnable action) {
+    this.ifAuthorized(new RoleType[] { role }, loginSupplier, action);
+  }
+
+  @TransactionAttribute(SUPPORTS)
+  @Override
+  public <T> T ifAuthorized(RoleType role, Supplier<String> loginSupplier, Supplier<T> action) {
+    return this.ifAuthorized(new RoleType[] { role }, loginSupplier, action);
+  }
+
   @TransactionAttribute(REQUIRED)
   @Override
   @SuppressWarnings("unchecked")
   public <U extends User> U getLoggedUser() {
-    return (U) this.userDao.getByEmail(this.context.getCallerPrincipal().getName());
+    return (U) this.userDao.get(this.context.getCallerPrincipal().getName());
   }
 
 }

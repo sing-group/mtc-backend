@@ -21,8 +21,6 @@
  */
 package org.sing_group.mtc.rest.resource;
 
-import javax.annotation.security.RunAs;
-import javax.inject.Inject;
 import javax.resource.spi.SecurityException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,37 +33,23 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.sing_group.mtc.domain.entities.user.User;
-import org.sing_group.mtc.rest.resource.entity.UserData;
-import org.sing_group.mtc.service.UserService;
-
 @Path("session")
-@Produces({
-    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-})
-@Consumes({
-    MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-})
-@RunAs("PATIENT")
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 public class SessionResource {
   @Context
   private HttpServletRequest request;
-  
-  @Inject
-  private UserService userService;
 
   @GET
   public Response check(
-    @QueryParam("email") String email,
+    @QueryParam("login") String login,
     @QueryParam("password") String password
   ) throws SecurityException {
     try {
       request.logout();
-      request.login(email, password);
+      request.login(login, password);
       
-      final User user = userService.get(email);
-      
-      return Response.ok(UserData.of(user)).build();
+      return Response.ok().build();
     } catch (ServletException e) {
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }

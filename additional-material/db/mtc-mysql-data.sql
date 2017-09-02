@@ -1,5 +1,17 @@
 -- MTC Game v0.1.0
 
+INSERT INTO `user` (`role`, `login`, `password`) VALUES ('ADMIN', 'admin', '25E4EE4E9229397B6B17776BFCEAF8E7');
+INSERT INTO `user` (`role`, `login`, `password`) VALUES ('MANAGER', 'manager', '3FD7488B6FD40F33C5A8E857B6A944AA');
+INSERT INTO `user` (`role`, `login`, `password`) VALUES ('THERAPIST', 'therapist', 'F15A0A52502E22F1E9D85DF282AACBCA');
+INSERT INTO `user` (`role`, `login`, `password`) VALUES ('PATIENT', 'patient', '03645D1E2E298B6D172C5126BDED3F60');
+
+INSERT INTO `administrator` (`email`, `name`, `surname`, `login`) VALUES ('admin@email.com', 'Admin', 'Nimda', 'admin');
+INSERT INTO `manager` (`email`, `name`, `surname`, `login`) VALUES ('admin@email.com', 'Manager', 'Reganam', 'manager');
+INSERT INTO `institution` (`name`, `address`, `description`, `manager`) VALUES ('Institution 1', 'Institution St. 1', 'First institution', 'manager');
+INSERT INTO `therapist` (`email`, `name`, `surname`, `login`, `institution`) VALUES ('therapist', 'Therapist', 'Tsipareht', 'therapist', 'Institution 1');
+INSERT INTO `patient` (`login`, `therapist`) VALUES ('patient', 'therapist');
+
+
 INSERT INTO `game` (`id`)
 VALUES ('recognition'),
        ('verbalFluency');
@@ -7,20 +19,6 @@ VALUES ('recognition'),
 INSERT INTO `game_type` (`game`, `name`)
 VALUES ('recognition', 'RECOGNITION'),
        ('verbalFluency', 'VERBAL_FLUENCY');
-
-INSERT INTO `user` (role, password, email, name, surname, therapistId) VALUES
-  ('ADMIN','25e4ee4e9229397b6b17776bfceaf8e7', 'admin@email.com', 'Admin', 'Nimda', null),
-  ('PATIENT','03645d1e2e298b6d172c5126bded3f60', 'patient@email.com', 'Patient', 'Tneitap', null),
-  ('THERAPIST','f15a0a52502e22f1e9d85df282aacbca', 'therapist@email.com', 'Therapist', 'Tsipareht', null);
-    
-SET @therapistId = (SELECT id FROM `user` WHERE email = 'therapist@email.com');
-UPDATE user SET therapistId = @therapistId WHERE role = 'PATIENT';
-
-INSERT INTO `session` (`id`, `therapistId`)
-VALUES (1,3);
-
-INSERT INTO `session_game` (`game`, `gameOrder`, `session`)
-VALUES ('recognition',1,1);
        
 INSERT INTO `integer_parameter` (`game`, `id`, `defaultValue`, `max`, `min`)
 VALUES ('recognition','maxRepetitions',1,1,5),
@@ -29,10 +27,21 @@ VALUES ('recognition','maxRepetitions',1,1,5),
 INSERT INTO `seconds_parameter` (`game`, `id`, `defaultValue`)
 VALUES ('recognition','diceShowTime',5);
 
+INSERT INTO `session` (`id`, `therapist`)
+VALUES (1,'therapist');
+
+INSERT INTO `session_game` (`game`, `gameOrder`, `session`)
+VALUES ('recognition',1,1),
+       ('verbalFluency',2,1),
+       ('recognition',3,1);
+
 INSERT INTO `session_game_param_value` (`game`, `gameOrder`, `session`, `value`, `param`)
 VALUES ('recognition',1,1,3,'diceShowTime'),
-       ('recognition',2,1,2,'maxRepetitions'),
-       ('recognition',3,1,6,'numOfStimuli');
+       ('recognition',1,1,2,'maxRepetitions'),
+       ('recognition',1,1,6,'numOfStimuli'),
+       ('recognition',3,1,3,'diceShowTime'),
+       ('recognition',3,1,2,'maxRepetitions'),
+       ('recognition',3,1,10,'numOfStimuli');
 
 INSERT INTO `i18n` (`messageKey`, `locale`, `value`)
 VALUES ('session.1.description','EN_US','Recognition game.'),

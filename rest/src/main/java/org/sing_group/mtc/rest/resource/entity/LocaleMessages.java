@@ -42,8 +42,8 @@ public class LocaleMessages implements Serializable {
   private String key;
 
   @XmlJavaTypeAdapter(MapStringStringAdapter.class)
-  @XmlElementWrapper(name = "messages", nillable = false, required = true)
-  @XmlElement(name = "message", nillable = false, required = true)
+  @XmlElementWrapper(name = "messages", required = true)
+  @XmlElement(name = "message", required = true)
   private Map<String, String> messages;
 
   LocaleMessages() {}

@@ -38,9 +38,7 @@ public class IsEqualToPatient extends IsEqualToEntityOfSameType<Patient> {
       this.addTemplatedValueDescription("actual", expected.toString());
       return false;
     } else {
-      return checkAttribute("email", Patient::getEmail, actual)
-        && checkAttribute("name", Patient::getName, actual)
-        && checkAttribute("surname", Patient::getSurname, actual)
+      return checkAttribute("login", Patient::getLogin, actual)
         && checkAttribute("password", user -> user.getPassword().toUpperCase(), actual);
     }
   }

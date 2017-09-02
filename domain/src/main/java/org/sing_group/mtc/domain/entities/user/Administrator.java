@@ -21,10 +21,9 @@
  */
 package org.sing_group.mtc.domain.entities.user;
 
-import java.io.Serializable;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * An administrator of the application.
@@ -32,44 +31,28 @@ import javax.persistence.Entity;
  * @author Miguel Reboiro-Jato
  */
 @Entity
+@Table(name = "administrator")
 @DiscriminatorValue("ADMIN")
-public class Administrator extends User implements Serializable {
+public class Administrator extends IdentifiedUser {
   private static final long serialVersionUID = 1L;
 
   // Required for JPA
   Administrator() {}
 
-  /**
-   * Creates a new instance of {@code Administrator}.
-   * 
-   * @param email
-   *          the email that identifies the user. This parameter must be a non
-   *          empty and non {@code null} string with a maximum length of 100
-   *          chars.
-   * @param password
-   *          the raw password of the user. This parameter must be a non
-   *          {@code null} string with a minimum length of 6 chars.
-   * 
-   * @throws NullPointerException
-   *           if a {@code null} value is passed as the value for any parameter.
-   * @throws IllegalArgumentException
-   *           if value provided for any parameter is not valid according to its
-   *           description.
-   */
-  public Administrator(String email, String password, String name, String surname, boolean encodedPassword) {
-    super(email, password, name, surname, encodedPassword);
+  public Administrator(String login, String email, String password) {
+    super(login, email, password);
   }
 
-  public Administrator(Integer id, String email, String password, String name, String surname, boolean encodedPassword) {
-    super(id, email, password, name, surname, encodedPassword);
+  public Administrator(String login, String email, String password, boolean encodedPassword) {
+    super(login, email, password, encodedPassword);
   }
 
-  public Administrator(Integer id, String email, String password, String name, String surname) {
-    super(id, email, password, name, surname);
+  public Administrator(String login, String email, String password, String name, String surname, boolean encodedPassword) {
+    super(login, email, password, name, surname, encodedPassword);
   }
 
-  public Administrator(String email, String password, String name, String surname) {
-    super(email, password, name, surname);
+  public Administrator(String login, String email, String password, String name, String surname) {
+    super(login, email, password, name, surname);
   }
-  
+
 }

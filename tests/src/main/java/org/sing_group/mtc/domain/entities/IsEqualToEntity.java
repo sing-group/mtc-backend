@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -1008,5 +1009,9 @@ public abstract class IsEqualToEntity<E, A> extends TypeSafeMatcher<A> {
   
   protected static <R, S> Function<R, Iterable<S>> wrapStreamToIterableFunction(Function<R, Stream<S>> array) {
     return array.andThen(input -> input.collect(toList()));
+  }
+  
+  protected static <R, S> Function<R, S> unwrapOptionalFuncion(Function<R, Optional<S>> getter) {
+    return getter.andThen(value -> value.orElse(null));
   }
 }

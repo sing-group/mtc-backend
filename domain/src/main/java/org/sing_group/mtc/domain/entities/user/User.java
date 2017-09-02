@@ -22,8 +22,6 @@
 package org.sing_group.mtc.domain.entities.user;
 
 import static java.util.Objects.requireNonNull;
-import static javax.persistence.GenerationType.IDENTITY;
-import static org.sing_group.fluent.checker.Checks.requireEmail;
 import static org.sing_group.fluent.checker.Checks.requireMD5;
 import static org.sing_group.fluent.checker.Checks.requireStringSize;
 
@@ -36,7 +34,6 @@ import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -45,16 +42,20 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 @Entity
 @Table(name = "user")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "role", discriminatorType = DiscriminatorType.STRING, length = 9)
 public abstract class User implements Serializable {
   private static final long serialVersionUID = 1L;
   
-  public static String getRole(User user) {
+  public static String getRoleName(User user) {
+    return getRole(user).name();
+  }
+  
+  public static RoleType getRole(User user) {
     final Class<? extends User> userClass = user.getClass();
     final DiscriminatorValue dvAnnotation = userClass.getAnnotation(DiscriminatorValue.class);
     
-    return dvAnnotation.value();
+    return RoleType.valueOf(dvAnnotation.value());
   }
   
   public static boolean haveSameRole(User user1, User user2) {
@@ -62,34 +63,21 @@ public abstract class User implements Serializable {
   }
 
   @Id
-  @GeneratedValue(strategy = IDENTITY)
-  protected Integer id;
-  
   @Column(length = 100, nullable = false, unique = true)
-  protected String email;
+  protected String login;
 
   @Column(length = 32, nullable = false)
   protected String password;
 
-  @Column(length = 100, nullable = false)
-  protected String name;
-
-  @Column(length = 100, nullable = false)
-  protected String surname;
-
+  // For JPA
   User() {}
   
-  public User(Integer id, String email, String password, String name, String surname) {
-    this(id, email, password, name, surname, true);
+  public User(String login, String password) {
+    this(login, password, true);
   }
   
-  public User(String email, String password, String name, String surname) {
-    this(email, password, name, surname, true);
-  }
-  
-  public User(Integer id, String email, String password, String name, String surname, boolean encodedPassword) {
-    this.id = id;
-    this.setEmail(email);
+  public User(String login, String password, boolean encodedPassword) {
+    this.setLogin(login);
     
     if (password != null) {
       if (encodedPassword)
@@ -97,74 +85,14 @@ public abstract class User implements Serializable {
       else
         this.setPassword(password);
     }
-    
-    this.name = name;
-    this.surname = surname;
   }
 
-  /**
-   * Creates a new instance of {@code User}.
-   * 
-   * @param email
-   *          the email that identifies the user. This parameter must be a non
-   *          empty and non {@code null} string with a maximum length of 100
-   *          chars.
-   * @param password
-   *          the raw password of the user. This parameter must be a non
-   *          {@code null} string with a minimum length of 6 chars.
-   * 
-   * @throws NullPointerException
-   *           if a {@code null} value is passed as the value for any parameter.
-   * @throws IllegalArgumentException
-   *           if value provided for any parameter is not valid according to its
-   *           description.
-   */
-  public User(String email, String password, String name, String surname, boolean encodedPassword) {
-    this(null, email, password, name, surname, encodedPassword);
-  }
-
-  public int getId() {
-    return id;
-  }
-
-  /**
-   * Returns the email of this user.
-   * 
-   * @return the email of this user.
-   */
-  public String getEmail() {
-    return email;
-  }
-
-  /**
-   * Sets the email of this user.
-   * 
-   * @param email
-   *          the email of the user. This parameter must be a non empty and non
-   *          {@code null} string with a maximum length of 100 chars.
-   * @throws NullPointerException
-   *           if {@code null} is passed as parameter.
-   * @throws IllegalArgumentException
-   *           if the length of the string passed is not valid.
-   */
-  public void setEmail(String email) {
-    this.email = requireEmail(email, 100, "'email' should have email format and a length between 1 and 100");
+  public String getLogin() {
+    return login;
   }
   
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = requireStringSize(name, 1, 100, "'name' should have a length between 1 and 100");
-  }
-
-  public String getSurname() {
-    return surname;
-  }
-
-  public void setSurname(String surname) {
-    this.surname = requireStringSize(surname, 1, 100, "'surname' should have a length between 1 and 100");
+  void setLogin(String login) {
+    this.login = requireStringSize(login, 1, 100, "'login' should have a length between 1 and 100");
   }
 
   /**
@@ -178,18 +106,6 @@ public abstract class User implements Serializable {
     return password;
   }
 
-  /**
-   * Sets the MD5 password of the user. The MD5 string is stored with capital
-   * letters.
-   * 
-   * @param password
-   *          the MD5 password of the user. This parameter must be a non
-   *          {@code null} MD5 string.
-   * @throws NullPointerException
-   *           if {@code null} is passed as parameter.
-   * @throws IllegalArgumentException
-   *           if the string passed is not a valid MD5 string.
-   */
   public void setPassword(String password) {
     this.password = requireMD5(password, "'password' should be a valid MD5 string").toUpperCase();
   }
@@ -226,7 +142,7 @@ public abstract class User implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    result = prime * result + ((login == null) ? 0 : login.hashCode());
     return result;
   }
 
@@ -239,17 +155,12 @@ public abstract class User implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     User other = (User) obj;
-    if (id == null) {
-      if (other.id != null)
+    if (login == null) {
+      if (other.login != null)
         return false;
-    } else if (!id.equals(other.id))
+    } else if (!login.equals(other.login))
       return false;
     return true;
-  }
-
-  @Override
-  public String toString() {
-    return "User [id=" + id + ", email=" + email + ", password=" + password + ", name=" + name + ", surname=" + surname + "]";
   }
   
 }

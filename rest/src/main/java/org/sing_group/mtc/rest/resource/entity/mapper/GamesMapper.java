@@ -26,6 +26,7 @@ import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toMap;
 import static javax.transaction.Transactional.TxType.MANDATORY;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
@@ -47,7 +48,7 @@ import org.sing_group.mtc.rest.resource.entity.session.GameConfigurationData;
 import org.sing_group.mtc.rest.resource.entity.session.GameParamData;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionData;
-import org.sing_group.mtc.service.GameService;
+import org.sing_group.mtc.service.spi.session.GameService;
 
 @Default
 @Transactional(value = MANDATORY)
@@ -92,7 +93,7 @@ public class GamesMapper {
     .collect(toCollection(TreeSet::new));
   }
   
-  public GamesSessionData mapToGameSessionData(GamesSession session, Function<Therapist, String> therapistUrlBuilder) {
+  public GamesSessionData mapToGameSessionData(GamesSession session, Function<Therapist, URI> therapistUrlBuilder) {
     return new GamesSessionData(
       session.getId(),
       therapistUrlBuilder.apply(session.getTherapist()),

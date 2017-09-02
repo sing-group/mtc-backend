@@ -42,6 +42,8 @@
     <class>org.sing_group.mtc.domain.entities.user.Patient</class>
     <class>org.sing_group.mtc.domain.entities.user.Therapist</class>
     <class>org.sing_group.mtc.domain.entities.user.User</class>
+    <class>org.sing_group.mtc.domain.entities.user.Manager</class>
+    <class>org.sing_group.mtc.domain.entities.user.Institution</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
 
     <properties>

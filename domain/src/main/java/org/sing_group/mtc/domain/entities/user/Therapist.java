@@ -21,15 +21,22 @@
  */
 package org.sing_group.mtc.domain.entities.user;
 
-import java.io.Serializable;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.sing_group.mtc.domain.entities.session.GamesSession;
 
@@ -39,64 +46,86 @@ import org.sing_group.mtc.domain.entities.session.GamesSession;
  * @author Miguel Reboiro-Jato
  */
 @Entity
+@Table(name = "therapist")
 @DiscriminatorValue("THERAPIST")
-public class Therapist extends User implements Serializable {
+public class Therapist extends IdentifiedUser {
   private static final long serialVersionUID = 1L;
 
-  @OneToMany(mappedBy = "therapist", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "therapist", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private Set<Patient> patients;
   
-  @OneToMany(mappedBy = "therapist", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "therapist", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   private Set<GamesSession> sessions;
+  
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(
+    name = "institution",
+    referencedColumnName = "name",
+    nullable = false,
+    foreignKey = @ForeignKey(name = "FK_institution_therapist")
+  )
+  private Institution institution;
   
   // For JPA
   Therapist() {}
 
-  /**
-   * Creates a new instance of {@code Therapist}.
-   * 
-   * @param email
-   *          the email that identifies the user. This parameter must be a non
-   *          empty and non {@code null} string with a maximum length of 100
-   *          chars.
-   * @param password
-   *          the raw password of the user. This parameter must be a non
-   *          {@code null} string with a minimum length of 6 chars.
-   * 
-   * @throws NullPointerException
-   *           if a {@code null} value is passed as the value for any parameter.
-   * @throws IllegalArgumentException
-   *           if value provided for any parameter is not valid according to its
-   *           description.
-   */
-  public Therapist(String email, String password, String name, String surname, boolean encodedPassword) {
-    super(email, password, name, surname, encodedPassword);
-    
-    this.patients = new HashSet<>();
-    this.sessions = new HashSet<>();
+  public Therapist(String login, String email, String password, Institution institution) {
+    this(login, email, password, institution, null, null, null, null);
   }
 
-  public Therapist(Integer id, String email, String password, String name, String surname, boolean encodedPassword) {
-    super(id, email, password, name, surname, encodedPassword);
-    
-    this.patients = new HashSet<>();
-    this.sessions = new HashSet<>();
+  public Therapist(String login, String email, String password, Institution institution, boolean encodedPassword) {
+    this(login, email, password, institution, null, null, null, null, encodedPassword);
   }
 
-  public Therapist(Integer id, String email, String password, String name, String surname) {
-    super(id, email, password, name, surname);
+  public Therapist(
+    String login, String email, String password,
+    Institution institution,
+    String name,
+    String surname,
+    Collection<Patient> patients,
+    Collection<GamesSession> sessions
+  ) {
+    super(login, email, password, name, surname);
     
-    this.patients = new HashSet<>();
-    this.sessions = new HashSet<>();
+    this.patients = patients == null ? new HashSet<>() : new HashSet<>(patients);
+    this.sessions = sessions == null ? new HashSet<>() : new HashSet<>(sessions);
+    
+    this.setInstitution(institution);
   }
 
-  public Therapist(String email, String password, String name, String surname) {
-    super(email, password, name, surname);
+  public Therapist(
+    String login, String email, String password,
+    Institution institution,
+    String name,
+    String surname,
+    Collection<Patient> patients,
+    Collection<GamesSession> sessions,
+    boolean encodedPassword
+  ) {
+    super(login, email, password, name, surname, encodedPassword);
     
-    this.patients = new HashSet<>();
-    this.sessions = new HashSet<>();
+    this.patients = patients == null ? new HashSet<>() : new HashSet<>(patients);
+    this.sessions = sessions == null ? new HashSet<>() : new HashSet<>(sessions);
+    
+    this.setInstitution(institution);
   }
   
+  public void setInstitution(Institution institution) {
+    if (this.institution != null) {
+      this.institution.directRemoveTherapist(this);
+      this.institution = null;
+    }
+    
+    if (institution != null) {
+      this.institution = institution;
+      this.institution.directAddTherapist(this);
+    }
+  }
+  
+  public Institution getInstitution() {
+    return institution;
+  }
+
   public Stream<Patient> getPatients() {
     return patients.stream();
   }
@@ -140,6 +169,8 @@ public class Therapist extends User implements Serializable {
   }
   
   public boolean addSession(GamesSession session) {
+    requireNonNull(session, "session can't be null");
+    
     if (this.sessions.add(session)) {
       if (session.getTherapist() != this)
         session.setTherapist(this);
@@ -151,6 +182,8 @@ public class Therapist extends User implements Serializable {
   }
   
   public boolean removeSession(GamesSession session) {
+    requireNonNull(session, "session can't be null");
+    
     if (this.sessions.remove(session)) {
       if (session.getTherapist() != null)
         session.setTherapist(null);

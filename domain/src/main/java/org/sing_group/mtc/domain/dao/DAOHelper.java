@@ -55,8 +55,8 @@ public class DAOHelper<K, T> {
     return this.entityClass;
   }
   
-  public T get(K key) {
-    return this.em.find(this.getEntityType(), requireNonNull(key));
+  public Optional<T> get(K key) {
+    return Optional.ofNullable(this.em.find(this.getEntityType(), requireNonNull(key)));
   }
   
   public T persist(T entity) {

@@ -46,8 +46,8 @@ public class GameConfigurationData implements Serializable {
   @XmlAttribute(name = "gameOrder", required = true)
   private int gameOrder;
   
-  @XmlElementWrapper(name = "parameters", nillable = false, required = true)
-  @XmlElement(name = "parameter", nillable = false, required = true)
+  @XmlElementWrapper(name = "parameters", required = true)
+  @XmlElement(name = "parameter", required = true)
   private GameParamData[] parameters;
   
   GameConfigurationData() {}

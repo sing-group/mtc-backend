@@ -25,12 +25,17 @@ import java.util.function.Supplier;
 
 import javax.ejb.Local;
 
+import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.User;
 
 @Local
 public interface SecurityGuard {
   public <U extends User> U getLoggedUser();
   
-  public void ifAuthorized(String[] roles, Supplier<String> emailSupplier, Runnable action);
-  public <T> T ifAuthorized(String[] roles, Supplier<String> emailSupplier, Supplier<T> action);
+  public void ifAuthorized(RoleType[] roles, Supplier<String> loginSupplier, Runnable action);
+  public <T> T ifAuthorized(RoleType[] roles, Supplier<String> loginSupplier, Supplier<T> action);
+  
+  public void ifAuthorized(RoleType role, Supplier<String> loginSupplier, Runnable action);
+  
+  public <T> T ifAuthorized(RoleType role, Supplier<String> loginSupplier, Supplier<T> action);
 }

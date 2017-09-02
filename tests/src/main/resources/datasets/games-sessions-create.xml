@@ -22,7 +22,7 @@
   -->
 
 <dataset>
-  <session id="2" therapistId="2" />
+  <session id="2" therapist="therapist2" />
 
   <session_game game="recognition" gameOrder="1" session="2" />
   <session_game game="verbalFluency" gameOrder="2" session="2" />

@@ -26,7 +26,11 @@ import java.util.List;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
-import org.sing_group.mtc.rest.resource.entity.UserData;
+import org.sing_group.mtc.rest.resource.entity.user.AdministratorData;
+import org.sing_group.mtc.rest.resource.entity.user.IdentifiedUserData;
+import org.sing_group.mtc.rest.resource.entity.user.ManagerData;
+import org.sing_group.mtc.rest.resource.entity.user.PatientData;
+import org.sing_group.mtc.rest.resource.entity.user.TherapistData;
 
 /**
  * This class have methods to read list of entities
@@ -37,7 +41,7 @@ import org.sing_group.mtc.rest.resource.entity.UserData;
 public final class GenericTypes {
   private GenericTypes() {}
 
-  public static class UserDataListType extends GenericType<List<UserData>> {
+  public static class UserDataListType extends GenericType<List<IdentifiedUserData>> {
     public static UserDataListType USER_DATA_LIST_TYPE = new UserDataListType();
 
     /**
@@ -47,8 +51,40 @@ public final class GenericTypes {
      *          response received by rest
      * @return list of events
      */
-    public static List<UserData> readEntity(Response response) {
+    public static List<IdentifiedUserData> readEntity(Response response) {
       return response.readEntity(USER_DATA_LIST_TYPE);
+    }
+  }
+
+  public static class AdministratorDataListType extends GenericType<List<AdministratorData>> {
+    public static AdministratorDataListType ADMINISTRATOR_DATA_LIST_TYPE = new AdministratorDataListType();
+
+    public static List<AdministratorData> readEntity(Response response) {
+      return response.readEntity(ADMINISTRATOR_DATA_LIST_TYPE);
+    }
+  }
+  
+  public static class ManagerDataListType extends GenericType<List<ManagerData>> {
+    public static ManagerDataListType MANAGER_DATA_LIST_TYPE = new ManagerDataListType();
+    
+    public static List<ManagerData> readEntity(Response response) {
+      return response.readEntity(MANAGER_DATA_LIST_TYPE);
+    }
+  }
+  
+  public static class TherapistDataListType extends GenericType<List<TherapistData>> {
+    public static TherapistDataListType THERAPIST_DATA_LIST_TYPE = new TherapistDataListType();
+    
+    public static List<TherapistData> readEntity(Response response) {
+      return response.readEntity(THERAPIST_DATA_LIST_TYPE);
+    }
+  }
+  
+  public static class PatientDataListType extends GenericType<List<PatientData>> {
+    public static PatientDataListType PATIENT_DATA_LIST_TYPE = new PatientDataListType();
+    
+    public static List<PatientData> readEntity(Response response) {
+      return response.readEntity(PATIENT_DATA_LIST_TYPE);
     }
   }
 }

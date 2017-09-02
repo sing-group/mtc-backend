@@ -21,7 +21,11 @@
  */
 package org.sing_group.mtc.domain.entities.user;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -33,6 +37,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.sing_group.mtc.domain.entities.session.AssignedGamesSession;
 
@@ -42,12 +47,18 @@ import org.sing_group.mtc.domain.entities.session.AssignedGamesSession;
  * @author Miguel Reboiro-Jato
  */
 @Entity
+@Table(name = "patient")
 @DiscriminatorValue("PATIENT")
 public class Patient extends User implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "therapistId", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_patient_therapist"))
+  @JoinColumn(
+    name = "therapist",
+    referencedColumnName = "login",
+    nullable = false,
+    foreignKey = @ForeignKey(name = "FK_patient_therapist")
+  )
   private Therapist therapist;
 
   @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -56,45 +67,28 @@ public class Patient extends User implements Serializable {
   // Required for JPA
   Patient() {}
 
-  /**
-   * Creates a new instance of {@code Patient}.
-   * 
-   * @param email
-   *          the email that identifies the user. This parameter must be a non
-   *          empty and non {@code null} string with a maximum length of 100
-   *          chars.
-   * @param password
-   *          the raw password of the user. This parameter must be a non
-   *          {@code null} string with a minimum length of 6 chars.
-   * 
-   * @throws NullPointerException
-   *           if a {@code null} value is passed as the value for any parameter.
-   * @throws IllegalArgumentException
-   *           if value provided for any parameter is not valid according to its
-   *           description.
-   */
-  public Patient(String email, String password, String name, String surname, Therapist therapist, boolean encodedPassword) {
-    super(email, password, name, surname, encodedPassword);
-    
-    this.setTherapist(therapist);
+  public Patient(String login, String password, Therapist therapist) {
+    this(login, password, therapist, null);
   }
 
-  public Patient(Integer id, String email, String password, String name, String surname, Therapist therapist, boolean encodedPassword) {
-    super(id, email, password, name, surname, encodedPassword);
-    
-    this.setTherapist(therapist);
+  public Patient(String login, String password, Therapist therapist, boolean encodedPassword) {
+    this(login, password, therapist, null, encodedPassword);
   }
 
-  public Patient(Integer id, String email, String password, String name, String surname, Therapist therapist) {
-    super(id, email, password, name, surname);
+  public Patient(String login, String password, Therapist therapist, Collection<AssignedGamesSession> sessions) {
+    super(login, password);
     
     this.setTherapist(therapist);
+    
+    this.assigned = sessions == null ? new HashSet<>() : new HashSet<>(sessions);
   }
 
-  public Patient(String email, String password, String name, String surname, Therapist therapist) {
-    super(email, password, name, surname);
+  public Patient(String login, String password, Therapist therapist, Collection<AssignedGamesSession> sessions, boolean encodedPassword) {
+    super(login, password, encodedPassword);
     
     this.setTherapist(therapist);
+    
+    this.assigned = sessions == null ? new HashSet<>() : new HashSet<>(sessions);
   }
   
   public Therapist getTherapist() {
@@ -113,7 +107,37 @@ public class Patient extends User implements Serializable {
     }
   }
   
-  public Stream<AssignedGamesSession> getAssigned() {
+  public Stream<AssignedGamesSession> getAssignedGameSessions() {
     return this.assigned.stream();
+  }
+  
+  public boolean hasAssignedGameSession(AssignedGamesSession session) {
+    return this.assigned.contains(session);
+  }
+  
+  public boolean addAssignedGameSession(AssignedGamesSession session) {
+    requireNonNull(session, "'session' can't be null");
+    
+    if (this.assigned.add(session)) {
+      if (session.getPatient() != this)
+        session.setPatient(this);
+      
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public boolean removeAssignedGameSession(AssignedGamesSession session) {
+    requireNonNull(session, "'session' can't be null");
+
+    if (this.assigned.remove(session)) {
+      if (session.getPatient() == this)
+        session.setPatient(null);
+      
+      return true;
+    } else {
+      return false;
+    }
   }
 }

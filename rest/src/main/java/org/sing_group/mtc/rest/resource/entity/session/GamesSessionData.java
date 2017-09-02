@@ -22,6 +22,7 @@
 package org.sing_group.mtc.rest.resource.entity.session;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Arrays;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -36,22 +37,22 @@ public class GamesSessionData implements Serializable {
   
   private int id;
 
-  private String therapist;
+  private URI therapist;
   
   @XmlElementWrapper(name = "configurations", nillable = false, required = true)
   private GameConfigurationData[] gameConfiguration;
 
-  @XmlElement(name = "name", nillable = false, required = true)
+  @XmlElement(name = "name", required = true)
   private LocaleMessages nameMessage;
 
-  @XmlElement(name = "description", nillable = false, required = true)
+  @XmlElement(name = "description", required = true)
   private LocaleMessages descriptionMessage;
   
   GamesSessionData() {}
 
   public GamesSessionData(
     int id,
-    String therapist,
+    URI therapist,
     GameConfigurationData[] gameConfiguration,
     LocaleMessages nameMessage,
     LocaleMessages descriptionMessage
@@ -71,11 +72,11 @@ public class GamesSessionData implements Serializable {
     this.id = id;
   }
 
-  public String getTherapist() {
+  public URI getTherapist() {
     return therapist;
   }
 
-  public void setTherapist(String therapist) {
+  public void setTherapist(URI therapist) {
     this.therapist = therapist;
   }
 

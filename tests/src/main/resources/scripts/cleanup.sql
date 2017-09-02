@@ -28,4 +28,10 @@ DELETE FROM `integer_parameter`;
 DELETE FROM `seconds_parameter`;
 DELETE FROM `game_type`;
 DELETE FROM `game`;
+
+DELETE FROM `patient`;
+DELETE FROM `therapist`;
+DELETE FROM `institution`;
+DELETE FROM `manager`;
+DELETE FROM `administrator`;
 DELETE FROM `user`;

@@ -21,6 +21,8 @@
  */
 package org.sing_group.mtc.domain.entities.session;
 
+import static javax.persistence.GenerationType.SEQUENCE;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -28,6 +30,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -36,14 +39,18 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.sing_group.mtc.domain.entities.session.AssignedGamesSession.AssignedSessionId;
+import org.sing_group.mtc.domain.entities.session.AssignedGamesSession.AssignedGamesSessionId;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 @Entity
 @Table(name = "assigned_session")
-@IdClass(AssignedSessionId.class)
+@IdClass(AssignedGamesSessionId.class)
 public class AssignedGamesSession implements Serializable {
   private static final long serialVersionUID = 1L;
+  
+  @GeneratedValue(strategy = SEQUENCE)
+  @Column(name = "simpleId", unique = true, updatable = false, insertable = false, nullable = false)
+  private int simpleId;
   
   @Id
   @Column(name = "assignmentDate")
@@ -72,11 +79,15 @@ public class AssignedGamesSession implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(
     name = "patient",
-    referencedColumnName = "id",
+    referencedColumnName = "login",
     nullable = false, insertable = false, updatable = false,
     foreignKey = @ForeignKey(name = "FK_assignedsession_patient")
   )
   private Patient patient;
+  
+  public int getSimpleId() {
+    return simpleId;
+  }
   
   public GamesSession getSession() {
     return session;
@@ -98,6 +109,18 @@ public class AssignedGamesSession implements Serializable {
     return patient;
   }
 
+  public void setPatient(Patient patient) {
+    if (this.patient != null) {
+      this.patient.removeAssignedGameSession(this);
+      this.patient = null;
+    }
+    
+    if (patient != null) {
+      this.patient = patient;
+      this.patient.addAssignedGameSession(this);
+    }
+  }
+
   public Date getAssignmentDate() {
     return assignmentDate;
   }
@@ -110,21 +133,21 @@ public class AssignedGamesSession implements Serializable {
     return endDate;
   }
 
-  public final static class AssignedSessionId implements Serializable {
+  public final static class AssignedGamesSessionId implements Serializable {
     private static final long serialVersionUID = 1L;
   
     private int session;
-    private int patient;
+    private String patient;
     private Date assignmentDate;
     
-    public AssignedSessionId(int sessionId, int patientId, Date assignmentDate) {
+    public AssignedGamesSessionId(int sessionId, String patient, Date assignmentDate) {
       super();
       this.session = sessionId;
-      this.patient = patientId;
+      this.patient = patient;
       this.assignmentDate = assignmentDate;
     }
 
-    public int getPatient() {
+    public String getPatient() {
       return patient;
     }
 
@@ -141,7 +164,7 @@ public class AssignedGamesSession implements Serializable {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((assignmentDate == null) ? 0 : assignmentDate.hashCode());
-      result = prime * result + patient;
+      result = prime * result + ((patient == null) ? 0 : patient.hashCode());
       result = prime * result + session;
       return result;
     }
@@ -154,13 +177,16 @@ public class AssignedGamesSession implements Serializable {
         return false;
       if (getClass() != obj.getClass())
         return false;
-      AssignedSessionId other = (AssignedSessionId) obj;
+      AssignedGamesSessionId other = (AssignedGamesSessionId) obj;
       if (assignmentDate == null) {
         if (other.assignmentDate != null)
           return false;
       } else if (!assignmentDate.equals(other.assignmentDate))
         return false;
-      if (patient != other.patient)
+      if (patient == null) {
+        if (other.patient != null)
+          return false;
+      } else if (!patient.equals(other.patient))
         return false;
       if (session != other.session)
         return false;

@@ -73,8 +73,8 @@ public class GamesSession implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(
-    name = "therapistId",
-    referencedColumnName = "id",
+    name = "therapist",
+    referencedColumnName = "login",
     foreignKey = @ForeignKey(name = "FK_session_therapist")
   )
   private Therapist therapist;

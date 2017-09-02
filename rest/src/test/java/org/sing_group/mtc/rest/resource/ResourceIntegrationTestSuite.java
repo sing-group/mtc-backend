@@ -24,10 +24,18 @@ package org.sing_group.mtc.rest.resource;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.sing_group.mtc.rest.resource.session.GamesSessionResourceIntegrationTest;
+import org.sing_group.mtc.rest.resource.user.AdministratorResourceIntegrationTest;
+import org.sing_group.mtc.rest.resource.user.ManagerResourceIntegrationTest;
+import org.sing_group.mtc.rest.resource.user.PatientResourceIntegrationTest;
+import org.sing_group.mtc.rest.resource.user.TherapistResourceIntegrationTest;
 
 @SuiteClasses({
 	SessionResourceIntegrationTest.class,
-	UserResourceIntegrationTest.class,
+	AdministratorResourceIntegrationTest.class,
+	ManagerResourceIntegrationTest.class,
+	TherapistResourceIntegrationTest.class,
+	PatientResourceIntegrationTest.class,
 	GamesSessionResourceIntegrationTest.class
 })
 @RunWith(Suite.class)

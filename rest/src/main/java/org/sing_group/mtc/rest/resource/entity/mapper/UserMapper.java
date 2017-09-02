@@ -21,48 +21,134 @@
  */
 package org.sing_group.mtc.rest.resource.entity.mapper;
 
-import static javax.transaction.Transactional.TxType.MANDATORY;
+import java.net.URI;
+import java.util.function.Function;
 
-import javax.enterprise.inject.Default;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
+import org.sing_group.mtc.domain.entities.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Administrator;
+import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.domain.entities.user.User;
-import org.sing_group.mtc.rest.resource.entity.UserEditionData;
-import org.sing_group.mtc.service.UserService;
+import org.sing_group.mtc.rest.resource.entity.user.AdministratorData;
+import org.sing_group.mtc.rest.resource.entity.user.AdministratorEditionData;
+import org.sing_group.mtc.rest.resource.entity.user.ManagerData;
+import org.sing_group.mtc.rest.resource.entity.user.ManagerEditionData;
+import org.sing_group.mtc.rest.resource.entity.user.PatientData;
+import org.sing_group.mtc.rest.resource.entity.user.PatientEditionData;
+import org.sing_group.mtc.rest.resource.entity.user.TherapistData;
+import org.sing_group.mtc.rest.resource.entity.user.TherapistEditionData;
 
-@Default
-@Transactional(value = MANDATORY)
 public class UserMapper {
-  @Inject
-  private UserService userService;
-  
-  public User toUser(int id, UserEditionData userData) {
-    switch (userData.getRole()) {
-      case "ADMIN":
-        return new Administrator(id, userData.getEmail(), userData.getPassword(), userData.getName(), userData.getSurname(), false);
-      case "PATIENT":
-        return new Patient(id, userData.getEmail(), userData.getPassword(), userData.getName(), userData.getSurname(), (Therapist) userService.get(userData.getTherapistId()), false);
-      case "THERAPIST":
-        return new Therapist(id, userData.getEmail(), userData.getPassword(), userData.getName(), userData.getSurname(), false);
-      default:
-        throw new IllegalArgumentException("Invalid userData");
-    }
+  public static AdministratorData toData(Administrator admin) {
+    return new AdministratorData(
+      admin.getLogin(),
+      admin.getEmail(),
+      admin.getName().orElse(null),
+      admin.getSurname().orElse(null)
+    );
   }
   
-  public User toUser(UserEditionData userData) {
-    switch (userData.getRole()) {
-      case "ADMIN":
-        return new Administrator(userData.getEmail(), userData.getPassword(), userData.getName(), userData.getSurname(), false);
-      case "PATIENT":
-        return new Patient(userData.getEmail(), userData.getPassword(), userData.getName(), userData.getSurname(), (Therapist) userService.get(userData.getTherapistId()), false);
-      case "THERAPIST":
-        return new Therapist(userData.getEmail(), userData.getPassword(), userData.getName(), userData.getSurname(), false);
-      default:
-        throw new IllegalArgumentException("Invalid userData");
-    }
+  public static AdministratorEditionData toEditionData(Administrator admin, String password) {
+    return new AdministratorEditionData(
+      admin.getLogin(),
+      password,
+      admin.getEmail(),
+      admin.getName().orElse(null),
+      admin.getSurname().orElse(null)
+    );
+  }
+  
+  public static ManagerData toData(Manager manager, Function<Institution, URI> institutionToURI) {
+    return new ManagerData(
+      manager.getLogin(),
+      manager.getEmail(),
+      manager.getName().orElse(null),
+      manager.getSurname().orElse(null),
+      manager.getInstitutions()
+        .map(institutionToURI)
+      .toArray(URI[]::new)
+    );
+  }
+  
+  public static ManagerEditionData toEditionData(Manager manager, String password) {
+    return new ManagerEditionData(
+      manager.getLogin(),
+      password,
+      manager.getEmail(),
+      manager.getName().orElse(null),
+      manager.getSurname().orElse(null)
+    );
+  }
+  
+  public static TherapistData toData(
+    Therapist therapist,
+    Function<Institution, URI> institutionToURI,
+    Function<Patient, URI> patientToURI,
+    Function<GamesSession, URI> sessionToURI
+  ) {
+    return new TherapistData(
+      therapist.getLogin(),
+      therapist.getEmail(),
+      therapist.getName().orElse(null),
+      therapist.getSurname().orElse(null),
+      institutionToURI.apply(therapist.getInstitution()),
+      therapist.getPatients()
+        .map(patientToURI)
+      .toArray(URI[]::new),
+      therapist.getSessions()
+        .map(sessionToURI)
+      .toArray(URI[]::new)
+    );
+  }
+  
+  public static TherapistEditionData toEditionData(Therapist therapist, String password) {
+    return new TherapistEditionData(
+      therapist.getLogin(),
+      password,
+      therapist.getEmail(),
+      therapist.getName().orElse(null),
+      therapist.getSurname().orElse(null),
+      therapist.getInstitution().getName()
+    );
+  }
+  
+  public static PatientData toData(
+    Patient patient,
+    Function<Therapist, URI> therapistToUri,
+    Function<AssignedGamesSession, URI> assignedSessionToURI
+  ) {
+    return new PatientData(
+      patient.getLogin(),
+      therapistToUri.apply(patient.getTherapist()),
+      patient.getAssignedGameSessions()
+        .map(assignedSessionToURI)
+      .toArray(URI[]::new)
+    );
+  }
+  
+  public static PatientEditionData toEditionData(Patient patient, String password) {
+    return new PatientEditionData(
+      patient.getLogin(),
+      password,
+      patient.getTherapist().getLogin()
+    );
+  }
+
+  public static Administrator toAdministrator(AdministratorEditionData data) {
+    return new Administrator(data.getLogin(), data.getEmail(), data.getPassword(), data.getName(), data.getSurname());
+  }
+
+  public static Manager toManager(ManagerEditionData data) {
+    return new Manager(data.getLogin(), data.getEmail(), data.getPassword(), data.getName(), data.getSurname(), null);
+  }
+  
+  public static Therapist toTherapist(TherapistEditionData data, Institution institution) {
+    return new Therapist(data.getLogin(), data.getEmail(), data.getPassword(), institution, data.getName(), data.getSurname(), null, null);
+  }
+  
+  public static Patient toPatient(PatientEditionData data, Therapist therapist) {
+    return new Patient(data.getLogin(), data.getPassword(), therapist);
   }
 }

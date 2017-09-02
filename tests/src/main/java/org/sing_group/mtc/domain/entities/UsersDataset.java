@@ -97,8 +97,8 @@ public class UsersDataset {
   
   public static Stream<User> users() {
     final List<Institution> institutions = asList(
-      new Institution("Institution 1", null),
-      new Institution("Institution 2", null)
+      new Institution(1, "Institution 1", null),
+      new Institution(2, "Institution 2", null)
     );
     
     final Manager manager = new Manager("manager", "manager@email.com", passwordOf("manager"), "Man", "Manager", institutions);

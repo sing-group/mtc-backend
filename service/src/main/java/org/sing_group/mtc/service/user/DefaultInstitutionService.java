@@ -39,8 +39,8 @@ public class DefaultInstitutionService implements InstitutionService {
   
 
   @Override
-  public Institution get(String name) {
-    return this.dao.get(name);
+  public Institution get(int id) {
+    return this.dao.get(id);
   }
 
 }

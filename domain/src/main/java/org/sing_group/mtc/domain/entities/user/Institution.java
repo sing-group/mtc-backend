@@ -22,6 +22,7 @@
 package org.sing_group.mtc.domain.entities.user;
 
 import static java.util.Objects.requireNonNull;
+import static javax.persistence.GenerationType.IDENTITY;
 import static org.sing_group.fluent.checker.Checks.requireStringSize;
 
 import java.io.Serializable;
@@ -36,6 +37,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -48,7 +50,10 @@ public class Institution implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
-  @Column(name = "name", length = 255, columnDefinition = "VARCHAR(255)")
+  @GeneratedValue(strategy = IDENTITY)
+  private Integer id;
+  
+  @Column(name = "name", length = 255, columnDefinition = "VARCHAR(255)", unique = true, nullable = false)
   private String name;
   
   @Column(name = "description", length = 1023, columnDefinition = "VARCHAR(1023)", nullable = true)
@@ -72,17 +77,30 @@ public class Institution implements Serializable {
   // For JPA
   Institution() {}
   
+  public Institution(Integer id, String name, Manager manager) {
+    this(id, name, manager, null, null, null);
+  }
+  
   public Institution(String name, Manager manager) {
     this(name, manager, null, null, null);
   }
   
   public Institution(String name, Manager manager, String description, String address, Collection<Therapist> therapists) {
+    this(null, name, manager, description, address, therapists);
+  }
+
+  public Institution(Integer id, String name, Manager manager, String description, String address, Collection<Therapist> therapists) {
+    this.id = id;
     this.name = name;
     this.setDescription(description);
     this.setAddress(address);
     this.setManager(manager);
     
     this.therapists = therapists == null ? new HashSet<>() : new HashSet<>(therapists);
+  }
+
+  public Integer getId() {
+    return id;
   }
 
   public String getName() {
@@ -173,7 +191,7 @@ public class Institution implements Serializable {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
     return result;
   }
 
@@ -186,10 +204,10 @@ public class Institution implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     Institution other = (Institution) obj;
-    if (name == null) {
-      if (other.name != null)
+    if (id == null) {
+      if (other.id != null)
         return false;
-    } else if (!name.equals(other.name))
+    } else if (!id.equals(other.id))
       return false;
     return true;
   }

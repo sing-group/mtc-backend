@@ -8,7 +8,7 @@ INSERT INTO `user` (`role`, `login`, `password`) VALUES ('PATIENT', 'patient', '
 INSERT INTO `administrator` (`email`, `name`, `surname`, `login`) VALUES ('admin@email.com', 'Admin', 'Nimda', 'admin');
 INSERT INTO `manager` (`email`, `name`, `surname`, `login`) VALUES ('admin@email.com', 'Manager', 'Reganam', 'manager');
 INSERT INTO `institution` (`name`, `address`, `description`, `manager`) VALUES ('Institution 1', 'Institution St. 1', 'First institution', 'manager');
-INSERT INTO `therapist` (`email`, `name`, `surname`, `login`, `institution`) VALUES ('therapist', 'Therapist', 'Tsipareht', 'therapist', 'Institution 1');
+INSERT INTO `therapist` (`email`, `name`, `surname`, `login`, `institution`) VALUES ('therapist', 'Therapist', 'Tsipareht', 'therapist', 1);
 INSERT INTO `patient` (`login`, `therapist`) VALUES ('patient', 'therapist');
 
 

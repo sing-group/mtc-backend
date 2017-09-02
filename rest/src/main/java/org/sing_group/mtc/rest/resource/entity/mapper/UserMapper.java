@@ -110,7 +110,7 @@ public class UserMapper {
       therapist.getEmail(),
       therapist.getName().orElse(null),
       therapist.getSurname().orElse(null),
-      therapist.getInstitution().getName()
+      therapist.getInstitution().getId()
     );
   }
   

@@ -28,6 +28,6 @@
   
   <!-- HTTP Basic token: dGhlcmFwaXN0TmV3OnRoZXJhcGlzdE5ld3Bhc3M= -->
   <user login="therapistNew" password="A8A63412EAF5848942513F64C37EE6CA" role="THERAPIST" />
-  <therapist login="therapistNew" email="therapistNew@email.com" name="TheraNew" surname="TherapistNew" institution="Institution 2" />
+  <therapist login="therapistNew" email="therapistNew@email.com" name="TheraNew" surname="TherapistNew" institution="2" />
   
 </dataset>

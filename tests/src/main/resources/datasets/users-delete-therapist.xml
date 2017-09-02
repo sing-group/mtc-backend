@@ -38,8 +38,8 @@
   <user login="manager" password="3FD7488B6FD40F33C5A8E857B6A944AA" role="MANAGER" />
   <manager login="manager" email="manager@email.com" name="Man" surname="Manager" />
   
-  <institution name="Institution 1" manager="manager" />
-  <institution name="Institution 2" manager="manager" />
+  <institution id="1" name="Institution 1" manager="manager" />
+  <institution id="2" name="Institution 2" manager="manager" />
   
   <!-- HTTP Basic token: bWFuYWdlcjI6bWFuYWdlcjJwYXNz -->
   <user login="manager2" password="DF6D7E524763F97CD09EE77EE05CC03B" role="MANAGER" />
@@ -48,6 +48,6 @@
   
   <!-- HTTP Basic token: dGhlcmFwaXN0Mjp0aGVyYXBpc3QycGFzcw== -->
   <user login="therapist2" password="E5B265BFF1ECCC63D185BC73923C19DB" role="THERAPIST" />
-  <therapist login="therapist2" email="therapist2@email.com" name="Thera2" surname="Therapist2" institution="Institution 2" />
+  <therapist login="therapist2" email="therapist2@email.com" name="Thera2" surname="Therapist2" institution="2" />
 
 </dataset>

@@ -71,7 +71,7 @@ public class ManagerResource {
       .path(this.getClass().getAnnotation(Path.class).value())
       .path(institution.getManager().getLogin())
       .path("institution")
-      .path(institution.getName())
+      .path(institution.getId().toString())
     .build();
   }
   

@@ -34,23 +34,23 @@ public class TherapistEditionData extends IdentifiedUserEditionData {
   private static final long serialVersionUID = 1L;
   
   @XmlElement(name = "institution", required = true)
-  private String institution;
+  private Integer institution;
 
   TherapistEditionData() {
     super();
   }
   
-  public TherapistEditionData(String login, String password, String email, String name, String surname, String institution) {
+  public TherapistEditionData(String login, String password, String email, String name, String surname, Integer institution) {
     super(login, password, email, name, surname, RoleType.MANAGER);
     
     this.institution = institution;
   }
   
-  public String getInstitution() {
+  public Integer getInstitution() {
     return this.institution;
   }
   
-  public void setInstitution(String institution) {
+  public void setInstitution(Integer institution) {
     this.institution = institution;
   }
 

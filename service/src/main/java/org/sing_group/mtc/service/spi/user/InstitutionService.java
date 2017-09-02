@@ -27,5 +27,5 @@ import org.sing_group.mtc.domain.entities.user.Institution;
 
 @Local
 public interface InstitutionService {
-  public Institution get(String name);
+  public Institution get(int id);
 }

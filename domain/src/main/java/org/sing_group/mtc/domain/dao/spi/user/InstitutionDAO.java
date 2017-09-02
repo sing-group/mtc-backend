@@ -24,5 +24,5 @@ package org.sing_group.mtc.domain.dao.spi.user;
 import org.sing_group.mtc.domain.entities.user.Institution;
 
 public interface InstitutionDAO {
-  public Institution get(String name);
+  public Institution get(int id);
 }

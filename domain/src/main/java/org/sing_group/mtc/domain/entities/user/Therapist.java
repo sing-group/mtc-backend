@@ -60,7 +60,7 @@ public class Therapist extends IdentifiedUser {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(
     name = "institution",
-    referencedColumnName = "name",
+    referencedColumnName = "id",
     nullable = false,
     foreignKey = @ForeignKey(name = "FK_institution_therapist")
   )

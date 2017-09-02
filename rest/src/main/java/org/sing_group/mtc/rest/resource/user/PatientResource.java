@@ -83,7 +83,7 @@ public class PatientResource {
       .path(this.getClass().getAnnotation(Path.class).value())
       .path(session.getPatient().getLogin())
       .path("assignedsession")
-      .path(Integer.toString(session.getSimpleId()))
+      .path(Integer.toString(session.getId()))
     .build();
   }
   

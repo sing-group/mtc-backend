@@ -21,36 +21,60 @@
  */
 package org.sing_group.mtc.rest.resource;
 
-import javax.resource.spi.SecurityException;
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.sing_group.mtc.rest.filter.CrossDomain;
+import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
+import org.sing_group.mtc.rest.resource.spi.SessionResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
 @Path("session")
-@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-public class SessionResource {
+@Api("session")
+@Stateless
+@Default
+@CrossDomain
+public class DefaultSessionResource implements SessionResource {
+  private Logger LOG = LoggerFactory.getLogger(DefaultSessionResource.class);
+  
   @Context
   private HttpServletRequest request;
 
+  @Override
   @GET
+  @ApiOperation(
+    value = "Checks the provided credentials",
+    code = 200
+  )
+  @ApiResponses({
+    @ApiResponse(code = 200, message = "successful operation"),
+    @ApiResponse(code = 401, message = SecurityExceptionMapper.UNAUTHORIZED_MESSAGE)
+  })
   public Response check(
     @QueryParam("login") String login,
     @QueryParam("password") String password
-  ) throws SecurityException {
+  ) {
     try {
       request.logout();
       request.login(login, password);
       
       return Response.ok().build();
     } catch (ServletException e) {
+      LOG.warn("Login attempt error", e);
+      
       return Response.status(Response.Status.UNAUTHORIZED).build();
     }
   }

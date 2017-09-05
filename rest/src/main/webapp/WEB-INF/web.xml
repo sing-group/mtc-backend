@@ -25,10 +25,18 @@
 	version="3.1">
 	<display-name>JavaEE Sample REST</display-name>
 
-	<servlet-mapping>
+	<!-- servlet-mapping>
 		<servlet-name>javax.ws.rs.core.Application</servlet-name>
 		<url-pattern>/api/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping-->
+  
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>swagger</web-resource-name>
+      <url-pattern>/api/swagger*</url-pattern>
+      <http-method>*</http-method>
+    </web-resource-collection>
+  </security-constraint>
   
   <security-constraint>
     <web-resource-collection>
@@ -49,6 +57,18 @@
 			<role-name>ADMIN</role-name>
 		</auth-constraint>
 	</security-constraint>
+  
+  <!--Defining security constraint for type of roles available -->
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>manager</web-resource-name>
+      <url-pattern>/api/manager/*</url-pattern>
+      <http-method-omission>OPTIONS</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>ADMIN</role-name>
+    </auth-constraint>
+  </security-constraint>
   
   <!--Defining security constraint for type of roles available -->
   <security-constraint>

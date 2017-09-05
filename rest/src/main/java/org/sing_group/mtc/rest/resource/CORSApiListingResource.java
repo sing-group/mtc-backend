@@ -19,12 +19,14 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource.entity.user;
+package org.sing_group.mtc.rest.resource;
 
-public class InstitutionData {
+import javax.ws.rs.Path;
 
-  public InstitutionData() {
-    // TODO Auto-generated constructor stub
-  }
+import org.sing_group.mtc.rest.filter.CrossDomain;
 
-}
+import io.swagger.jaxrs.listing.ApiListingResource;
+
+@Path("/swagger.{type:json|yaml}")
+@CrossDomain
+public class CORSApiListingResource extends ApiListingResource {}

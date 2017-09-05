@@ -28,6 +28,7 @@ import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toTherap
 import java.net.URI;
 
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -44,17 +45,37 @@ import javax.ws.rs.core.UriInfo;
 import org.sing_group.mtc.domain.entities.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
+import org.sing_group.mtc.rest.filter.CrossDomain;
+import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.entity.mapper.UserMapper;
 import org.sing_group.mtc.rest.resource.entity.user.TherapistData;
 import org.sing_group.mtc.rest.resource.entity.user.TherapistEditionData;
+import org.sing_group.mtc.rest.resource.spi.user.TherapistResource;
 import org.sing_group.mtc.service.spi.user.InstitutionService;
 import org.sing_group.mtc.service.spi.user.TherapistService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.ResponseHeader;
+
 @Path("therapist")
+@Api(
+  value = "therapist",
+  authorizations = @Authorization("basicAuth")
+)
+@ApiResponses({
+  @ApiResponse(code = 401, message = SecurityExceptionMapper.UNAUTHORIZED_MESSAGE),
+  @ApiResponse(code = 403, message = SecurityExceptionMapper.FORBIDDEN_MESSAGE)
+})
 @Produces({ APPLICATION_JSON, APPLICATION_XML })
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Stateless
-public class TherapistResource {
+@Default
+@CrossDomain
+public class DefaultTherapistResource implements TherapistResource {
   @Inject
   private TherapistService service;
   
@@ -64,48 +85,31 @@ public class TherapistResource {
   @Context
   private UriInfo uriInfo;
   
-  public URI buildUriFor(Therapist therapist) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(therapist.getLogin())
-    .build();
-  }
-  
-  public URI buildUriForInstitution(Therapist therapist) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(therapist.getLogin())
-      .path("institution")
-    .build();
-  }
-  
-  public URI buildUriForPatient(Patient patient) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(patient.getTherapist().getLogin())
-      .path("patient")
-      .path(patient.getLogin())
-    .build();
-  }
-  
-  public URI buildUriForSession(GamesSession session) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(session.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
-      .path("session")
-      .path(session.getId().toString())
-    .build();
-  }
-  
+  @Override
   @GET
   @Path("{login}")
+  @ApiOperation(
+    value = "Finds therapists by login.",
+    response = TherapistData.class,
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login} | 'login' should have a length between 1 and 100")
+  )
   public Response get(@PathParam("login") String login) {
     final Therapist user = this.service.get(login);
 
     return Response.ok(toData(user)).build();
   }
   
+  @Override
   @GET
+  @ApiOperation(
+    value = "Returns all the therapists in the database.",
+    response = TherapistData.class,
+    responseContainer = "List",
+    code = 200
+  )
   public Response list() {
     final TherapistData[] therapists = this.service.list()
       .map(this::toData)
@@ -114,7 +118,16 @@ public class TherapistResource {
     return Response.ok(therapists).build();
   }
   
+  @Override
   @POST
+  @ApiOperation(
+    value = "Creates a new therapist.",
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the new therapist created."),
+    code = 201
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Entity already exists")
+  )
   public Response create(TherapistEditionData data) {
     final Therapist therapist = this.service.create(toTherapist(data, this.institutionService.get(data.getInstitution())));
     
@@ -123,7 +136,15 @@ public class TherapistResource {
     return Response.created(userUri).build();
   }
   
+  @Override
   @PUT
+  @ApiOperation(
+    value = "Modifies an existing therapist.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login}")
+  )
   public Response update(
     TherapistEditionData data
   ) {
@@ -132,12 +153,53 @@ public class TherapistResource {
     return Response.ok().build();
   }
   
+  @Override
   @DELETE
   @Path("{login}")
+  @ApiOperation(
+    value = "Deletes an existing therapist.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login}")
+  )
   public Response delete(@PathParam("login") String login) {
     this.service.delete(login);
     
     return Response.ok().build();
+  }
+  
+  private URI buildUriFor(Therapist therapist) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(therapist.getLogin())
+    .build();
+  }
+  
+  private URI buildUriForInstitution(Therapist therapist) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(therapist.getLogin())
+      .path("institution")
+    .build();
+  }
+  
+  private URI buildUriForPatient(Patient patient) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(patient.getTherapist().getLogin())
+      .path("patient")
+      .path(patient.getLogin())
+    .build();
+  }
+  
+  private URI buildUriForSession(GamesSession session) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(session.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
+      .path("session")
+      .path(session.getId().toString())
+    .build();
   }
   
   private TherapistData toData(Therapist therapist) {

@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import javax.resource.spi.SecurityException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -40,6 +39,9 @@ import org.slf4j.LoggerFactory;
 public class SecurityExceptionMapper
 implements ExceptionMapper<SecurityException> {
   private final static Logger LOG = LoggerFactory.getLogger(IllegalArgumentException.class);
+  
+  public final static String UNAUTHORIZED_MESSAGE = "Unauthorized operation";
+  public final static String FORBIDDEN_MESSAGE = "Forbidden operation";
 
   private Principal principal;
   
@@ -58,13 +60,16 @@ implements ExceptionMapper<SecurityException> {
   public Response toResponse(SecurityException e) {
     LOG.error("Exception catched", e);
     
-    final Status status = "anonymous".equals(principal.getName())
-      ? Response.Status.UNAUTHORIZED
-      : Response.Status.FORBIDDEN;
-    
-    return Response.status(status)
-      .entity(e.getMessage())
-      .type(MediaType.TEXT_PLAIN)
-    .build();
+    if ("anonymous".equals(principal.getName())) {
+      return Response.status(Response.Status.UNAUTHORIZED)
+        .entity(UNAUTHORIZED_MESSAGE)
+        .type(MediaType.TEXT_PLAIN)
+      .build();
+    } else {
+      return Response.status(Response.Status.FORBIDDEN)
+        .entity(FORBIDDEN_MESSAGE)
+        .type(MediaType.TEXT_PLAIN)
+      .build();
+    }
   }
 }

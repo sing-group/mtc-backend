@@ -31,17 +31,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
-@XmlRootElement(name = "manager-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Profile data of the patient entity.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
+@XmlRootElement(name = "patient-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "patient-data", description = "Profile data of the patient entity.")
 public class PatientData extends UserData {
   private static final long serialVersionUID = 1L;
   
   @XmlElement(name = "therapist", required = true)
-  private URI therapist;
+  protected URI therapist;
   
   @XmlElementWrapper(name = "assignedSessions")
-  @XmlElement(name = "assignedSession")
-  private URI[] assignedSession;
+  @XmlElement(name = "assignedSession", required = false)
+  protected URI[] assignedSession;
   
   PatientData() {}
 
@@ -50,7 +58,7 @@ public class PatientData extends UserData {
     
     this.therapist = therapist;
   }
-  
+
   public URI getTherapist() {
     return therapist;
   }
@@ -58,7 +66,7 @@ public class PatientData extends UserData {
   public void setTherapist(URI therapist) {
     this.therapist = therapist;
   }
-
+  
   public URI[] getAssignedSession() {
     return assignedSession;
   }

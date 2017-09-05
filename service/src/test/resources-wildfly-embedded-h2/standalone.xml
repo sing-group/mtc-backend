@@ -353,6 +353,12 @@
       </mail-session>
     </subsystem>
     <subsystem xmlns="urn:jboss:domain:naming:2.0">
+      <bindings>
+          <simple name="java:global/mtc/swagger/version" value="1.0.0-SNAPSHOT" type="java.lang.String"/>
+          <simple name="java:global/mtc/swagger/schemes" value="http" type="java.lang.String"/>
+          <simple name="java:global/mtc/swagger/host" value="localhost:8080" type="java.lang.String"/>
+          <simple name="java:global/mtc/swagger/basePath" value="/mtc/rest/api" type="java.lang.String"/>
+      </bindings>
       <remote-naming />
     </subsystem>
     <subsystem xmlns="urn:jboss:domain:pojo:1.0" />

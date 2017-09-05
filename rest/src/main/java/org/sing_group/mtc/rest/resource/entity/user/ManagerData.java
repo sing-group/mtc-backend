@@ -31,13 +31,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Profile data of the manager entity.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
 @XmlRootElement(name = "manager-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "manager-data", description = "Profile data of the manager entity.")
 public class ManagerData extends IdentifiedUserData {
   private static final long serialVersionUID = 1L;
   
-  @XmlElementWrapper(name = "institutions")
-  @XmlElement(name = "institution")
+  @XmlElementWrapper(name = "institutions", required = false)
+  @XmlElement(name = "institutions")
   private URI[] institutions;
   
   ManagerData() {}

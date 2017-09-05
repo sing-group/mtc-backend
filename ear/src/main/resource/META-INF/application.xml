@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
-  REST
+  EAR
   %%
   Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
   %%
@@ -21,11 +21,19 @@
   #L%
   -->
 
-<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
-       bean-discovery-mode="all">
-  <interceptors>
-    <class>org.sing_group.mtc.rest.filter.CrossDomainInterceptor</class>
-  </interceptors>
-</beans>
+<!DOCTYPE application PUBLIC
+	"-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN"
+	"http://java.sun.com/dtd/application_1_3.dtd">
+<application id="mtc">
+  <display-name>Java EE</display-name>
+  <description>MultiTasking Cubes - EAR</description>
+  <module>
+    <web>
+      <web-uri>mtc-rest-0.1.0-SNAPSHOT.war</web-uri>
+      <context-root>/mtc/rest</context-root>
+    </web>
+  </module>
+  <module>
+    <ejb>mtc-service-0.1.0-SNAPSHOT.jar</ejb>
+  </module>
+</application>

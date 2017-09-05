@@ -48,3 +48,12 @@ The application can be stopped with the following Maven command:
 ```
 mvn wildfly:shutdown -P wildfly-mysql-run,-wildfly-embedded-h2
 ```
+
+### REST API documentation
+The REST API is documented using the [Swagger](https://swagger.io/) framework.
+It can be browsed using the [Swagger UI](http://petstore.swagger.io/)
+application to access the following URL:
+
+```
+http://localhost:8080/mtc/rest/api/swagger.json
+```

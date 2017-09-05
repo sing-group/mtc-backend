@@ -25,13 +25,24 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Arrays;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.sing_group.mtc.rest.resource.entity.LocaleMessages;
 
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Games session.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
 @XmlRootElement(name = "games-session", namespace = "http://entity.resource.rest.mtc.sing-group.org")
+@XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "game-session", description = "Games session.")
 public class GamesSessionData implements Serializable {
   private static final long serialVersionUID = 1L;
   

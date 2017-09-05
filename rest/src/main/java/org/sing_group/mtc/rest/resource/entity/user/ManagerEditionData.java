@@ -27,8 +27,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Profile data of the manager entity.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
 @XmlRootElement(name = "manager-edition-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "manager-edition-data", description = "Edition data of the manager entity.")
 public class ManagerEditionData extends IdentifiedUserEditionData {
   private static final long serialVersionUID = 1L;
 
@@ -42,7 +50,7 @@ public class ManagerEditionData extends IdentifiedUserEditionData {
 
   @Override
   public String toString() {
-    return "ManagerEditionData [login=" + login + ", email=" + email + ", name=" + name + ", surname=" + surname + ", password=" + password + "]";
+    return "ManagerEditionData [login=" + login + ", email=" + email + ", name=" + name + ", surname=" + surname + "]";
   }
   
 }

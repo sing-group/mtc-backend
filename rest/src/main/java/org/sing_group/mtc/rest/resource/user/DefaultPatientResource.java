@@ -28,6 +28,7 @@ import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toPatien
 import java.net.URI;
 
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,17 +44,37 @@ import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.entities.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.rest.filter.CrossDomain;
+import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.entity.mapper.UserMapper;
 import org.sing_group.mtc.rest.resource.entity.user.PatientData;
 import org.sing_group.mtc.rest.resource.entity.user.PatientEditionData;
+import org.sing_group.mtc.rest.resource.spi.user.PatientResource;
 import org.sing_group.mtc.service.spi.user.PatientService;
 import org.sing_group.mtc.service.spi.user.TherapistService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.ResponseHeader;
+
 @Path("patient")
+@Api(
+  value = "patient",
+  authorizations = @Authorization("basicAuth")
+)
+@ApiResponses({
+  @ApiResponse(code = 401, message = SecurityExceptionMapper.UNAUTHORIZED_MESSAGE),
+  @ApiResponse(code = 403, message = SecurityExceptionMapper.FORBIDDEN_MESSAGE)
+})
 @Produces({ APPLICATION_JSON, APPLICATION_XML })
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Stateless
-public class PatientResource {
+@Default
+@CrossDomain
+public class DefaultPatientResource implements PatientResource {
   @Inject
   private PatientService service;
   
@@ -63,39 +84,31 @@ public class PatientResource {
   @Context
   private UriInfo uriInfo;
   
-  public URI buildUriFor(Patient patient) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(patient.getLogin())
-    .build();
-  }
-  
-  public URI buildUriForTherapist(Patient patient) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(patient.getLogin())
-      .path("therapist")
-    .build();
-  }
-  
-  public URI buildUriForAssignedSession(AssignedGamesSession session) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(session.getPatient().map(Patient::getLogin).orElseThrow(IllegalStateException::new))
-      .path("assignedsession")
-      .path(Integer.toString(session.getId()))
-    .build();
-  }
-  
+  @Override
   @GET
   @Path("{login}")
+  @ApiOperation(
+    value = "Finds patients by login.",
+    response = PatientData.class,
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login} | 'login' should have a length between 1 and 100")
+  )
   public Response get(@PathParam("login") String login) {
     final Patient user = this.service.get(login);
 
     return Response.ok(toData(user)).build();
   }
   
+  @Override
   @GET
+  @ApiOperation(
+    value = "Returns all the patients in the database.",
+    response = PatientData.class,
+    responseContainer = "List",
+    code = 200
+  )
   public Response list() {
     final PatientData[] patients = this.service.list()
       .map(this::toData)
@@ -104,7 +117,16 @@ public class PatientResource {
     return Response.ok(patients).build();
   }
   
+  @Override
   @POST
+  @ApiOperation(
+    value = "Creates a new patient.",
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the new patient created."),
+    code = 201
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Entity already exists")
+  )
   public Response create(PatientEditionData data) {
     final Patient patient = this.service.create(toPatient(data, therapistService.get(data.getTherapist())));
     
@@ -113,7 +135,15 @@ public class PatientResource {
     return Response.created(userUri).build();
   }
   
+  @Override
   @PUT
+  @ApiOperation(
+    value = "Modifies an existing patient.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login}")
+  )
   public Response update(
     PatientEditionData data
   ) {
@@ -122,12 +152,44 @@ public class PatientResource {
     return Response.ok().build();
   }
   
+  @Override
   @DELETE
   @Path("{login}")
+  @ApiOperation(
+    value = "Deletes an existing patient.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login}")
+  )
   public Response delete(@PathParam("login") String login) {
     this.service.delete(login);
     
     return Response.ok().build();
+  }
+  
+  private URI buildUriFor(Patient patient) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(patient.getLogin())
+    .build();
+  }
+  
+  private URI buildUriForTherapist(Patient patient) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(patient.getLogin())
+      .path("therapist")
+    .build();
+  }
+  
+  private URI buildUriForAssignedSession(AssignedGamesSession session) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(session.getPatient().map(Patient::getLogin).orElseThrow(IllegalStateException::new))
+      .path("assignedsession")
+      .path(Integer.toString(session.getId()))
+    .build();
   }
   
   private PatientData toData(Patient patient) {

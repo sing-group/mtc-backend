@@ -73,6 +73,9 @@
     <!-- Dependencies versions -->
     <wildfly.version>8.2.1.Final</wildfly.version>
     <fluent-commons.version>0.1.0-SNAPSHOT</fluent-commons.version>
+    <swagger.version>1.5.16</swagger.version>
+    <!-- Resteasy specific version required, as it fixes ResourceInfo injection bug -->
+    <resteasy.version>3.0.24.Final</resteasy.version>
 
     <!-- Testing dependecies versions -->
     <arquillian.jacoco.version>1.0.0.Alpha9</arquillian.jacoco.version>
@@ -84,7 +87,6 @@
     <jacoco.version>0.7.9</jacoco.version>
     <junit.version>4.12</junit.version>
     <mysql.connector.java.version>5.1.21</mysql.connector.java.version>
-    <resteasy.version>3.0.13.Final</resteasy.version>
     <slf4j.version>1.5.10</slf4j.version>
 
     <!-- Plugins versions -->
@@ -166,6 +168,16 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${slf4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-jersey2-jaxrs</artifactId>
+        <version>${swagger.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jboss.resteasy</groupId>
+        <artifactId>resteasy-client</artifactId>
+        <version>${resteasy.version}</version>
       </dependency>
 
       <!-- Testing -->

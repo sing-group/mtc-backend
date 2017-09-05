@@ -29,5 +29,8 @@
   <alternatives>
     <class>org.sing_group.mtc.javaee.service.util.security.TestPrincipal</class>
   </alternatives>
+  <interceptors>
+    <class>org.sing_group.mtc.rest.filter.CrossDomainInterceptor</class>
+  </interceptors>
 </beans>
 

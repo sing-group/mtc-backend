@@ -28,8 +28,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
-@XmlRootElement(name = "manager-edition-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Profile data of the patient entity.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
+@XmlRootElement(name = "patient-edition-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "patient-edition-data", description = "Edition data of the patient entity.")
 public class PatientEditionData extends UserEditionData {
   private static final long serialVersionUID = 1L;
   
@@ -56,7 +64,7 @@ public class PatientEditionData extends UserEditionData {
 
   @Override
   public String toString() {
-    return "PatientEditionData [login=" + login + ", password=" + password + "]";
+    return "PatientEditionData [login=" + getLogin() + ", password=" + password + "]";
   }
   
 }

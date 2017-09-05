@@ -66,7 +66,7 @@ public class DAOHelper<K, T> {
       
       return entity;
     } catch (PersistenceException pe) {
-      throw new IllegalArgumentException("entity already exists", pe);
+      throw new IllegalArgumentException("Entity already exists", pe);
     }
   }
   
@@ -125,7 +125,7 @@ public class DAOHelper<K, T> {
     Optional<Integer> maxResults,
     F ... values
   ) {
-    requireNonNull(fieldName, "fieldname can't be null");
+    requireNonNull(fieldName, "Fieldname can't be null");
     requireNonNullArray(values);
     
     final CriteriaQuery<T> query = createCBQuery();

@@ -21,108 +21,29 @@
  */
 package org.sing_group.mtc.rest.resource.entity.mapper;
 
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toCollection;
-import static java.util.stream.Collectors.toMap;
-import static javax.transaction.Transactional.TxType.MANDATORY;
-
 import java.net.URI;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
-import javax.enterprise.inject.Default;
-import javax.inject.Inject;
-import javax.transaction.Transactional;
-
-import org.sing_group.mtc.domain.entities.game.Game;
-import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.session.GameConfigurationForSession;
 import org.sing_group.mtc.domain.entities.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.resource.entity.LocaleMessages;
 import org.sing_group.mtc.rest.resource.entity.session.GameConfigurationData;
-import org.sing_group.mtc.rest.resource.entity.session.GameParamData;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionData;
-import org.sing_group.mtc.service.spi.session.GameService;
 
-@Default
-@Transactional(value = MANDATORY)
-public class GamesMapper {
-  @Inject
-  private GameService gamesService;
-  
-  public void setGamesService(GameService gamesService) {
-    this.gamesService = gamesService;
-  }
-  
-  public GamesSession mapToGameSession(GamesSessionCreationData data) {
-    final GamesSession session = new GamesSession();
-    
-    session.setNameMessages(extractMessages(data.getName()));
-    session.setDescriptionMessages(extractMessages(data.getDescription()));
-    
-    mapToGameConfigurationForSession(data.getGames())
-      .forEach(session::addGameConfiguration);
-    
-    return session;
-  }
-  
-  private Map<I18NLocale, String> extractMessages(LocaleMessages messages) {
-    return messages.getMessages().entrySet().stream()
-      .collect(toMap(
-        entry -> I18NLocale.valueOf(entry.getKey()),
-        Entry::getValue
-      ));
-  }
-  
-  public SortedSet<GameConfigurationForSession> mapToGameConfigurationForSession(GameConfigurationData[] gameConfigurations) {
-    final AtomicInteger gameOrder = new AtomicInteger(1);
-    
-    return stream(gameConfigurations)
-      .map(game -> new GameConfigurationForSession(
-        null,
-        gamesService.getGame(game.getGameId()),
-        gameOrder.getAndIncrement(),
-        game.getParameterValues()
-      ))
-    .collect(toCollection(TreeSet::new));
-  }
-  
-  public GamesSessionData mapToGameSessionData(GamesSession session, Function<Therapist, URI> therapistUrlBuilder) {
-    return new GamesSessionData(
-      session.getId(),
-      therapistUrlBuilder.apply(session.getTherapist().orElseThrow(IllegalStateException::new)),
-      session.getGameConfigurations()
-        .map(this::mapToGameConfigurationData)
-      .toArray(GameConfigurationData[]::new),
-      mapToLocaleMessages(session.getName()),
-      mapToLocaleMessages(session.getDescription())
-    );
-  }
-  
-  public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration) {
-    return new GameConfigurationData(
-      gameConfiguration.getGame().map(Game::getId).orElseThrow(IllegalStateException::new),
-      gameConfiguration.getGameOrder(),
-      gameConfiguration.getParamValues().entrySet().stream()
-        .map(entry -> new GameParamData(entry.getKey(), entry.getValue()))
-      .toArray(GameParamData[]::new)
-    );
-  }
-  
-  public LocaleMessages mapToLocaleMessages(LocalizedMessage message) {
-    final Map<String, String> messages = message.getMessages().entrySet().stream()
-      .collect(toMap(
-        entry -> entry.getKey().getValue(),
-        Entry::getValue
-      ));
-    
-    return new LocaleMessages(message.getId(), messages);
-  }
+public interface GamesMapper {
+
+  public GamesSession mapToGameSession(GamesSessionCreationData data);
+
+  public SortedSet<GameConfigurationForSession> mapToGameConfigurationForSession(GameConfigurationData[] gameConfigurations);
+
+  public GamesSessionData mapToGameSessionData(GamesSession session, Function<Therapist, URI> therapistUrlBuilder);
+
+  public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration);
+
+  public LocaleMessages mapToLocaleMessages(LocalizedMessage message);
+
 }

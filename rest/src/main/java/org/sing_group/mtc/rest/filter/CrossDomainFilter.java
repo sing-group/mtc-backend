@@ -21,33 +21,30 @@
  */
 package org.sing_group.mtc.rest.filter;
 
+import static java.util.Arrays.asList;
+
 import java.io.IOException;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class CORSFilter implements ContainerResponseFilter {
+@PreMatching
+public class CrossDomainFilter implements ContainerResponseFilter {
   @Override
-  public void filter(final ContainerRequestContext requestContext, final ContainerResponseContext cres)
-    throws IOException {
+  public void filter(ContainerRequestContext containerRequest, ContainerResponseContext containerResponse) throws IOException {
+    if (containerRequest.getMethod().equals("OPTIONS")) {
+      final MultivaluedMap<String, Object> responseHeaders = containerResponse.getHeaders();
 
-    final MultivaluedMap<String, Object> headers = cres.getHeaders();
-
-    headers.remove("Access-Control-Allow-Origin");
-    headers.remove("Access-Control-Allow-Headers");
-    headers.remove("Access-Control-Allow-Credentials");
-    headers.remove("Access-Control-Allow-Methods");
-    headers.remove("Access-Control-Max-Age");
-
-    headers.add("Access-Control-Allow-Origin", "*");
-    headers.add("Access-Control-Allow-Headers", "Accept, Authorization, Connection, Content-Length, Content-Type, Origin");
-    headers.add("Access-Control-Allow-Credentials", "true");
-    headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
-    headers.add("Access-Control-Max-Age", "1209600");
-    headers.add("Access-Control-Expose-Headers", "Content-Type, Connection, Content-Length, Date, Location");
+      final CrossDomain annotation = CrossDomainInterceptor.class.getAnnotation(CrossDomain.class);
+      
+      CrossDomainInterceptor.buildCorsPreFlightHeaders(
+        annotation, (key, value) -> responseHeaders.put(key, asList(value)), containerRequest::getHeaderString
+      );
+    }
   }
 }

@@ -35,8 +35,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Game configuration data for a session.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
 @XmlRootElement(name = "game-configuration", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "game-configuration", description = "Game configuration data for a session.")
 public class GameConfigurationData implements Serializable {
   private static final long serialVersionUID = 1L;
   

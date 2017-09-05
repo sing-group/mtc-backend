@@ -27,8 +27,16 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Profile data of the administrator entity.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
 @XmlRootElement(name = "admin-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "admin-data", description = "Profile data of the administrator entity.")
 public class AdministratorData extends IdentifiedUserData {
   private static final long serialVersionUID = 1L;
 

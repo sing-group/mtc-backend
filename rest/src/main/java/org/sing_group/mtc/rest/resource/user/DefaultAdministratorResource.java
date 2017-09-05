@@ -29,6 +29,7 @@ import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toData;
 import java.net.URI;
 
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -43,38 +44,67 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.entities.user.Administrator;
+import org.sing_group.mtc.rest.filter.CrossDomain;
+import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.entity.mapper.UserMapper;
 import org.sing_group.mtc.rest.resource.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.resource.entity.user.AdministratorEditionData;
+import org.sing_group.mtc.rest.resource.spi.user.AdministratorResource;
 import org.sing_group.mtc.service.spi.user.AdministratorService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+import io.swagger.annotations.ResponseHeader;
+
 @Path("admin")
+@Api(
+  value = "admin",
+  authorizations = @Authorization("basicAuth")
+)
+@ApiResponses({
+  @ApiResponse(code = 401, message = SecurityExceptionMapper.UNAUTHORIZED_MESSAGE),
+  @ApiResponse(code = 403, message = SecurityExceptionMapper.FORBIDDEN_MESSAGE)
+})
 @Produces({ APPLICATION_JSON, APPLICATION_XML })
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Stateless
-public class AdministratorResource {
+@Default
+@CrossDomain
+public class DefaultAdministratorResource implements AdministratorResource {
   @Inject
   private AdministratorService service;
   
   @Context
   private UriInfo uriInfo;
   
-  public URI buildUriFor(Administrator admin) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(admin.getLogin())
-    .build();
-  }
-  
+  @Override
   @GET
   @Path("{login}")
+  @ApiOperation(
+    value = "Finds administrators by login.",
+    response = AdministratorData.class,
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login} | 'login' should have a length between 1 and 100")
+  )
   public Response get(@PathParam("login") String login) {
     final Administrator user = this.service.get(login);
 
     return Response.ok(toData(user)).build();
   }
   
+  @Override
   @GET
+  @ApiOperation(
+    value = "Returns all the administrators in the database.",
+    response = AdministratorData.class,
+    responseContainer = "List",
+    code = 200
+  )
   public Response list() {
     final AdministratorData[] admins = this.service.list()
       .map(UserMapper::toData)
@@ -83,7 +113,16 @@ public class AdministratorResource {
     return Response.ok(admins).build();
   }
   
+  @Override
   @POST
+  @ApiOperation(
+    value = "Creates a new administrator.",
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the new administrator created."),
+    code = 201
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Entity already exists")
+  )
   public Response create(AdministratorEditionData data) {
     final Administrator admin = this.service.create(toAdministrator(data));
     
@@ -92,7 +131,15 @@ public class AdministratorResource {
     return Response.created(userUri).build();
   }
   
+  @Override
   @PUT
+  @ApiOperation(
+    value = "Modifies an existing administrator.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login}")
+  )
   public Response update(
     AdministratorEditionData data
   ) {
@@ -101,11 +148,26 @@ public class AdministratorResource {
     return Response.ok().build();
   }
   
+  @Override
   @DELETE
   @Path("{login}")
+  @ApiOperation(
+    value = "Deletes an existing administrator.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login}")
+  )
   public Response delete(@PathParam("login") String login) {
     this.service.delete(login);
     
     return Response.ok().build();
+  }
+  
+  private URI buildUriFor(Administrator admin) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(admin.getLogin())
+    .build();
   }
 }

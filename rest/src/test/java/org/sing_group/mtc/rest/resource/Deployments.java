@@ -22,8 +22,8 @@
 package org.sing_group.mtc.rest.resource;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.sing_group.fluent.checker.Checks;
 
 public final class Deployments {
@@ -32,12 +32,19 @@ public final class Deployments {
   public static WebArchive createDeployment() {
     return ShrinkWrap.create(WebArchive.class, "test.war")
       .addClass(Checks.class)
-      .addPackages(true, "org.sing_group.mtc", "org.sing_group.fluent", "org.hamcrest")
+      .addPackages(true, "org.sing_group.mtc")
+      .addAsLibraries(
+        Maven.resolver()
+          .loadPomFromFile("pom.xml")
+          .importRuntimeDependencies()
+          .resolve().withTransitivity()
+        .asFile()
+      )
       .addAsResource("arquillian.extension.persistence.properties")
       .addAsResource("arquillian.extension.persistence.dbunit.properties")
       .addAsResource("test-persistence.xml", "META-INF/persistence.xml")
       .addAsWebInfResource("jboss-web.xml")
       .addAsWebInfResource("web.xml")
-      .addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+      .addAsWebInfResource("beans.xml");
   }
 }

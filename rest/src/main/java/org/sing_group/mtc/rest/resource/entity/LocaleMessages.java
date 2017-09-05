@@ -33,8 +33,16 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Localized messages.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
 @XmlRootElement(name = "locale-messages", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "locale-messages", description = "Localized messages.")
 public class LocaleMessages implements Serializable {
   private static final long serialVersionUID = 1L;
 

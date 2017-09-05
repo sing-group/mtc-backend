@@ -22,6 +22,8 @@
 package org.sing_group.mtc.rest.mapper;
 
 import static java.util.Objects.requireNonNull;
+import static org.sing_group.mtc.rest.mapper.SecurityExceptionMapper.FORBIDDEN_MESSAGE;
+import static org.sing_group.mtc.rest.mapper.SecurityExceptionMapper.UNAUTHORIZED_MESSAGE;
 
 import java.security.Principal;
 
@@ -29,7 +31,6 @@ import javax.ejb.EJBAccessException;
 import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
@@ -58,13 +59,16 @@ implements ExceptionMapper<EJBAccessException> {
   public Response toResponse(EJBAccessException e) {
     LOG.error("Exception catched", e);
     
-    final Status status = "anonymous".equals(principal.getName())
-      ? Response.Status.UNAUTHORIZED
-      : Response.Status.FORBIDDEN;
-    
-    return Response.status(status)
-      .entity(e.getMessage())
-      .type(MediaType.TEXT_PLAIN)
-    .build();
+    if ("anonymous".equals(principal.getName())) {
+      return Response.status(Response.Status.UNAUTHORIZED)
+        .entity(UNAUTHORIZED_MESSAGE)
+        .type(MediaType.TEXT_PLAIN)
+      .build();
+    } else {
+      return Response.status(Response.Status.FORBIDDEN)
+        .entity(FORBIDDEN_MESSAGE)
+        .type(MediaType.TEXT_PLAIN)
+      .build();
+    }
   }
 }

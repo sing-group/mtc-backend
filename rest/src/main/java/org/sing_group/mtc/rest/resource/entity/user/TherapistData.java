@@ -31,19 +31,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Profile data of the therapist entity.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
 @XmlRootElement(name = "therapist-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
+@ApiModel(value = "therapist-data", description = "Profile data of the therapist entity.")
 public class TherapistData extends IdentifiedUserData {
   private static final long serialVersionUID = 1L;
   
   @XmlElement(name = "institution", required = true)
   private URI institution;
   
-  @XmlElementWrapper(name = "patients")
+  @XmlElementWrapper(name = "patients", required = false)
   @XmlElement(name = "patient")
   private URI[] patients;
   
-  @XmlElementWrapper(name = "sessions")
+  @XmlElementWrapper(name = "sessions", required = false)
   @XmlElement(name = "session")
   private URI[] sessions;
   
@@ -59,7 +67,7 @@ public class TherapistData extends IdentifiedUserData {
     this.patients = patients;
     this.sessions = sessions;
   }
-  
+
   public URI getInstitution() {
     return institution;
   }
@@ -86,6 +94,6 @@ public class TherapistData extends IdentifiedUserData {
 
   @Override
   public String toString() {
-    return "TherapistData [login=" + login + ", email=" + email + ", name=" + name + ", surname=" + surname + "]";
+    return "TherapistData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()=" + getName() + ", getSurname()=" + getSurname() + "]";
   }
 }

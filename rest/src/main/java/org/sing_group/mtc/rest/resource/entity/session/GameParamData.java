@@ -28,8 +28,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import io.swagger.annotations.ApiModel;
+
+/**
+ * Game configuration parameter.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
 @XmlRootElement(name = "game-param", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
+@ApiModel(value = "game-param", description = "Game configuration parameter.")
 public class GameParamData implements Serializable {
   private static final long serialVersionUID = 1L;
 

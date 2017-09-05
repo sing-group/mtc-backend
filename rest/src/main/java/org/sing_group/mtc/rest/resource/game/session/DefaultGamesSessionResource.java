@@ -19,11 +19,12 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource.session;
+package org.sing_group.mtc.rest.resource.game.session;
 
 import java.net.URI;
 
 import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,19 +37,34 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.entities.session.GamesSession;
+import org.sing_group.mtc.rest.filter.CrossDomain;
+import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.entity.mapper.GamesMapper;
 import org.sing_group.mtc.rest.resource.entity.session.GamesSessionData;
+import org.sing_group.mtc.rest.resource.spi.game.session.GamesSessionResource;
 import org.sing_group.mtc.service.spi.session.GamesSessionService;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
+
 @Path("game/session")
-@Produces({
-  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
+@Api(
+  value = "game/session",
+  authorizations = @Authorization("basicAuth")
+)
+@ApiResponses({
+  @ApiResponse(code = 401, message = SecurityExceptionMapper.UNAUTHORIZED_MESSAGE),
+  @ApiResponse(code = 403, message = SecurityExceptionMapper.FORBIDDEN_MESSAGE)
 })
-@Consumes({
-  MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML
-})
+@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Stateless
-public class GamesSessionResource {
+@Default
+@CrossDomain
+public class DefaultGamesSessionResource implements GamesSessionResource {
   @Inject
   private GamesSessionService service;
 
@@ -58,16 +74,17 @@ public class GamesSessionResource {
   @Context
   private UriInfo uriInfo;
   
-  public URI buildUriForTherapist(GamesSession session) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(Integer.toString(session.getId()))
-      .path("therapist")
-    .build();
-  }
-  
+  @Override
   @GET
   @Path("{id}")
+  @ApiOperation(
+    value = "Finds game sessions by identifier.",
+    response = GamesSessionData.class,
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown session: {id}")
+  )
   public Response get(@PathParam("id") int sessionId) {
     final GamesSession session = this.service.get(sessionId);
     
@@ -75,5 +92,13 @@ public class GamesSessionResource {
       this.gamesMapper.mapToGameSessionData(session, therapist -> this.buildUriForTherapist(session));
     
     return Response.ok(sessionData).build();
+  }
+  
+  private URI buildUriForTherapist(GamesSession session) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(Integer.toString(session.getId()))
+      .path("therapist")
+    .build();
   }
 }

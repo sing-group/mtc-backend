@@ -39,10 +39,9 @@ import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKeyColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.PrimaryKeyJoinColumns;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -71,22 +70,22 @@ public class GameResult {
   private String patient;
   
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @PrimaryKeyJoinColumns(
+  @JoinColumns(
     value = {
-      @PrimaryKeyJoinColumn(name = "session", referencedColumnName = "session"),
-      @PrimaryKeyJoinColumn(name = "patient", referencedColumnName = "patient"),
-      @PrimaryKeyJoinColumn(name = "assignmentDate", referencedColumnName = "assignmentDate")
+      @JoinColumn(name = "session", referencedColumnName = "session", insertable = false, updatable = false, nullable = false),
+      @JoinColumn(name = "patient", referencedColumnName = "patient", insertable = false, updatable = false, nullable = false),
+      @JoinColumn(name = "assignmentDate", referencedColumnName = "assignmentDate", insertable = false, updatable = false, nullable = false)
     },
     foreignKey = @ForeignKey(name = "FK_gameresult_assignedsession")
   )
   private AssignedGamesSession assignedSession;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
-  @PrimaryKeyJoinColumns(
+  @JoinColumns(
     value = {
-      @PrimaryKeyJoinColumn(name = "gameOrder", referencedColumnName = "gameOrder"),
-      @PrimaryKeyJoinColumn(name = "session", referencedColumnName = "session"),
-      @PrimaryKeyJoinColumn(name = "game", referencedColumnName = "game")
+      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", insertable = false, updatable = false, nullable = false),
+      @JoinColumn(name = "session", referencedColumnName = "session", insertable = false, updatable = false, nullable = false),
+      @JoinColumn(name = "game", referencedColumnName = "game", insertable = false, updatable = false, nullable = false)
     },
     foreignKey = @ForeignKey(name = "FK_gameresult_sessiongame")
   )

@@ -44,7 +44,7 @@ import org.sing_group.mtc.domain.entities.game.parameter.GameParameter.GameParam
 @Entity
 @Table(name = "game_parameter")
 @Cacheable
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 @IdClass(GameParameterId.class)
 public abstract class GameParameter<T> {
   @Id

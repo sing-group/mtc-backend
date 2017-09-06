@@ -31,7 +31,14 @@ Of course, this configuration can be changed in the POM file.
 The application can be started with the following Maven command:
 
 ```
-mvn package wildfly:start wildfly:deploy-only -P wildfly-mysql-run,-wildfly-embedded-h2
+mvn package wildfly:start wildfly:deploy-only -P wildfly-mysql-run,-wildfly-embedded-h2,-metadata-build
+```
+
+This will start a **WildFly 8.2.1**. If you want to use a **WildFly 10.1.0**,
+you can use the command:
+
+```
+mvn package wildfly:start wildfly:deploy-only -P wildfly10-mysql-run,-wildfly-embedded-h2,-metadata-build
 ```
 
 ### Restarting the application
@@ -39,14 +46,21 @@ Once it is running, the application can be re-started with the following Maven
 command:
 
 ```
-mvn wildfly:shutdown wildfly:start wildfly:deploy-only -P wildfly-mysql-run,-wildfly-embedded-h2
+mvn wildfly:shutdown wildfly:start wildfly:deploy-only -P wildfly-mysql-run,-wildfly-embedded-h2,-metadata-build
+```
+
+In case you are using the **WildFly 10.1.0** version, you should use the
+following command instead:
+
+```
+mvn wildfly:shutdown wildfly:start wildfly:deploy-only -P wildfly10-mysql-run,-wildfly-embedded-h2,-metadata-build
 ```
 
 ### Stopping the application
 The application can be stopped with the following Maven command:
 
 ```
-mvn wildfly:shutdown -P wildfly-mysql-run,-wildfly-embedded-h2
+mvn wildfly:shutdown
 ```
 
 ### REST API documentation

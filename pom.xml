@@ -40,17 +40,43 @@
 
   <distributionManagement>
     <repository>
-      <id>deployment</id>
-      <name>Internal Releases</name>
-      <url>https://maven.sing-group.org/content/repositories/releases/</url>
+      <id>sing-maven-releases</id>
+      <name>SING Maven Releases</name>
+      <url>https://maven.sing-group.org/repository/maven-releases/</url>
     </repository>
+
     <snapshotRepository>
-      <id>deployment</id>
-      <name>Internal SNAPSHOT Releases</name>
-      <url>https://maven.sing-group.org/content/repositories/snapshots/</url>
+      <id>sing-maven-releases</id>
+      <name>SING Maven Snapshots</name>
+      <url>https://maven.sing-group.org/repository/maven-snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
 
+  <repositories>
+    <repository>
+      <id>sing-maven-releases</id>
+      <name>SING Maven Releases</name>
+      <url>https://maven.sing-group.org/repository/maven-releases/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>sing-maven-snapshots</id>
+      <name>SING Maven Snapshots</name>
+      <url>https://maven.sing-group.org/repository/maven-snapshots/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  
   <properties>
     <!-- General properties -->
     <maven.compiler.source>1.8</maven.compiler.source>

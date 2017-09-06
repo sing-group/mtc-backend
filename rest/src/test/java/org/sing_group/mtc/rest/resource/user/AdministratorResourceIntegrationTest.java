@@ -35,10 +35,10 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
-import static org.sing_group.mtc.rest.resource.entity.GenericTypes.AdministratorDataListType.ADMINISTRATOR_DATA_LIST_TYPE;
-import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toEditionData;
-import static org.sing_group.mtc.rest.resource.entity.user.IsEqualToAdministrator.containsAdministratorsInAnyOrder;
-import static org.sing_group.mtc.rest.resource.entity.user.IsEqualToAdministrator.equalToAdministrator;
+import static org.sing_group.mtc.rest.entity.GenericTypes.AdministratorDataListType.ADMINISTRATOR_DATA_LIST_TYPE;
+import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToAdministrator.containsAdministratorsInAnyOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToAdministrator.equalToAdministrator;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -59,10 +59,10 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.entities.user.Administrator;
+import org.sing_group.mtc.rest.entity.mapper.UserMapper;
+import org.sing_group.mtc.rest.entity.user.AdministratorData;
+import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
 import org.sing_group.mtc.rest.resource.Deployments;
-import org.sing_group.mtc.rest.resource.entity.mapper.UserMapper;
-import org.sing_group.mtc.rest.resource.entity.user.AdministratorData;
-import org.sing_group.mtc.rest.resource.entity.user.AdministratorEditionData;
 
 @RunWith(Arquillian.class)
 public class AdministratorResourceIntegrationTest {

@@ -39,7 +39,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.sing_group.mtc.domain.entities.session.GamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 
 /**
  * A therapist.

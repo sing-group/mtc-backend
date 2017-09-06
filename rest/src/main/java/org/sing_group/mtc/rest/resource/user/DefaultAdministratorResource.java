@@ -23,8 +23,8 @@ package org.sing_group.mtc.rest.resource.user;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
-import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toAdministrator;
-import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toData;
+import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toAdministrator;
+import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toData;
 
 import java.net.URI;
 
@@ -44,11 +44,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.entities.user.Administrator;
+import org.sing_group.mtc.rest.entity.mapper.UserMapper;
+import org.sing_group.mtc.rest.entity.user.AdministratorData;
+import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
-import org.sing_group.mtc.rest.resource.entity.mapper.UserMapper;
-import org.sing_group.mtc.rest.resource.entity.user.AdministratorData;
-import org.sing_group.mtc.rest.resource.entity.user.AdministratorEditionData;
 import org.sing_group.mtc.rest.resource.spi.user.AdministratorResource;
 import org.sing_group.mtc.service.spi.user.AdministratorService;
 

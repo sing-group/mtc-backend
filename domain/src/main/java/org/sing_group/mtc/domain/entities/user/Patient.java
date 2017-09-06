@@ -40,7 +40,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.sing_group.mtc.domain.entities.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 
 /**
  * A patient.

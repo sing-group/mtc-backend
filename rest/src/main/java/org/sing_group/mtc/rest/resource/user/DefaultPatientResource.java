@@ -23,7 +23,7 @@ package org.sing_group.mtc.rest.resource.user;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
-import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toPatient;
+import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toPatient;
 
 import java.net.URI;
 
@@ -42,13 +42,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.sing_group.mtc.domain.entities.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.rest.entity.mapper.UserMapper;
+import org.sing_group.mtc.rest.entity.user.PatientData;
+import org.sing_group.mtc.rest.entity.user.PatientEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
-import org.sing_group.mtc.rest.resource.entity.mapper.UserMapper;
-import org.sing_group.mtc.rest.resource.entity.user.PatientData;
-import org.sing_group.mtc.rest.resource.entity.user.PatientEditionData;
 import org.sing_group.mtc.rest.resource.spi.user.PatientResource;
 import org.sing_group.mtc.service.spi.user.PatientService;
 import org.sing_group.mtc.service.spi.user.TherapistService;

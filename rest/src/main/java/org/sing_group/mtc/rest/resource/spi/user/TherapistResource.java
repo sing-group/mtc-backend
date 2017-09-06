@@ -24,7 +24,7 @@ package org.sing_group.mtc.rest.resource.spi.user;
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
-import org.sing_group.mtc.rest.resource.entity.user.TherapistEditionData;
+import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 
 @Local
 public interface TherapistResource {

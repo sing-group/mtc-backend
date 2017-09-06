@@ -36,13 +36,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.sing_group.mtc.domain.entities.session.GamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GamesSession;
+import org.sing_group.mtc.rest.entity.mapper.GamesMapper;
+import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
-import org.sing_group.mtc.rest.resource.entity.mapper.GamesMapper;
-import org.sing_group.mtc.rest.resource.entity.session.GamesSessionData;
 import org.sing_group.mtc.rest.resource.spi.game.session.GamesSessionResource;
-import org.sing_group.mtc.service.spi.session.GamesSessionService;
+import org.sing_group.mtc.service.spi.game.session.GamesSessionService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -35,10 +35,10 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.therapists;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
-import static org.sing_group.mtc.rest.resource.entity.GenericTypes.TherapistDataListType.THERAPIST_DATA_LIST_TYPE;
-import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toEditionData;
-import static org.sing_group.mtc.rest.resource.entity.user.IsEqualToTherapist.containsTherapistsInAnyOrder;
-import static org.sing_group.mtc.rest.resource.entity.user.IsEqualToTherapist.equalToTherapist;
+import static org.sing_group.mtc.rest.entity.GenericTypes.TherapistDataListType.THERAPIST_DATA_LIST_TYPE;
+import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.containsTherapistsInAnyOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.equalToTherapist;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -59,9 +59,9 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.entities.user.Therapist;
+import org.sing_group.mtc.rest.entity.user.TherapistData;
+import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 import org.sing_group.mtc.rest.resource.Deployments;
-import org.sing_group.mtc.rest.resource.entity.user.TherapistData;
-import org.sing_group.mtc.rest.resource.entity.user.TherapistEditionData;
 
 @RunWith(Arquillian.class)
 public class TherapistResourceIntegrationTest {

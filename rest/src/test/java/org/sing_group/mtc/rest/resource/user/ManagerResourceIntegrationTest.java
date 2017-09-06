@@ -35,10 +35,10 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
-import static org.sing_group.mtc.rest.resource.entity.GenericTypes.ManagerDataListType.MANAGER_DATA_LIST_TYPE;
-import static org.sing_group.mtc.rest.resource.entity.mapper.UserMapper.toEditionData;
-import static org.sing_group.mtc.rest.resource.entity.user.IsEqualToManager.containsManagersInAnyOrder;
-import static org.sing_group.mtc.rest.resource.entity.user.IsEqualToManager.equalToManager;
+import static org.sing_group.mtc.rest.entity.GenericTypes.ManagerDataListType.MANAGER_DATA_LIST_TYPE;
+import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.containsManagersInAnyOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.equalToManager;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -59,9 +59,9 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.rest.entity.user.ManagerData;
+import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
 import org.sing_group.mtc.rest.resource.Deployments;
-import org.sing_group.mtc.rest.resource.entity.user.ManagerData;
-import org.sing_group.mtc.rest.resource.entity.user.ManagerEditionData;
 
 @RunWith(Arquillian.class)
 public class ManagerResourceIntegrationTest {

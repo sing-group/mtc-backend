@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Profile data of the administrator entity.
@@ -35,7 +36,7 @@ import io.swagger.annotations.ApiModel;
  * @author Miguel Reboiro-Jato
  */
 @XmlRootElement(name = "admin-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @ApiModel(value = "admin-data", description = "Profile data of the administrator entity.")
 public class AdministratorData extends IdentifiedUserData {
   private static final long serialVersionUID = 1L;
@@ -46,8 +47,21 @@ public class AdministratorData extends IdentifiedUserData {
     super(login, email, name, surname, RoleType.ADMIN);
   }
 
+  @ApiModelProperty(allowableValues = "ADMIN", required = true)
+  @Override
+  public RoleType getRole() {
+    return super.getRole();
+  }
+  
+  @Override
+  public void setRole(RoleType role) {
+    if (role != RoleType.ADMIN)
+      throw new IllegalArgumentException("Invalid role. Only " + RoleType.ADMIN + " role is admitted");
+  }
+  
   @Override
   public String toString() {
-    return "AdministratorData [login=" + login + ", email=" + email + ", name=" + name + ", surname=" + surname + "]";
+    return "AdministratorData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()=" + getName()
+      + ", getSurname()=" + getSurname() + "]";
   }
 }

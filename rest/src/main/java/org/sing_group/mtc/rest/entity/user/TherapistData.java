@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Profile data of the therapist entity.
@@ -44,15 +45,10 @@ import io.swagger.annotations.ApiModel;
 public class TherapistData extends IdentifiedUserData {
   private static final long serialVersionUID = 1L;
   
-  @XmlElement(name = "institution", required = true)
   private URI institution;
   
-  @XmlElementWrapper(name = "patients", required = false)
-  @XmlElement(name = "patient")
   private URI[] patients;
   
-  @XmlElementWrapper(name = "sessions", required = false)
-  @XmlElement(name = "session")
   private URI[] sessions;
   
   TherapistData() {}
@@ -68,6 +64,7 @@ public class TherapistData extends IdentifiedUserData {
     this.sessions = sessions;
   }
 
+  @XmlElement(name = "institution", required = true)
   public URI getInstitution() {
     return institution;
   }
@@ -76,6 +73,8 @@ public class TherapistData extends IdentifiedUserData {
     this.institution = institution;
   }
 
+  @XmlElementWrapper(name = "patients", required = false)
+  @XmlElement(name = "patient")
   public URI[] getPatients() {
     return patients;
   }
@@ -84,6 +83,8 @@ public class TherapistData extends IdentifiedUserData {
     this.patients = patients;
   }
 
+  @XmlElementWrapper(name = "sessions", required = false)
+  @XmlElement(name = "session")
   public URI[] getSessions() {
     return sessions;
   }
@@ -92,8 +93,21 @@ public class TherapistData extends IdentifiedUserData {
     this.sessions = sessions;
   }
 
+  @ApiModelProperty(allowableValues = "THERAPIST", required = true)
+  @Override
+  public RoleType getRole() {
+    return super.getRole();
+  }
+
+  @Override
+  public void setRole(RoleType role) {
+    if (role != RoleType.THERAPIST)
+      throw new IllegalArgumentException("Invalid role. Only " + RoleType.THERAPIST + " role is admitted");
+  }
+  
   @Override
   public String toString() {
-    return "TherapistData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()=" + getName() + ", getSurname()=" + getSurname() + "]";
+    return "TherapistData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()=" + getName()
+      + ", getSurname()=" + getSurname() + "]";
   }
 }

@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Profile data of the manager entity.
@@ -39,13 +40,11 @@ import io.swagger.annotations.ApiModel;
  * @author Miguel Reboiro-Jato
  */
 @XmlRootElement(name = "manager-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @ApiModel(value = "manager-data", description = "Profile data of the manager entity.")
 public class ManagerData extends IdentifiedUserData {
   private static final long serialVersionUID = 1L;
   
-  @XmlElementWrapper(name = "institutions", required = false)
-  @XmlElement(name = "institutions")
   private URI[] institutions;
   
   ManagerData() {}
@@ -55,7 +54,9 @@ public class ManagerData extends IdentifiedUserData {
     
     this.institutions = institutions;
   }
-  
+
+  @XmlElementWrapper(name = "institutions", required = false)
+  @XmlElement(name = "institutions")
   public URI[] getInstitutions() {
     return institutions;
   }
@@ -64,8 +65,21 @@ public class ManagerData extends IdentifiedUserData {
     this.institutions = institutions;
   }
 
+  @ApiModelProperty(allowableValues = "MANAGER", required = true)
+  @Override
+  public RoleType getRole() {
+    return super.getRole();
+  }
+
+  @Override
+  public void setRole(RoleType role) {
+    if (role != RoleType.MANAGER)
+      throw new IllegalArgumentException("Invalid role. Only " + RoleType.MANAGER + " role is admitted");
+  }
+
   @Override
   public String toString() {
-    return "ManagerData [login=" + login + ", email=" + email + ", name=" + name + ", surname=" + surname + "]";
+    return "ManagerData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()=" + getName()
+      + ", getSurname()=" + getSurname() + "]";
   }
 }

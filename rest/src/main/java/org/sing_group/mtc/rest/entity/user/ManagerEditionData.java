@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Profile data of the manager entity.
@@ -35,7 +36,7 @@ import io.swagger.annotations.ApiModel;
  * @author Miguel Reboiro-Jato
  */
 @XmlRootElement(name = "manager-edition-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @ApiModel(value = "manager-edition-data", description = "Edition data of the manager entity.")
 public class ManagerEditionData extends IdentifiedUserEditionData {
   private static final long serialVersionUID = 1L;
@@ -48,9 +49,21 @@ public class ManagerEditionData extends IdentifiedUserEditionData {
     super(login, password, email, name, surname, RoleType.MANAGER);
   }
 
+  @ApiModelProperty(allowableValues = "MANAGER", required = true)
+  @Override
+  public RoleType getRole() {
+    return super.getRole();
+  }
+
+  @Override
+  public void setRole(RoleType role) {
+    if (role != RoleType.MANAGER)
+      throw new IllegalArgumentException("Invalid role. Only " + RoleType.MANAGER + " role is admitted");
+  }
+
   @Override
   public String toString() {
-    return "ManagerEditionData [login=" + login + ", email=" + email + ", name=" + name + ", surname=" + surname + "]";
+    return "ManagerEditionData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()="
+      + getName() + ", getSurname()=" + getSurname() + ", getPassword()=" + getPassword() + "]";
   }
-  
 }

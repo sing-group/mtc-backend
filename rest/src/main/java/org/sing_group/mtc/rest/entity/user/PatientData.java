@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Profile data of the patient entity.
@@ -39,26 +40,24 @@ import io.swagger.annotations.ApiModel;
  * @author Miguel Reboiro-Jato
  */
 @XmlRootElement(name = "patient-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @ApiModel(value = "patient-data", description = "Profile data of the patient entity.")
 public class PatientData extends UserData {
   private static final long serialVersionUID = 1L;
   
-  @XmlElement(name = "therapist", required = true)
   protected URI therapist;
   
-  @XmlElementWrapper(name = "assignedSessions")
-  @XmlElement(name = "assignedSession", required = false)
   protected URI[] assignedSession;
   
   PatientData() {}
 
   public PatientData(String login, URI therapist, URI[] assignedSessions) {
-    super(login, RoleType.MANAGER);
+    super(login, RoleType.PATIENT);
     
     this.therapist = therapist;
   }
 
+  @XmlElement(name = "therapist", required = true)
   public URI getTherapist() {
     return therapist;
   }
@@ -66,7 +65,9 @@ public class PatientData extends UserData {
   public void setTherapist(URI therapist) {
     this.therapist = therapist;
   }
-  
+
+  @XmlElementWrapper(name = "assignedSessions")
+  @XmlElement(name = "assignedSession", required = false)
   public URI[] getAssignedSession() {
     return assignedSession;
   }
@@ -75,8 +76,20 @@ public class PatientData extends UserData {
     this.assignedSession = assignedSession;
   }
 
+  @ApiModelProperty(allowableValues = "PATIENT", required = true)
+  @Override
+  public RoleType getRole() {
+    return super.getRole();
+  }
+
+  @Override
+  public void setRole(RoleType role) {
+    if (role != RoleType.PATIENT)
+      throw new IllegalArgumentException("Invalid role. Only " + RoleType.PATIENT + " role is admitted");
+  }
+
   @Override
   public String toString() {
-    return "PatientData [login=" + login + "]";
+    return "PatientData [getLogin()=" + getLogin() + "]";
   }
 }

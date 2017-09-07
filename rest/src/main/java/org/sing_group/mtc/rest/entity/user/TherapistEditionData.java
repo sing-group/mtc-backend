@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Profile data of the therapist entity.
@@ -36,12 +37,11 @@ import io.swagger.annotations.ApiModel;
  * @author Miguel Reboiro-Jato
  */
 @XmlRootElement(name = "therapist-edition-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 @ApiModel(value = "therapist-edition-data", description = "Edition data of the therapist entity.")
 public class TherapistEditionData extends IdentifiedUserEditionData {
   private static final long serialVersionUID = 1L;
   
-  @XmlElement(name = "institution", required = true)
   private Integer institution;
 
   TherapistEditionData() {
@@ -49,17 +49,30 @@ public class TherapistEditionData extends IdentifiedUserEditionData {
   }
   
   public TherapistEditionData(String login, String password, String email, String name, String surname, Integer institution) {
-    super(login, password, email, name, surname, RoleType.MANAGER);
+    super(login, password, email, name, surname, RoleType.THERAPIST);
     
     this.institution = institution;
   }
   
+  @XmlElement(name = "institution", required = true)
   public Integer getInstitution() {
     return this.institution;
   }
   
   public void setInstitution(Integer institution) {
     this.institution = institution;
+  }
+
+  @ApiModelProperty(allowableValues = "THERAPIST", required = true)
+  @Override
+  public RoleType getRole() {
+    return super.getRole();
+  }
+
+  @Override
+  public void setRole(RoleType role) {
+    if (role != RoleType.THERAPIST)
+      throw new IllegalArgumentException("Invalid role. Only " + RoleType.THERAPIST + " role is admitted");
   }
 
   @Override
@@ -89,6 +102,7 @@ public class TherapistEditionData extends IdentifiedUserEditionData {
 
   @Override
   public String toString() {
-    return "TherapistEditionData [login=" + login + ", email=" + email + ", name=" + name + ", surname=" + surname + "]";
+    return "TherapistEditionData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()="
+      + getName() + ", getSurname()=" + getSurname() + ", getPassword()=" + getPassword() + "]";
   }
 }

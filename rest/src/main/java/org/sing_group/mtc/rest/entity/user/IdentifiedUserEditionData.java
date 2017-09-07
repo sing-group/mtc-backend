@@ -28,14 +28,11 @@ import org.sing_group.mtc.domain.entities.user.RoleType;
 public abstract class IdentifiedUserEditionData extends UserEditionData {
   private static final long serialVersionUID = 1L;
   
-  @XmlElement(name = "email", required = true)
-  protected String email;
+  private String email;
   
-  @XmlElement(name = "name", required = false)
-  protected String name;
+  private String name;
   
-  @XmlElement(name = "surname", required = false)
-  protected String surname;
+  private String surname;
   
   IdentifiedUserEditionData() {}
 
@@ -47,6 +44,7 @@ public abstract class IdentifiedUserEditionData extends UserEditionData {
     this.surname = surname;
   }
 
+  @XmlElement(name = "email", required = true)
   public String getEmail() {
     return email;
   }
@@ -55,6 +53,7 @@ public abstract class IdentifiedUserEditionData extends UserEditionData {
     this.email = email;
   }
 
+  @XmlElement(name = "name", required = false)
   public String getName() {
     return name;
   }
@@ -63,6 +62,7 @@ public abstract class IdentifiedUserEditionData extends UserEditionData {
     this.name = name;
   }
 
+  @XmlElement(name = "surname", required = false)
   public String getSurname() {
     return surname;
   }

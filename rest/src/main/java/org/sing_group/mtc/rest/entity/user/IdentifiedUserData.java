@@ -30,14 +30,9 @@ import org.sing_group.mtc.domain.entities.user.RoleType;
 public abstract class IdentifiedUserData extends UserData implements Serializable {
   private static final long serialVersionUID = 1L;
   
-  @XmlElement(name = "email", required = true)
-  protected String email;
-  
-  @XmlElement(name = "name", required = false)
-  protected String name;
-  
-  @XmlElement(name = "surname", required = false)
-  protected String surname;
+  private String email;
+  private String name;
+  private String surname;
 
   IdentifiedUserData() {}
 
@@ -49,6 +44,7 @@ public abstract class IdentifiedUserData extends UserData implements Serializabl
     this.surname = surname;
   }
 
+  @XmlElement(name = "email", required = true)
   public String getEmail() {
     return email;
   }
@@ -57,6 +53,7 @@ public abstract class IdentifiedUserData extends UserData implements Serializabl
     this.email = email;
   }
 
+  @XmlElement(name = "name", required = false)
   public String getName() {
     return name;
   }
@@ -65,6 +62,7 @@ public abstract class IdentifiedUserData extends UserData implements Serializabl
     this.name = name;
   }
 
+  @XmlElement(name = "surname", required = false)
   public String getSurname() {
     return surname;
   }

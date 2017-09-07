@@ -30,11 +30,9 @@ import org.sing_group.mtc.domain.entities.user.RoleType;
 public abstract class UserData implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  @XmlElement(name = "login", required = true)
-  protected String login;
+  private String login;
 
-  @XmlElement(name = "role", required = true)
-  protected RoleType role;
+  private RoleType role;
 
   UserData() {}
 
@@ -43,6 +41,7 @@ public abstract class UserData implements Serializable {
     this.role = role;
   }
 
+  @XmlElement(name = "login", required = true)
   public String getLogin() {
     return login;
   }
@@ -51,6 +50,7 @@ public abstract class UserData implements Serializable {
     this.login = login;
   }
 
+  @XmlElement(name = "role", required = true)
   public RoleType getRole() {
     return role;
   }

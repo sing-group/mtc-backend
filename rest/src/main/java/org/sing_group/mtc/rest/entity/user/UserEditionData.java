@@ -28,8 +28,7 @@ import org.sing_group.mtc.domain.entities.user.RoleType;
 public abstract class UserEditionData extends UserData {
   private static final long serialVersionUID = 1L;
 
-  @XmlElement(name = "password", required = false)
-  protected String password;
+  private String password;
   
   UserEditionData() {}
 
@@ -39,6 +38,7 @@ public abstract class UserEditionData extends UserData {
     this.password = password;
   }
 
+  @XmlElement(name = "password", required = false)
   public String getPassword() {
     return password;
   }

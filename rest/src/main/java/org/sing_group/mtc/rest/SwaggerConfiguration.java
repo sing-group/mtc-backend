@@ -30,6 +30,7 @@ import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.config.ReaderListener;
+import io.swagger.models.Contact;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.BasicAuthDefinition;
 
@@ -49,12 +50,23 @@ public class SwaggerConfiguration implements ReaderListener {
   @PostConstruct
   public void init() {
     final BeanConfig config = new BeanConfig();
-    config.setVersion(this.version);
+    
+    config.setBasePath(this.basePath);
     config.setSchemes(this.schemes.split(","));
     config.setHost(this.host);
-    config.setBasePath(this.basePath);
+    
+    config.setTitle("MultiTasking Cubes");
+    config.setDescription("MultiTasking Cubes (MTC) is an open tool for cognitive rehabilitation");
+    config.setVersion(this.version);
+    config.setLicense("GPLv3");
+    config.setLicenseUrl("https://www.gnu.org/licenses/gpl-3.0.en.html");
+    config.setContact("SING Group");
+    
     config.setResourcePackage(this.getClass().getPackage().getName());
     config.setScan(true);
+    
+    final Contact contact = config.getSwagger().getInfo().getContact();
+    contact.setUrl("https://www.sing-group.org");
   }
   
   @Override

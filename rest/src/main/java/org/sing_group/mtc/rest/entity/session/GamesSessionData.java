@@ -24,14 +24,17 @@ package org.sing_group.mtc.rest.entity.session;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.sing_group.mtc.rest.entity.LocaleMessages;
+import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.MapI18NLocaleDataStringAdapter;
 
 import io.swagger.annotations.ApiModel;
 
@@ -53,11 +56,15 @@ public class GamesSessionData implements Serializable {
   @XmlElementWrapper(name = "configurations", nillable = false, required = true)
   private GameConfigurationData[] gameConfiguration;
 
+  @XmlJavaTypeAdapter(MapI18NLocaleDataStringAdapter.class)
+  @XmlElementWrapper(name = "name", required = true)
   @XmlElement(name = "name", required = true)
-  private LocaleMessages nameMessage;
+  private Map<I18NLocaleData, String> nameMessage;
 
+  @XmlJavaTypeAdapter(MapI18NLocaleDataStringAdapter.class)
+  @XmlElementWrapper(name = "description", required = true)
   @XmlElement(name = "description", required = true)
-  private LocaleMessages descriptionMessage;
+  private Map<I18NLocaleData, String> descriptionMessage;
   
   GamesSessionData() {}
 
@@ -65,8 +72,8 @@ public class GamesSessionData implements Serializable {
     int id,
     URI therapist,
     GameConfigurationData[] gameConfiguration,
-    LocaleMessages nameMessage,
-    LocaleMessages descriptionMessage
+    Map<I18NLocaleData, String> nameMessage,
+    Map<I18NLocaleData, String> descriptionMessage
   ) {
     this.id = id;
     this.therapist = therapist;
@@ -99,19 +106,19 @@ public class GamesSessionData implements Serializable {
     this.gameConfiguration = gameConfiguration;
   }
 
-  public LocaleMessages getNameMessage() {
+  public Map<I18NLocaleData, String> getNameMessage() {
     return nameMessage;
   }
 
-  public void setNameMessage(LocaleMessages nameMessage) {
+  public void setNameMessage(Map<I18NLocaleData, String> nameMessage) {
     this.nameMessage = nameMessage;
   }
 
-  public LocaleMessages getDescriptionMessage() {
+  public Map<I18NLocaleData, String> getDescriptionMessage() {
     return descriptionMessage;
   }
 
-  public void setDescriptionMessage(LocaleMessages descriptionMessage) {
+  public void setDescriptionMessage(Map<I18NLocaleData, String> descriptionMessage) {
     this.descriptionMessage = descriptionMessage;
   }
 

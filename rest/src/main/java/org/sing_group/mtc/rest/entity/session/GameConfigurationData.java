@@ -34,8 +34,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Game configuration data for a session.
@@ -90,6 +92,8 @@ public class GameConfigurationData implements Serializable {
     this.parameters = parameters;
   }
   
+  @XmlTransient
+  @ApiModelProperty(hidden = true)
   public Map<String, String> getParameterValues() {
     return stream(this.parameters)
       .collect(toMap(

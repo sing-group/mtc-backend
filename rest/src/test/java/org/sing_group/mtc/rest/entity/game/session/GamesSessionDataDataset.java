@@ -24,8 +24,7 @@ package org.sing_group.mtc.rest.entity.game.session;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
-import org.sing_group.mtc.rest.entity.LocaleMessages;
+import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.session.GameParamData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
@@ -48,17 +47,17 @@ public final class GamesSessionDataDataset {
       })
     };
 
-    final Map<String, String> nameMessages = new HashMap<>();
-    final Map<String, String> descriptionMessages = new HashMap<>();
+    final Map<I18NLocaleData, String> nameMessages = new HashMap<>();
+    final Map<I18NLocaleData, String> descriptionMessages = new HashMap<>();
 
-    nameMessages.put(I18NLocale.EN_US.name(), "Recognition 2");
-    nameMessages.put(I18NLocale.ES_ES.name(), "Reconocimiento 2");
-    nameMessages.put(I18NLocale.GL_ES.name(), "Recoñecemento 2");
+    nameMessages.put(I18NLocaleData.EN_US, "Recognition 2");
+    nameMessages.put(I18NLocaleData.ES_ES, "Reconocimiento 2");
+    nameMessages.put(I18NLocaleData.GL_ES, "Recoñecemento 2");
 
-    descriptionMessages.put(I18NLocale.EN_US.name(), "Recognition game.");
-    descriptionMessages.put(I18NLocale.ES_ES.name(), "Juego de reconocimiento.");
-    descriptionMessages.put(I18NLocale.GL_ES.name(), "Xogo de recoñecemento.");
+    descriptionMessages.put(I18NLocaleData.EN_US, "Recognition game.");
+    descriptionMessages.put(I18NLocaleData.ES_ES, "Juego de reconocimiento.");
+    descriptionMessages.put(I18NLocaleData.GL_ES, "Xogo de recoñecemento.");
     
-    return new GamesSessionCreationData(games, new LocaleMessages("name", nameMessages), new LocaleMessages("description", descriptionMessages));
+    return new GamesSessionCreationData(games, nameMessages, descriptionMessages);
   }
 }

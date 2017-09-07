@@ -20,6 +20,11 @@ INSERT INTO `game_type` (`game`, `name`)
 VALUES ('recognition', 'RECOGNITION'),
        ('verbalFluency', 'VERBAL_FLUENCY');
        
+INSERT INTO `game_parameter` (`game`, `id`)
+VALUES ('recognition','maxRepetitions'),
+       ('recognition','numOfStimuli'),
+       ('recognition','diceShowTime');
+       
 INSERT INTO `integer_parameter` (`game`, `id`, `defaultValue`, `max`, `min`)
 VALUES ('recognition','maxRepetitions',1,1,5),
        ('recognition','numOfStimuli',6,1,12);

@@ -22,14 +22,17 @@
 package org.sing_group.mtc.rest.entity.game.session;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
+import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
+import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.rest.entity.IsEqualToLocaleMessages;
+import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 
 public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData, GamesSession> {
@@ -47,8 +50,8 @@ public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData,
     } else {
       return checkAttribute("id", GamesSessionData::getId, GamesSession::getId, actual)
         && checkAttribute("therapist", GamesSessionData::getTherapist, unwrapOptionalFuncion(GamesSession::getTherapist), actual, this::matchUriAndTherapist)
-        && matchAttribute("nameMessages", GamesSessionData::getNameMessage, GamesSession::getName, actual, IsEqualToLocaleMessages::equalToLocaleMessages)
-        && matchAttribute("descriptionMessages", GamesSessionData::getDescriptionMessage, GamesSession::getDescription, actual, IsEqualToLocaleMessages::equalToLocaleMessages)
+        && checkAttribute("nameMessages", GamesSessionData::getNameMessage, GamesSession::getName, actual, this::matchLocaleMessages)
+        && checkAttribute("descriptionMessages", GamesSessionData::getDescriptionMessage, GamesSession::getDescription, actual, this::matchLocaleMessages)
         && matchIterableAttribute("gameConfigurations",
           wrapArrayToIterableFunction(GamesSessionData::getGameConfiguration),
           wrapStreamToIterableFunction(GamesSession::getGameConfigurations),
@@ -61,6 +64,21 @@ public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData,
   private boolean matchUriAndTherapist(URI uri, Therapist therapist) {
     return uri.toString().endsWith("/therapist/" + therapist.getLogin())
       || uri.toString().endsWith("therapist");
+  }
+  
+  private boolean matchLocaleMessages(Map<I18NLocaleData, String> data, LocalizedMessage messages) {
+    for (Map.Entry<I18NLocaleData, String> entry : data.entrySet()) {
+      final I18NLocaleData locale = entry.getKey();
+      final String message = entry.getValue();
+      
+      final String expectedMessage = messages.getMessage(I18NLocale.valueOf(locale.name()));
+      
+      if (!message.equals(expectedMessage)) {
+        return false;
+      }
+    }
+    
+    return true;
   }
 
   @Factory

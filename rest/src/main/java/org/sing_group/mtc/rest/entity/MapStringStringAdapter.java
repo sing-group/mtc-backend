@@ -93,9 +93,13 @@ public class MapStringStringAdapter extends XmlAdapter<MapStringString, Map<Stri
     
     public MapStringStringEntry() {}
     
+    public MapStringStringEntry(String key, String value) {
+      this.key = key;
+      this.value = value;
+    }
+    
     public MapStringStringEntry(Map.Entry<String, String> entry) {
-      this.key = entry.getKey();
-      this.value = entry.getValue();
+      this(entry.getKey(), entry.getValue());
     }
     
     public String getKey() {

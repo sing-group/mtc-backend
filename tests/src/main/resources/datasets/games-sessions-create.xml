@@ -22,7 +22,7 @@
   -->
 
 <dataset>
-  <session id="2" therapist="therapist2" />
+  <session id="2" therapist="therapist" />
 
   <session_game game="recognition" gameOrder="1" session="2" />
   <session_game game="verbalFluency" gameOrder="2" session="2" />
@@ -59,4 +59,68 @@
     i18nLocale="ES_ES" />
   <session_i18n session="2" i18nKey="session.2.description"
     i18nLocale="GL_ES" />
+    
+    <!-- 
+Sample JSON for games session creation:
+
+{
+  "game": [
+    {
+      "gameId": "recognition",
+      "gameOrder": 1,
+      "parameter": [
+        {
+          "key": "maxRepetitions",
+          "value": "2"
+        },
+        {
+          "key": "numOfStimuli",
+          "value": "6"
+        },
+        {
+          "key": "diceShowTime",
+          "value": "3"
+        }
+      ]
+    },
+    {
+      "gameId": "verbalFluency",
+      "gameOrder": 2,
+      "parameter": []
+    },
+    {
+      "gameId": "recognition",
+      "gameOrder": 3,
+      "parameter": [
+        {
+          "key": "maxRepetitions",
+          "value": "1"
+        },
+        {
+          "key": "numOfStimuli",
+          "value": "8"
+        },
+        {
+          "key": "diceShowTime",
+          "value": "2"
+        }
+      ]
+    }
+  ],
+  "name": {
+    "values": [
+      { "key": "en_US", "value": "Recognition 2" },
+      { "key": "es_ES", "value": "Reconocimiento 2" },
+      { "key": "gl_ES", "value": "Recoñecemento 2" }
+    ]
+  },
+  "description": {
+    "values": [
+      { "key": "en_US", "value": "Recognition game." },
+      { "key": "es_ES", "value": "Juego de reconocimiento." },
+      { "key": "gl_ES", "value": "Xogo de recoñecemento." }
+    ]
+  }
+}
+     -->
 </dataset>

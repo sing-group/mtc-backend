@@ -44,7 +44,7 @@ import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.rest.entity.LocaleMessages;
+import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.session.GameParamData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
@@ -74,10 +74,10 @@ public class DefaultGamesMapper implements GamesMapper {
     return session;
   }
   
-  private Map<I18NLocale, String> extractMessages(LocaleMessages messages) {
-    return messages.getMessages().entrySet().stream()
+  private Map<I18NLocale, String> extractMessages(Map<I18NLocaleData, String> messages) {
+    return messages.entrySet().stream()
       .collect(toMap(
-        entry -> I18NLocale.valueOf(entry.getKey()),
+        entry -> I18NLocale.valueOf(entry.getKey().name()),
         Entry::getValue
       ));
   }
@@ -121,13 +121,13 @@ public class DefaultGamesMapper implements GamesMapper {
   }
   
   @Override
-  public LocaleMessages mapToLocaleMessages(LocalizedMessage message) {
-    final Map<String, String> messages = message.getMessages().entrySet().stream()
+  public Map<I18NLocaleData, String> mapToLocaleMessages(LocalizedMessage message) {
+    final Map<I18NLocaleData, String> messages = message.getMessages().entrySet().stream()
       .collect(toMap(
-        entry -> entry.getKey().getValue(),
+        entry -> I18NLocaleData.of(entry.getKey().getValue()),
         Entry::getValue
       ));
     
-    return new LocaleMessages(message.getId(), messages);
+    return messages;
   }
 }

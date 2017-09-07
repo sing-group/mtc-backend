@@ -23,14 +23,17 @@ package org.sing_group.mtc.rest.entity.session;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.sing_group.mtc.rest.entity.LocaleMessages;
+import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.MapI18NLocaleDataStringAdapter;
 
 @XmlRootElement(name = "games-session-creation", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -41,30 +44,26 @@ public class GamesSessionCreationData implements Serializable {
   @XmlElement(name = "game", required = true)
   private GameConfigurationData[] games;
 
+  @XmlJavaTypeAdapter(MapI18NLocaleDataStringAdapter.class)
+  @XmlElementWrapper(name = "name", required = true)
   @XmlElement(name = "name", required = true)
-  private LocaleMessages name;
-  
+  private Map<I18NLocaleData, String> name;
+
+  @XmlJavaTypeAdapter(MapI18NLocaleDataStringAdapter.class)
+  @XmlElementWrapper(name = "description", required = true)
   @XmlElement(name = "description", required = true)
-  private LocaleMessages description;
+  private Map<I18NLocaleData, String> description;
   
   GamesSessionCreationData() {}
 
   public GamesSessionCreationData(
     GameConfigurationData[] games,
-    LocaleMessages name,
-    LocaleMessages description
+    Map<I18NLocaleData, String> name,
+    Map<I18NLocaleData, String> description
   ) {
     this.games = games;
     this.name = name;
     this.description = description;
-  }
-  
-  public LocaleMessages getName() {
-    return name;
-  }
-
-  public void setName(LocaleMessages name) {
-    this.name = name;
   }
 
   public GameConfigurationData[] getGames() {
@@ -74,12 +73,20 @@ public class GamesSessionCreationData implements Serializable {
   public void setGames(GameConfigurationData[] games) {
     this.games = games;
   }
+  
+  public Map<I18NLocaleData, String> getName() {
+    return name;
+  }
 
-  public LocaleMessages getDescription() {
+  public void setName(Map<I18NLocaleData, String> name) {
+    this.name = name;
+  }
+
+  public Map<I18NLocaleData, String> getDescription() {
     return description;
   }
 
-  public void setDescription(LocaleMessages description) {
+  public void setDescription(Map<I18NLocaleData, String> description) {
     this.description = description;
   }
 

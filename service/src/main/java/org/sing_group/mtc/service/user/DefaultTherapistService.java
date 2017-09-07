@@ -29,17 +29,26 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.sing_group.mtc.domain.dao.spi.game.session.GamesSessionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
+import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.service.security.SecurityGuard;
 import org.sing_group.mtc.service.spi.user.TherapistService;
+import org.sing_group.mtc.service.spi.user.UserService;
 
 @Stateless
 @RolesAllowed("MANAGER")
 public class DefaultTherapistService implements TherapistService {
   @Inject
   private TherapistDAO dao;
+  
+  @Inject
+  private GamesSessionDAO gamesSessionDao;
+  
+  @Inject
+  private UserService userService;
 
   @Inject
   private SecurityGuard securityGuard;
@@ -71,4 +80,13 @@ public class DefaultTherapistService implements TherapistService {
   public void delete(String login) {
     dao.delete(login);
   }
+
+  @RolesAllowed("THERAPIST")
+  @Override
+  public GamesSession createGamesSession(GamesSession gamesSession) {
+    gamesSession.setTherapist(this.userService.getCurrentUser());
+    
+    return this.gamesSessionDao.persist(gamesSession);
+  }
+  
 }

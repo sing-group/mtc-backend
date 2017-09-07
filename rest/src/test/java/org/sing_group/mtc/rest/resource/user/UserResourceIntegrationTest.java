@@ -37,8 +37,6 @@ import java.util.function.Consumer;
 
 import javax.ws.rs.core.Response;
 
-import org.hamcrest.CoreMatchers;
-import org.hamcrest.core.IsEqual;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;

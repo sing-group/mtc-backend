@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import javax.ejb.Local;
 
+import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Local
@@ -38,4 +39,6 @@ public interface TherapistService {
   public Therapist update(Therapist therapist);
 
   public void delete(String login);
+
+  public GamesSession createGamesSession(GamesSession gamesSession);
 }

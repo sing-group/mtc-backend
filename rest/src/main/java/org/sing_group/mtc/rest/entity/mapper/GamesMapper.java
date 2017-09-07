@@ -22,6 +22,7 @@
 package org.sing_group.mtc.rest.entity.mapper;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.function.Function;
 
@@ -29,7 +30,7 @@ import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSessi
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.rest.entity.LocaleMessages;
+import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionData;
@@ -44,6 +45,6 @@ public interface GamesMapper {
 
   public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration);
 
-  public LocaleMessages mapToLocaleMessages(LocalizedMessage message);
+  public Map<I18NLocaleData, String> mapToLocaleMessages(LocalizedMessage message);
 
 }

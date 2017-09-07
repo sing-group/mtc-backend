@@ -45,7 +45,9 @@ import javax.ws.rs.core.UriInfo;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
+import org.sing_group.mtc.rest.entity.mapper.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.UserMapper;
+import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
@@ -82,10 +84,12 @@ public class DefaultTherapistResource implements TherapistResource {
   @Inject
   private InstitutionService institutionService;
   
+  @Inject
+  private GamesMapper gamesMapper;
+  
   @Context
   private UriInfo uriInfo;
   
-  @Override
   @GET
   @Path("{login}")
   @ApiOperation(
@@ -96,13 +100,13 @@ public class DefaultTherapistResource implements TherapistResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login} | 'login' should have a length between 1 and 100")
   )
+  @Override
   public Response get(@PathParam("login") String login) {
     final Therapist user = this.service.get(login);
 
     return Response.ok(toData(user)).build();
   }
   
-  @Override
   @GET
   @ApiOperation(
     value = "Returns all the therapists in the database.",
@@ -110,6 +114,7 @@ public class DefaultTherapistResource implements TherapistResource {
     responseContainer = "List",
     code = 200
   )
+  @Override
   public Response list() {
     final TherapistData[] therapists = this.service.list()
       .map(this::toData)
@@ -118,7 +123,6 @@ public class DefaultTherapistResource implements TherapistResource {
     return Response.ok(therapists).build();
   }
   
-  @Override
   @POST
   @ApiOperation(
     value = "Creates a new therapist.",
@@ -128,6 +132,7 @@ public class DefaultTherapistResource implements TherapistResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Entity already exists")
   )
+  @Override
   public Response create(TherapistEditionData data) {
     final Therapist therapist = this.service.create(toTherapist(data, this.institutionService.get(data.getInstitution())));
     
@@ -136,7 +141,6 @@ public class DefaultTherapistResource implements TherapistResource {
     return Response.created(userUri).build();
   }
   
-  @Override
   @PUT
   @ApiOperation(
     value = "Modifies an existing therapist.",
@@ -145,6 +149,7 @@ public class DefaultTherapistResource implements TherapistResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
   )
+  @Override
   public Response update(
     TherapistEditionData data
   ) {
@@ -153,7 +158,6 @@ public class DefaultTherapistResource implements TherapistResource {
     return Response.ok().build();
   }
   
-  @Override
   @DELETE
   @Path("{login}")
   @ApiOperation(
@@ -163,10 +167,35 @@ public class DefaultTherapistResource implements TherapistResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
   )
+  @Override
   public Response delete(@PathParam("login") String login) {
     this.service.delete(login);
     
     return Response.ok().build();
+  }
+  
+  @POST
+  @Path("gamesession")
+  @Override
+  @ApiOperation(
+    value = "Creates a new games session associated to the therapist.",
+    responseHeaders = @ResponseHeader(
+      name = "Location",
+      description = "Location of the new games session created relative to the therapist."
+    ),
+    code = 201
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Entity already exists")
+  )
+  public Response createGamesSession(GamesSessionCreationData data) {
+    final GamesSession gamesSession = this.service.createGamesSession(
+      gamesMapper.mapToGameSession(data)
+    );
+    
+    return Response
+      .created(this.buildUriForSession(gamesSession))
+    .build();
   }
   
   private URI buildUriFor(Therapist therapist) {

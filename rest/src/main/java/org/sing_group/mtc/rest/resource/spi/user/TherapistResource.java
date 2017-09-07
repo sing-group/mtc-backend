@@ -24,6 +24,7 @@ package org.sing_group.mtc.rest.resource.spi.user;
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
+import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 
 @Local
@@ -38,5 +39,7 @@ public interface TherapistResource {
   public Response update(TherapistEditionData data);
 
   public Response delete(String login);
+
+  public Response createGamesSession(GamesSessionCreationData data);
 
 }

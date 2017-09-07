@@ -38,8 +38,6 @@ public class IsEqualToGameConfigurationData extends IsEqualToEntity<GameConfigur
 
   @Override
   protected boolean matchesSafely(GameConfigurationForSession actualEntity) {
-    System.err.println("Matching: " + actualEntity);
-    
     this.clearDescribeTo();
 
     if (actualEntity == null) {

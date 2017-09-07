@@ -1,6 +1,6 @@
 /*
  * #%L
- * REST
+ * Service
  * %%
  * Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
  * %%
@@ -19,14 +19,34 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource.spi.session;
+package org.sing_group.mtc.service.user;
 
-import javax.ejb.Local;
-import javax.ws.rs.core.Response;
+import java.security.Principal;
 
-@Local
-public interface SessionResource {
+import javax.annotation.security.PermitAll;
+import javax.ejb.Stateless;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
 
-  public Response check(String login, String password);
+import org.sing_group.mtc.domain.dao.spi.user.UserDAO;
+import org.sing_group.mtc.domain.entities.user.User;
+import org.sing_group.mtc.service.spi.user.UserService;
+
+@Stateless
+@Default
+@PermitAll
+public class DefaultUserService implements UserService {
+  
+  @Inject
+  private UserDAO dao;
+  
+  @Inject
+  private Principal principal;
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public <U extends User> U getCurrentUser() {
+    return (U) this.dao.get(this.principal.getName());
+  }
 
 }

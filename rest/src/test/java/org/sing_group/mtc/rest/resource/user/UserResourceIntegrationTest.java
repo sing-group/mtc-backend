@@ -19,13 +19,16 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource.session;
+package org.sing_group.mtc.rest.resource.user;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.invalidLogins;
 import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.users;
 import static org.sing_group.mtc.domain.entities.UsersDataset.validLogins;
+import static org.sing_group.mtc.domain.entities.user.User.getRoleName;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasUnauthorizedStatus;
 
@@ -34,6 +37,8 @@ import java.util.function.Consumer;
 
 import javax.ws.rs.core.Response;
 
+import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsEqual;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
@@ -50,8 +55,8 @@ import org.sing_group.mtc.domain.entities.user.User;
 import org.sing_group.mtc.rest.resource.Deployments;
 
 @RunWith(Arquillian.class)
-public class SessionResourceIntegrationTest {
-  private static final String BASE_PATH = "api/session/";
+public class UserResourceIntegrationTest {
+  private static final String BASE_PATH = "api/user/role";
 
   @Deployment
   public static Archive<?> createDeployment() {
@@ -137,6 +142,10 @@ public class SessionResourceIntegrationTest {
       responseRef = Optional.of(response);
       
       assertThat(response, hasOkStatus());
+      
+      final String role = response.readEntity(String.class);
+        
+      assertThat(role, is(equalTo(getRoleName(expectedUser))));
     } finally {
       responseRef.ifPresent(Response::close);
     }

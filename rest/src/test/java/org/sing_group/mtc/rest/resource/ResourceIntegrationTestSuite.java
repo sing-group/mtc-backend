@@ -25,14 +25,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.sing_group.mtc.rest.resource.game.session.GamesSessionResourceIntegrationTest;
-import org.sing_group.mtc.rest.resource.session.SessionResourceIntegrationTest;
 import org.sing_group.mtc.rest.resource.user.AdministratorResourceIntegrationTest;
 import org.sing_group.mtc.rest.resource.user.ManagerResourceIntegrationTest;
 import org.sing_group.mtc.rest.resource.user.PatientResourceIntegrationTest;
 import org.sing_group.mtc.rest.resource.user.TherapistResourceIntegrationTest;
+import org.sing_group.mtc.rest.resource.user.UserResourceIntegrationTest;
 
 @SuiteClasses({
-	SessionResourceIntegrationTest.class,
+	UserResourceIntegrationTest.class,
 	AdministratorResourceIntegrationTest.class,
 	ManagerResourceIntegrationTest.class,
 	TherapistResourceIntegrationTest.class,

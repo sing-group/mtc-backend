@@ -83,6 +83,26 @@
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
               <execution>
+                <id>copy-wildfly</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.wildfly</groupId>
+                      <artifactId>wildfly-dist</artifactId>
+                      <version>${wildfly.version}</version>
+                      <type>zip</type>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>target</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+              
+              <execution>
                 <id>copy-mysql-for-execution</id>
                 <phase>generate-resources</phase>
                 <goals>
@@ -95,10 +115,33 @@
                       <artifactId>mysql-connector-java</artifactId>
                       <type>jar</type>
                       <overWrite>false</overWrite>
-                      <outputDirectory>${project.build.directory}</outputDirectory>
+                      <outputDirectory>${wildfly.home}/standalone/deployments</outputDirectory>
                       <destFileName>mysql-connector-java-${mysql.connector.java.version}.jar</destFileName>
                     </artifactItem>
                   </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-standalone</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${wildfly.home}/standalone/configuration</outputDirectory>
+                  <resources>
+                    <resource>
+                      <include>standalone.xml</include>
+                      <directory>${project.parent.basedir}/additional-material/wildfly8</directory>
+                    </resource>
+                  </resources>
                 </configuration>
               </execution>
             </executions>
@@ -108,62 +151,8 @@
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
             <configuration>
-              <version>${wildfly.version}</version>
-              <before-deployment>
-                <batch />
-                <commands>
-                  <command>deploy
-                    ${project.build.directory}/mysql-connector-java-${mysql.connector.java.version}.jar</command>
-                  <command>data-source add
-                    --jndi-name=java:jboss/datasources/mtc
-                    --name=mtc-mysql
-                    --jta=true --use-ccm=true
-                    --connection-url=jdbc:mysql://localhost:3306/mtc?useUnicode=yes&amp;characterEncoding=UTF-8
-                    --driver-name=mysql-connector-java-${mysql.connector.java.version}.jar
-                    --driver-class=com.mysql.jdbc.Driver --user-name=mtc
-                    --password=mtcpass</command>
-                  <command>/core-service=management/security-realm=RemotingRealm:add</command>
-                  <command>/core-service=management/security-realm=RemotingRealm/authentication=jaas:add(name="AppRealmLoopThrough")</command>
-                  <command>/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name="security-realm",
-                    value="RemotingRealm")</command>
-                  <command>/subsystem=security/security-domain=AppRealmLoopThrough:add(cache-type=default)</command>
-                  <command>/subsystem=security/security-domain=AppRealmLoopThrough/authentication=classic:add(login-modules=[{"code"=&gt;"Client",
-                    "flag" =&gt; "required", "module-options" =&gt;
-                    [("multi-threaded" =&gt; "true")]}])</command>
-                  <command>/subsystem=security/security-domain=mtc-security-domain:add</command>
-                  <command>/subsystem=security/security-domain=mtc-security-domain/authentication=classic:add(
-                    login-modules=[{
-                    "code"=&gt;"Database",
-                    "flag" =&gt; "required",
-                    "module-options" =&gt; [
-                    ("dsJndiName" =&gt; "java:jboss/datasources/mtc"),
-                    ("principalsQuery" =&gt; "SELECT password FROM user WHERE login=?"),
-                    ("rolesQuery" =&gt; "SELECT role, 'Roles' FROM user
-                    WHERE login=?"),
-                    ("hashAlgorithm" =&gt; "MD5"),
-                    ("hashEncoding" =&gt; "hex"),
-                    ("ignorePasswordCase" =&gt; "true")]
-                    }]
-                    )
-                  </command>
-                  <command>/subsystem=naming/binding=java\:global\/mtc\/swagger\/version:add(
-                    binding-type=simple, type=java.lang.String, value=${project.version}
-                  )</command>
-                  <command>/subsystem=naming/binding=java\:global\/mtc\/swagger\/schemes:add(binding-type=simple,
-                    type=java.lang.String, value=http)</command>
-                  <command>/subsystem=naming/binding=java\:global\/mtc\/swagger\/host:add(
-                    binding-type=simple, type=java.lang.String, value=localhost:8080
-                  )</command>
-                  <command>/subsystem=naming/binding=java\:global\/mtc\/swagger\/basePath:add(
-                    binding-type=simple, type=java.lang.String, value=mtc\/rest\/api
-                  )</command>
-                </commands>
-              </before-deployment>
-              <after-deployment>
-                <commands>
-                  <command>:reload</command>
-                </commands>
-              </after-deployment>
+              <jboss-home>${wildfly.home}</jboss-home>
+              <server-config>standalone.xml</server-config>
               <add-user>
                 <users>
                   <user>
@@ -178,7 +167,7 @@
         </plugins>
       </build>
     </profile>
-
+  
     <profile>
       <id>wildfly10-mysql-run</id>
       <build>
@@ -187,6 +176,26 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
             <executions>
+              <execution>
+                <id>copy-wildfly</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.wildfly</groupId>
+                      <artifactId>wildfly-dist</artifactId>
+                      <version>${wildfly10.version}</version>
+                      <type>zip</type>
+                      <overWrite>false</overWrite>
+                      <outputDirectory>target</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+              
               <execution>
                 <id>copy-mysql-for-execution</id>
                 <phase>generate-resources</phase>
@@ -200,10 +209,33 @@
                       <artifactId>mysql-connector-java</artifactId>
                       <type>jar</type>
                       <overWrite>false</overWrite>
-                      <outputDirectory>${project.build.directory}</outputDirectory>
+                      <outputDirectory>${wildfly10.home}/standalone/deployments</outputDirectory>
                       <destFileName>mysql-connector-java-${mysql.connector.java.version}.jar</destFileName>
                     </artifactItem>
                   </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-standalone</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${wildfly10.home}/standalone/configuration</outputDirectory>
+                  <resources>
+                    <resource>
+                      <include>standalone.xml</include>
+                      <directory>${project.parent.basedir}/additional-material/wildfly10</directory>
+                    </resource>
+                  </resources>
                 </configuration>
               </execution>
             </executions>
@@ -213,62 +245,8 @@
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
             <configuration>
-              <version>${wildfly10.version}</version>
-              <before-deployment>
-                <batch />
-                <commands>
-                  <command>deploy
-                    ${project.build.directory}/mysql-connector-java-${mysql.connector.java.version}.jar</command>
-                  <command>data-source add
-                    --jndi-name=java:jboss/datasources/mtc
-                    --name=mtc-mysql
-                    --jta=true --use-ccm=true
-                    --enabled=true
-                    --connection-url=jdbc:mysql://localhost:3306/mtc?useUnicode=yes&amp;characterEncoding=UTF-8
-                    --driver-name=mysql-connector-java-${mysql.connector.java.version}.jar
-                    --driver-class=com.mysql.jdbc.Driver --user-name=mtc
-                    --password=mtcpass</command>
-                  <command>/core-service=management/security-realm=RemotingRealm:add</command>
-                  <command>/core-service=management/security-realm=RemotingRealm/authentication=jaas:add(name="AppRealmLoopThrough")</command>
-                  <command>/subsystem=remoting/http-connector=http-remoting-connector:write-attribute(name="security-realm",
-                    value="RemotingRealm")</command>
-                  <command>/subsystem=security/security-domain=AppRealmLoopThrough:add(cache-type=default)</command>
-                  <command>/subsystem=security/security-domain=AppRealmLoopThrough/authentication=classic:add(login-modules=[{"code"=&gt;"Client",
-                    "flag" =&gt; "required", "module-options" =&gt;
-                    [("multi-threaded" =&gt; "true")]}])</command>
-                  <command>/subsystem=security/security-domain=mtc-security-domain:add</command>
-                  <command>/subsystem=security/security-domain=mtc-security-domain/authentication=classic:add(
-                    login-modules=[{
-                    "code"=&gt;"Database",
-                    "flag" =&gt; "required",
-                    "module-options" =&gt; [
-                    ("dsJndiName" =&gt; "java:jboss/datasources/mtc"),
-                    ("principalsQuery" =&gt; "SELECT password FROM user WHERE login=?"),
-                    ("rolesQuery" =&gt; "SELECT role, 'Roles' FROM user WHERE login=?"),
-                    ("hashAlgorithm" =&gt; "MD5"),
-                    ("hashEncoding" =&gt; "hex"),
-                    ("ignorePasswordCase" =&gt; "true")]
-                    }]
-                    )
-                  </command>
-                  <command>/subsystem=naming/binding=java\:global\/mtc\/swagger\/version:add(
-                    binding-type=simple, type=java.lang.String, value=${project.version}
-                  )</command>
-                  <command>/subsystem=naming/binding=java\:global\/mtc\/swagger\/schemes:add(binding-type=simple,
-                    type=java.lang.String, value=http)</command>
-                  <command>/subsystem=naming/binding=java\:global\/mtc\/swagger\/host:add(
-                    binding-type=simple, type=java.lang.String, value=localhost:8080
-                  )</command>
-                  <command>/subsystem=naming/binding=java\:global\/mtc\/swagger\/basePath:add(
-                    binding-type=simple, type=java.lang.String, value=mtc\/rest\/api
-                  )</command>
-                </commands>
-              </before-deployment>
-              <after-deployment>
-                <commands>
-                  <command>:reload</command>
-                </commands>
-              </after-deployment>
+              <jboss-home>${wildfly10.home}</jboss-home>
+              <server-config>standalone.xml</server-config>
               <add-user>
                 <users>
                   <user>

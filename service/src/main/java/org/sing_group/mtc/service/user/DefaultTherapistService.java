@@ -21,8 +21,6 @@
  */
 package org.sing_group.mtc.service.user;
 
-import static org.sing_group.fluent.checker.Checks.requireStringSize;
-
 import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
@@ -56,8 +54,6 @@ public class DefaultTherapistService implements TherapistService {
   @Override
   @RolesAllowed({ "MANAGER", "THERAPIST" })
   public Therapist get(String login) {
-    requireStringSize(login, 1, 100, "'login' should have a length between 1 and 100");
-    
     return this.securityGuard.ifAuthorized(RoleType.MANAGER, () -> login, () -> dao.get(login));
   }
 
@@ -83,10 +79,19 @@ public class DefaultTherapistService implements TherapistService {
 
   @RolesAllowed("THERAPIST")
   @Override
-  public GamesSession createGamesSession(GamesSession gamesSession) {
-    gamesSession.setTherapist(this.userService.getCurrentUser());
-    
-    return this.gamesSessionDao.persist(gamesSession);
+  public GamesSession createGamesSession(String login, GamesSession gamesSession) {
+    return this.securityGuard.ifAuthorized(RoleType.MANAGER, () -> login, () -> {
+      gamesSession.setTherapist(this.get(login));
+      
+      return this.gamesSessionDao.persist(gamesSession);
+    });
   }
-  
+
+  @RolesAllowed("THERAPIST")
+  @Override
+  public Stream<GamesSession> listGameSessions(String login) {
+    return this.securityGuard.ifAuthorized(RoleType.MANAGER, () -> login, () -> {
+      return ((Therapist) this.userService.getCurrentUser()).getSessions();
+    });
+  }
 }

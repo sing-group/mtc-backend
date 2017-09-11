@@ -48,6 +48,7 @@ import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.UserMapper;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
@@ -175,7 +176,7 @@ public class DefaultTherapistResource implements TherapistResource {
   }
   
   @POST
-  @Path("gamesession")
+  @Path("{login}/gamesession")
   @Override
   @ApiOperation(
     value = "Creates a new games session associated to the therapist.",
@@ -188,14 +189,34 @@ public class DefaultTherapistResource implements TherapistResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Entity already exists")
   )
-  public Response createGamesSession(GamesSessionCreationData data) {
+  public Response createGamesSession(
+    @PathParam("login") String therapist,
+    GamesSessionCreationData data
+  ) {
     final GamesSession gamesSession = this.service.createGamesSession(
-      gamesMapper.mapToGameSession(data)
+      therapist, gamesMapper.mapToGameSession(data)
     );
     
     return Response
       .created(this.buildUriForSession(gamesSession))
     .build();
+  }
+
+  @GET
+  @Path("{login}/gamesession")
+  @Override
+  @ApiOperation(
+    value = "List the games sessions of the therapist.",
+    code = 200,
+    responseContainer = "List",
+    response = GamesSessionData.class
+  )
+  public Response listGamesSessions(@PathParam("login") String therapist) {
+    final GamesSessionData[] sessions = this.service.listGameSessions(therapist)
+      .map(session -> gamesMapper.mapToGameSessionData(session, this::buildUriFor))
+    .toArray(GamesSessionData[]::new);
+    
+    return Response.ok(sessions).build();
   }
   
   private URI buildUriFor(Therapist therapist) {
@@ -226,7 +247,7 @@ public class DefaultTherapistResource implements TherapistResource {
     return uriInfo.getBaseUriBuilder()
       .path(this.getClass().getAnnotation(Path.class).value())
       .path(session.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
-      .path("session")
+      .path("gamesession")
       .path(session.getId().toString())
     .build();
   }

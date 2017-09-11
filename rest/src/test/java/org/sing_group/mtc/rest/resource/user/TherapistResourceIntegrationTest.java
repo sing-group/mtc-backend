@@ -34,9 +34,11 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.therapist;
 import static org.sing_group.mtc.domain.entities.UsersDataset.therapistToDelete;
 import static org.sing_group.mtc.domain.entities.UsersDataset.therapists;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.newGamesSession;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
+import static org.sing_group.mtc.rest.entity.GenericTypes.GamesSessionDataListType.GAMES_SESSION_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.GenericTypes.TherapistDataListType.THERAPIST_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.game.session.GamesSessionDataDataset.newGamesSessionData;
 import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
@@ -63,7 +65,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
+import org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 import org.sing_group.mtc.rest.resource.Deployments;
@@ -238,7 +242,9 @@ public class TherapistResourceIntegrationTest {
     final GamesSessionCreationData newSessionData = newGamesSessionData();
     final GamesSession expectedSession = newGamesSession();
     
-    final Response response = webTarget.path("gamesession")
+    final Response response = webTarget
+      .path(expectedSession.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
+      .path("gamesession")
       .request()
     .post(json(newSessionData));
     
@@ -251,5 +257,36 @@ public class TherapistResourceIntegrationTest {
   @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "games-sessions-create.xml" })
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterCreateGamesSession() {}
+
+  @Test
+  @InSequence(103)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
+  public void beforeGetGamesSession() {}
+
+  @Test
+  @InSequence(104)
+  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testGetGamesSession(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final Response response = webTarget
+      .path(therapist().getLogin())
+      .path("gamesession")
+      .request()
+    .get();
+    
+    assertThat(response, hasOkStatus());
+
+    final List<GamesSessionData> gamesSessionData = response.readEntity(GAMES_SESSION_DATA_LIST_TYPE);
+    
+    assertThat(gamesSessionData, IsEqualToGamesSession.containsGamesSessionsInAnyOrder(sessions()));
+  }
+
+  @Test
+  @InSequence(105)
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterGetGamesSession() {}
 
 }

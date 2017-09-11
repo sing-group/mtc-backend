@@ -40,6 +40,8 @@ public interface TherapistResource {
 
   public Response delete(String login);
 
-  public Response createGamesSession(GamesSessionCreationData data);
+  public Response createGamesSession(String login, GamesSessionCreationData data);
+  
+  public Response listGamesSessions(String login);
 
 }

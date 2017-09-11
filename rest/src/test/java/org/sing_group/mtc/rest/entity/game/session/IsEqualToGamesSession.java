@@ -35,38 +35,38 @@ import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 
-public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData, GamesSession> {
-  public IsEqualToGamesSessionData(GamesSessionData expected) {
+public class IsEqualToGamesSession extends IsEqualToEntity<GamesSession, GamesSessionData> {
+  public IsEqualToGamesSession(GamesSession expected) {
     super(expected);
   }
 
   @Override
-  protected boolean matchesSafely(GamesSession actual) {
+  protected boolean matchesSafely(GamesSessionData actual) {
     this.clearDescribeTo();
 
     if (actual == null) {
       this.addTemplatedValueDescription("actual", expected.toString());
       return false;
     } else {
-      return checkAttribute("id", GamesSessionData::getId, GamesSession::getId, actual)
-        && checkAttribute("therapist", GamesSessionData::getTherapist, unwrapOptionalFuncion(GamesSession::getTherapist), actual, this::matchUriAndTherapist)
-        && checkAttribute("nameMessages", GamesSessionData::getNameMessage, GamesSession::getName, actual, this::matchLocaleMessages)
-        && checkAttribute("descriptionMessages", GamesSessionData::getDescriptionMessage, GamesSession::getDescription, actual, this::matchLocaleMessages)
+      return checkAttribute("id", GamesSession::getId, GamesSessionData::getId, actual)
+        && checkAttribute("therapist", unwrapOptionalFuncion(GamesSession::getTherapist), GamesSessionData::getTherapist, actual, this::matchUriAndTherapist)
+        && checkAttribute("nameMessages", GamesSession::getName, GamesSessionData::getNameMessage, actual, this::matchLocaleMessages)
+        && checkAttribute("descriptionMessages", GamesSession::getDescription, GamesSessionData::getDescriptionMessage, actual, this::matchLocaleMessages)
         && matchIterableAttribute("gameConfigurations",
-          wrapArrayToIterableFunction(GamesSessionData::getGameConfiguration),
           wrapStreamToIterableFunction(GamesSession::getGameConfigurations),
+          wrapArrayToIterableFunction(GamesSessionData::getGameConfiguration),
           actual,
-          IsEqualToGameConfigurationData::containsGameConfigurationDataInAnyOrder
+          IsEqualToGameConfiguration::containsGameConfigurationInAnyOrder
         );
     }
   }
   
-  private boolean matchUriAndTherapist(URI uri, Therapist therapist) {
+  private boolean matchUriAndTherapist(Therapist therapist, URI uri) {
     return uri.toString().endsWith("/therapist/" + therapist.getLogin())
       || uri.toString().endsWith("therapist");
   }
   
-  private boolean matchLocaleMessages(Map<I18NLocaleData, String> data, LocalizedMessage messages) {
+  private boolean matchLocaleMessages(LocalizedMessage messages, Map<I18NLocaleData, String> data) {
     for (Map.Entry<I18NLocaleData, String> entry : data.entrySet()) {
       final I18NLocaleData locale = entry.getKey();
       final String message = entry.getValue();
@@ -82,22 +82,22 @@ public class IsEqualToGamesSessionData extends IsEqualToEntity<GamesSessionData,
   }
 
   @Factory
-  public static IsEqualToGamesSessionData equalToGamesSession(GamesSessionData session) {
-    return new IsEqualToGamesSessionData(session);
+  public static IsEqualToGamesSession equalToGameSession(GamesSession session) {
+    return new IsEqualToGamesSession(session);
   }
   
   @Factory
-  public static Matcher<Iterable<? extends GamesSession>> containsGamesSessionsDatasInAnyOrder(GamesSessionData... gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToGamesSession, gameSessions);
+  public static Matcher<Iterable<? extends GamesSessionData>> containsGamesSessionsInAnyOrder(GamesSession... gameSessions) {
+    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGameSession, gameSessions);
   }
   
   @Factory
-  public static Matcher<Iterable<? extends GamesSession>> containsGamesSessionsInAnyOrder(Iterable<GamesSessionData> gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToGamesSession, gameSessions);
+  public static Matcher<Iterable<? extends GamesSessionData>> containsGamesSessionsInAnyOrder(Iterable<GamesSession> gameSessions) {
+    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGameSession, gameSessions);
   }
   
   @Factory
-  public static Matcher<Iterable<? extends GamesSession>> containsGamesSessionsInAnyOrder(Stream<GamesSessionData> gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToGamesSessionData::equalToGamesSession, gameSessions);
+  public static Matcher<Iterable<? extends GamesSessionData>> containsGamesSessionsInAnyOrder(Stream<GamesSession> gameSessions) {
+    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGameSession, gameSessions);
   }
 }

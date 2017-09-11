@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
-import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSessionData.equalToGameSession;
+import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSessionData.equalToGamesSession;
 
 import javax.ws.rs.core.Response;
 
@@ -76,7 +76,7 @@ public class GamesSessionResourceIntegrationTest {
       
       final GamesSessionData gamesSession = response.readEntity(GamesSessionData.class);
       
-      assertThat(session, is(equalToGameSession(gamesSession)));
+      assertThat(session, is(equalToGamesSession(gamesSession)));
       
       response.close();
     });

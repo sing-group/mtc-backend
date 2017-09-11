@@ -40,5 +40,7 @@ public interface TherapistService {
 
   public void delete(String login);
 
-  public GamesSession createGamesSession(GamesSession gamesSession);
+  public GamesSession createGamesSession(String login, GamesSession gamesSession);
+
+  public Stream<GamesSession> listGameSessions(String login);
 }

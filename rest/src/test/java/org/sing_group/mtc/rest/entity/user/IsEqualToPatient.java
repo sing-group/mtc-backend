@@ -27,7 +27,6 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.user.Patient;
-import org.sing_group.mtc.rest.entity.user.PatientData;
 
 public class IsEqualToPatient extends IsEqualToEntity<Patient, PatientData> {
   public IsEqualToPatient(Patient user) {
@@ -64,5 +63,20 @@ public class IsEqualToPatient extends IsEqualToEntity<Patient, PatientData> {
   @Factory
   public static Matcher<Iterable<? extends PatientData>> containsPatientsInAnyOrder(Stream<Patient> patients) {
     return containsEntityInAnyOrder(IsEqualToPatient::equalToPatient, patients);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends PatientData>> containsPatientsInOrder(Patient... patients) {
+    return containsEntityInOrder(IsEqualToPatient::equalToPatient, patients);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends PatientData>> containsPatientsInOrder(Iterable<Patient> patients) {
+    return containsEntityInOrder(IsEqualToPatient::equalToPatient, patients);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends PatientData>> containsPatientsInOrder(Stream<Patient> patients) {
+    return containsEntityInOrder(IsEqualToPatient::equalToPatient, patients);
   }
 }

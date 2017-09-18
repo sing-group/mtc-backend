@@ -25,13 +25,16 @@ import java.util.stream.Stream;
 
 import javax.ejb.Local;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Administrator;
 
 @Local
 public interface AdministratorService {
   public Administrator get(String login);
 
-  public Stream<Administrator> list();
+  public Stream<Administrator> list(ListingOptions listingOptions);
+  
+  public long count();
 
   public Administrator create(Administrator administrator);
 

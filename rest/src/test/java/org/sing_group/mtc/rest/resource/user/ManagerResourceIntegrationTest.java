@@ -25,6 +25,7 @@ import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.ADMIN_HTTP_BASIC_AUTH;
+import static org.sing_group.mtc.domain.entities.UsersDataset.countManagers;
 import static org.sing_group.mtc.domain.entities.UsersDataset.manager;
 import static org.sing_group.mtc.domain.entities.UsersDataset.managerToDelete;
 import static org.sing_group.mtc.domain.entities.UsersDataset.managers;
@@ -38,9 +39,11 @@ import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.ManagerDataListType.MANAGER_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.containsManagersInAnyOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.containsManagersInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.equalToManager;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.ws.rs.core.Response;
@@ -58,6 +61,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
@@ -122,6 +126,7 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
     
     final List<ManagerData> userData = response.readEntity(MANAGER_DATA_LIST_TYPE);
     
@@ -133,6 +138,50 @@ public class ManagerResourceIntegrationTest {
   @ShouldMatchDataSet("users.xml")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterList() {}
+
+  @Test
+  @InSequence(13)
+  @UsingDataSet("users.xml")
+  public void beforeListFiltered() {}
+
+  @Test
+  @InSequence(14)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListFiltered(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final int start = 1;
+    final int end = 3;
+    final Function<Manager, String> getter = Manager::getLogin;
+    final String order = "login";
+    final SortDirection sortDirection = SortDirection.ASC;
+    
+    final Stream<Manager> managers = managers(
+      start, end, getter, sortDirection
+    );
+    
+    final Response response = webTarget
+      .queryParam("start", start)
+      .queryParam("end", end)
+      .queryParam("order", order)
+      .queryParam("sort", sortDirection)
+      .request()
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
+    
+    final List<ManagerData> managerData = response.readEntity(MANAGER_DATA_LIST_TYPE);
+    
+    assertThat(managerData, containsManagersInOrder(managers));
+  }
+
+  @Test
+  @InSequence(15)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListFiltered() {}
 
   @Test
   @InSequence(20)

@@ -32,10 +32,26 @@
   <!-- HTTP Basic token: YWRtaW4yOmFkbWluMnBhc3M= -->
   <user login="admin2" role="ADMIN" password="E0472CBC0BAFA482FF5479FE5BEAE860"/>
   <administrator login="admin2" email="admin2@email.com" name="Admin2" surname="Administrator2" />
+
+  <!-- HTTP Basic token: YWRtaW4zOmFkbWluM3Bhc3M= -->
+  <user login="admin3" role="ADMIN" password="D3E6CA5A66D2657A15136AA7DEF49098"/>
+  <administrator login="admin3" email="admin3@email.com" name="Admin3" surname="Administrator3" />
+
+  <!-- HTTP Basic token: YWRtaW40OmFkbWluNHBhc3M= -->
+  <user login="admin4" role="ADMIN" password="0B32DC614713204765BAB388A115C420"/>
+  <administrator login="admin4" email="admin4@email.com" name="Admin4" surname="Administrator4" />
   
   
   <!-- HTTP Basic token: bWFuYWdlcjI6bWFuYWdlcjJwYXNz -->
   <user login="manager2" password="DF6D7E524763F97CD09EE77EE05CC03B" role="MANAGER" />
   <manager login="manager2" email="manager2@email.com" name="Man2" surname="Manager2" />
+  
+  <!-- HTTP Basic token: bWFuYWdlcjM6bWFuYWdlcjNwYXNz -->
+  <user login="manager3" password="3E6C99CB859479F45A54934102359930" role="MANAGER" />
+  <manager login="manager3" email="manager3@email.com" name="Man3" surname="Manager3" />
+  
+  <!-- HTTP Basic token: bWFuYWdlcjQ6bWFuYWdlcjRwYXNz -->
+  <user login="manager4" password="CF1F2B68DD65F424529E4FAE83811068" role="MANAGER" />
+  <manager login="manager4" email="manager4@email.com" name="Man4" surname="Manager4" />
   
 </dataset>

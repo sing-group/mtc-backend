@@ -25,13 +25,16 @@ import java.util.stream.Stream;
 
 import javax.ejb.Local;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 @Local
 public interface PatientService {
   public Patient get(String login);
 
-  public Stream<Patient> list();
+  public Stream<Patient> list(ListingOptions listingOptions);
+  
+  public long count();
 
   public Patient create(Patient patient);
 

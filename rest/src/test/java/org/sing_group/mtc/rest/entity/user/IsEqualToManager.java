@@ -68,4 +68,19 @@ public class IsEqualToManager extends IsEqualToEntity<Manager, ManagerData> {
   public static Matcher<Iterable<? extends ManagerData>> containsManagersInAnyOrder(Stream<Manager> managers) {
     return containsEntityInAnyOrder(IsEqualToManager::equalToManager, managers);
   }
+  
+  @Factory
+  public static Matcher<Iterable<? extends ManagerData>> containsManagersInOrder(Manager... managers) {
+    return containsEntityInOrder(IsEqualToManager::equalToManager, managers);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends ManagerData>> containsManagersInOrder(Iterable<Manager> managers) {
+    return containsEntityInOrder(IsEqualToManager::equalToManager, managers);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends ManagerData>> containsManagersInOrder(Stream<Manager> managers) {
+    return containsEntityInOrder(IsEqualToManager::equalToManager, managers);
+  }
 }

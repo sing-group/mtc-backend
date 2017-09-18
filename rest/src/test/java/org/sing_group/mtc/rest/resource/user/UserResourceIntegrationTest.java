@@ -129,7 +129,7 @@ public class UserResourceIntegrationTest {
   
   private static void testAuthorized(ResteasyWebTarget webTarget, User expectedUser) {
     Optional<Response> responseRef = Optional.empty();
-    
+
     try {
       final Response response = webTarget
         .queryParam("login", expectedUser.getLogin())

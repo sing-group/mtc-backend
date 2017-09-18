@@ -25,13 +25,16 @@ import java.util.stream.Stream;
 
 import javax.ejb.Local;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Manager;
 
 @Local
 public interface ManagerService {
   public Manager get(String login);
 
-  public Stream<Manager> list();
+  public Stream<Manager> list(ListingOptions listingOptions);
+  
+  public long count();
 
   public Manager create(Manager manager);
 

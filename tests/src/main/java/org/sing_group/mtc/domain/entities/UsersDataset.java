@@ -23,11 +23,14 @@ package org.sing_group.mtc.domain.entities;
 
 import static java.util.Arrays.asList;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
+import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Administrator;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
@@ -48,10 +51,16 @@ public class UsersDataset {
   static {
     LOGIN_TO_PASSWORD.put("admin", "adminpass");
     LOGIN_TO_PASSWORD.put("admin2", "admin2pass");
+    LOGIN_TO_PASSWORD.put("admin3", "admin3pass");
+    LOGIN_TO_PASSWORD.put("admin4", "admin4pass");
     LOGIN_TO_PASSWORD.put("therapist", "therapistpass");
     LOGIN_TO_PASSWORD.put("therapist2", "therapist2pass");
+    LOGIN_TO_PASSWORD.put("therapist3", "therapist3pass");
+    LOGIN_TO_PASSWORD.put("therapist4", "therapist4pass");
     LOGIN_TO_PASSWORD.put("manager", "managerpass");
     LOGIN_TO_PASSWORD.put("manager2", "manager2pass");
+    LOGIN_TO_PASSWORD.put("manager3", "manager3pass");
+    LOGIN_TO_PASSWORD.put("manager4", "manager4pass");
     LOGIN_TO_PASSWORD.put("patient1", "patient1pass");
     LOGIN_TO_PASSWORD.put("patient2", "patient2pass");
     LOGIN_TO_PASSWORD.put("patient3", "patient3pass");
@@ -108,10 +117,16 @@ public class UsersDataset {
     return Stream.of(
       new Administrator("admin", "admin@email.com", passwordOf("admin"), "Admin", "Administrator"),
       new Administrator("admin2", "admin2@email.com", passwordOf("admin2"), "Admin2", "Administrator2"),
+      new Administrator("admin3", "admin3@email.com", passwordOf("admin3"), "Admin3", "Administrator3"),
+      new Administrator("admin4", "admin4@email.com", passwordOf("admin4"), "Admin4", "Administrator4"),
       manager,
       new Manager("manager2", "manager2@email.com", passwordOf("manager2"), "Man2", "Manager2", null),
+      new Manager("manager3", "manager3@email.com", passwordOf("manager3"), "Man3", "Manager3", null),
+      new Manager("manager4", "manager4@email.com", passwordOf("manager4"), "Man4", "Manager4", null),
       therapist,
       new Therapist("therapist2", "therapist2@email.com", passwordOf("therapist2"), institutions.get(1), "Thera2", "Therapist2", null, null),
+      new Therapist("therapist3", "therapist3@email.com", passwordOf("therapist3"), institutions.get(1), "Thera3", "Therapist3", null, null),
+      new Therapist("therapist4", "therapist4@email.com", passwordOf("therapist4"), institutions.get(1), "Thera4", "Therapist4", null, null),
       new Patient("patient1", passwordOf("patient1"), therapist),
       new Patient("patient2", passwordOf("patient2"), therapist),
       new Patient("patient3", passwordOf("patient3"), therapist),
@@ -174,6 +189,12 @@ public class UsersDataset {
     return users(RoleType.ADMIN);
   }
 
+  public static <T extends Comparable<T>> Stream<Administrator> admins(
+    int start, int end, Function<Administrator, T> getter, SortDirection sort
+  ) {
+    return filterUsers(admins(), start, end, getter, sort);
+  }
+
   public static Administrator newAdministrator() {
     return new Administrator("adminNew", "adminNew@email.com", passwordOf("adminNew"), "AdminNew", "AdministratorNew");
   }
@@ -188,6 +209,12 @@ public class UsersDataset {
 
   public static Stream<Manager> managers() {
     return users(RoleType.MANAGER);
+  }
+
+  public static <T extends Comparable<T>> Stream<Manager> managers(
+    int start, int end, Function<Manager, T> getter, SortDirection sort
+  ) {
+    return filterUsers(managers(), start, end, getter, sort);
   }
 
   public static Manager newManager() {
@@ -206,6 +233,12 @@ public class UsersDataset {
     return users(RoleType.THERAPIST);
   }
 
+  public static <T extends Comparable<T>> Stream<Therapist> therapists(
+    int start, int end, Function<Therapist, T> getter, SortDirection sort
+  ) {
+    return filterUsers(therapists(), start, end, getter, sort);
+  }
+
   public static Therapist newTherapist() {
     return new Therapist("therapistNew", "therapistNew@email.com", passwordOf("therapistNew"), institution("Institution 2"), "TheraNew", "TherapistNew", null, null);
   }
@@ -222,6 +255,25 @@ public class UsersDataset {
     return users(RoleType.PATIENT);
   }
 
+  public static <T extends Comparable<T>> Stream<Patient> patients(
+    int start, int end, Function<Patient, T> getter, SortDirection sort
+  ) {
+    return filterUsers(patients(), start, end, getter, sort);
+  }
+
+  private static <U extends User, T extends Comparable<T>> Stream<U> filterUsers(
+    Stream<U> users, int start, int end, Function<U, T> getter, SortDirection sort
+  ) {
+    final Comparator<T> compare = sort == SortDirection.ASC
+      ? (c1, c2) -> c1.compareTo(c2)
+      : (c1, c2) -> -c1.compareTo(c2);
+    
+    return users
+      .sorted((c1, c2) -> compare.compare(getter.apply(c1), getter.apply(c2)))
+      .skip(start)
+      .limit(end - start + 1);
+  }
+  
   public static Patient newPatient() {
     return new Patient("patientNew", passwordOf("patientNew"), therapist());
   }
@@ -233,4 +285,21 @@ public class UsersDataset {
   public static Patient patientToDelete() {
     return user("patient2");
   }
+
+  public static long countAdmins() {
+    return admins().count();
+  }
+
+  public static long countManagers() {
+    return managers().count();
+  }
+  
+  public static long countTherapists() {
+    return therapists().count();
+  }
+  
+  public static long countPatients() {
+    return patients().count();
+  }
+  
 }

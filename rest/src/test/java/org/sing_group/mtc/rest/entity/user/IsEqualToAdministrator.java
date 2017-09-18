@@ -68,4 +68,19 @@ public class IsEqualToAdministrator extends IsEqualToEntity<Administrator, Admin
   public static Matcher<Iterable<? extends AdministratorData>> containsAdministratorsInAnyOrder(Stream<Administrator> admins) {
     return containsEntityInAnyOrder(IsEqualToAdministrator::equalToAdministrator, admins);
   }
+  
+  @Factory
+  public static Matcher<Iterable<? extends AdministratorData>> containsAdministratorsInOrder(Administrator... admins) {
+    return containsEntityInOrder(IsEqualToAdministrator::equalToAdministrator, admins);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends AdministratorData>> containsAdministratorsInOrder(Iterable<Administrator> admins) {
+    return containsEntityInOrder(IsEqualToAdministrator::equalToAdministrator, admins);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends AdministratorData>> containsAdministratorsInOrder(Stream<Administrator> admins) {
+    return containsEntityInOrder(IsEqualToAdministrator::equalToAdministrator, admins);
+  }
 }

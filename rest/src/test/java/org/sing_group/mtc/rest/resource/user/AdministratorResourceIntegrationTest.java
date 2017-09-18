@@ -28,6 +28,7 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.ADMIN_HTTP_BASIC_A
 import static org.sing_group.mtc.domain.entities.UsersDataset.admin;
 import static org.sing_group.mtc.domain.entities.UsersDataset.administratorToDelete;
 import static org.sing_group.mtc.domain.entities.UsersDataset.admins;
+import static org.sing_group.mtc.domain.entities.UsersDataset.countAdmins;
 import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedAdministrator;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newAdministrator;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newPasswordOf;
@@ -38,9 +39,11 @@ import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.AdministratorDataListType.ADMINISTRATOR_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToAdministrator.containsAdministratorsInAnyOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToAdministrator.containsAdministratorsInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToAdministrator.equalToAdministrator;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.ws.rs.core.Response;
@@ -58,6 +61,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Administrator;
 import org.sing_group.mtc.rest.entity.mapper.UserMapper;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
@@ -123,6 +127,7 @@ public class AdministratorResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", countAdmins()));
     
     final List<AdministratorData> userData = response.readEntity(ADMINISTRATOR_DATA_LIST_TYPE);
     
@@ -134,6 +139,50 @@ public class AdministratorResourceIntegrationTest {
   @ShouldMatchDataSet("users.xml")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterList() {}
+
+  @Test
+  @InSequence(13)
+  @UsingDataSet("users.xml")
+  public void beforeListFiltered() {}
+
+  @Test
+  @InSequence(14)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListFiltered(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final int start = 0;
+    final int end = 2;
+    final Function<Administrator, String> getter = Administrator::getLogin;
+    final String order = "login";
+    final SortDirection sortDirection = SortDirection.DESC;
+    
+    final Stream<Administrator> admins = admins(
+      start, end, getter, sortDirection
+    );
+    
+    final Response response = webTarget
+      .queryParam("start", start)
+      .queryParam("end", end)
+      .queryParam("order", order)
+      .queryParam("sort", sortDirection)
+      .request()
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", countAdmins()));
+    
+    final List<AdministratorData> adminData = response.readEntity(ADMINISTRATOR_DATA_LIST_TYPE);
+    
+    assertThat(adminData, containsAdministratorsInOrder(admins));
+  }
+
+  @Test
+  @InSequence(15)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListFiltered() {}
 
   @Test
   @InSequence(20)

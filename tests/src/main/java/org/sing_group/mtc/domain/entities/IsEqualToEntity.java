@@ -985,6 +985,7 @@ public abstract class IsEqualToEntity<E, A> extends TypeSafeMatcher<A> {
     final Function<E, Matcher<? super A>> converter, final Stream<E> entities
   ) {
     final List<Matcher<? super A>> matchersList = entities
+      .sequential()
       .map(converter)
       .collect(toList());
 

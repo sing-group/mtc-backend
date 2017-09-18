@@ -85,6 +85,19 @@ public class DAOHelper<K, T> {
     ).getResultList();
   }
   
+  public List<T> list(ListingOptions options) {
+    final ListingOptionsQueryBuilder optionsBuilder = new ListingOptionsQueryBuilder(options);
+    
+    final CriteriaQuery<T> queryBuilder = createCBQuery();
+    final Root<T> root = queryBuilder.from(getEntityType());
+    
+    final CriteriaQuery<T> select = optionsBuilder.addOrder(cb(), queryBuilder.select(root), root);
+    
+    final TypedQuery<T> query = optionsBuilder.addLimits(em.createQuery(select));
+    
+    return query.getResultList();
+  }
+  
   public void removeByKey(K key) {
     this.em.remove(get(key));
     this.em.flush();
@@ -116,6 +129,14 @@ public class DAOHelper<K, T> {
   public <F> T getBy(String fieldName, F value) {
     return createFieldQuery(fieldName, empty(), empty(), value)
       .getSingleResult();
+  }
+
+  public long count() {
+    CriteriaQuery<Long> query = cb().createQuery(Long.class);
+    
+    query = query.select(cb().count(query.from(this.getEntityType())));
+    
+    return this.em.createQuery(query).getSingleResult();
   }
   
   @SafeVarargs

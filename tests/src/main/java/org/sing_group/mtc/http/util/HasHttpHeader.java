@@ -73,6 +73,21 @@ public class HasHttpHeader extends TypeSafeMatcher<Response> {
   }
   
   @Factory
+  public static HasHttpHeader hasHttpHeader(String header, int value) {
+    return new HasHttpHeader(header, Integer.toString(value));
+  }
+  
+  @Factory
+  public static HasHttpHeader hasHttpHeader(String header, long value) {
+    return new HasHttpHeader(header, Long.toString(value));
+  }
+  
+  @Factory
+  public static HasHttpHeader hasHttpHeader(String header, boolean value) {
+    return new HasHttpHeader(header, Boolean.toString(value));
+  }
+  
+  @Factory
   public static HasHttpHeader hasHttpHeader(String header, Predicate<String> valueChecker) {
     return new HasHttpHeader(header, valueChecker);
   }

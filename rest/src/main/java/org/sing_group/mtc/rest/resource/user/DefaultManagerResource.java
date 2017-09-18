@@ -32,16 +32,20 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.rest.entity.mapper.UserMapper;
@@ -112,14 +116,24 @@ public class DefaultManagerResource implements ManagerResource {
     value = "Returns all the managers in the database.",
     response = ManagerData.class,
     responseContainer = "List",
-    code = 200
+    code = 200,
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of therapists in the database.")
   )
-  public Response list() {
-    final ManagerData[] managers = this.service.list()
+  public Response list(
+    @QueryParam("start") @DefaultValue("-1") int start,
+    @QueryParam("end") @DefaultValue("-1") int end,
+    @QueryParam("order") String order,
+    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+  ) {
+    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    
+    final ManagerData[] managers = this.service.list(options)
       .map(this::toData)
     .toArray(ManagerData[]::new);
     
-    return Response.ok(managers).build();
+    return Response.ok(managers)
+      .header("X-Total-Count", this.service.count())
+    .build();
   }
   
   @Override

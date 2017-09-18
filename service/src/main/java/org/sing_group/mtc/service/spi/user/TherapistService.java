@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import javax.ejb.Local;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
@@ -32,7 +33,9 @@ import org.sing_group.mtc.domain.entities.user.Therapist;
 public interface TherapistService {
   public Therapist get(String login);
 
-  public Stream<Therapist> list();
+  public Stream<Therapist> list(ListingOptions listingOptions);
+  
+  public long count();
 
   public Therapist create(Therapist therapist);
 

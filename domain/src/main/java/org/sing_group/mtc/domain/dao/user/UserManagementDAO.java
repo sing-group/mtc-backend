@@ -23,13 +23,16 @@ package org.sing_group.mtc.domain.dao.user;
 
 import java.util.stream.Stream;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.User;
 
 public interface UserManagementDAO<E extends User> {
 
   public E get(String login);
 
-  public Stream<E> list();
+  public Stream<E> list(ListingOptions listingOptions);
+  
+  public long count();
 
   public E create(E user);
 

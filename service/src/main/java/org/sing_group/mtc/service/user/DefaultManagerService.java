@@ -29,6 +29,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.ManagerDAO;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.service.spi.user.ManagerService;
@@ -47,8 +48,13 @@ public class DefaultManagerService implements ManagerService {
   }
 
   @Override
-  public Stream<Manager> list() {
-    return dao.list();
+  public Stream<Manager> list(ListingOptions listingOptions) {
+    return dao.list(listingOptions);
+  }
+
+  @Override
+  public long count() {
+    return this.dao.count();
   }
   
   @Override

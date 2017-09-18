@@ -28,6 +28,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.sing_group.mtc.domain.dao.DAOHelper;
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.User;
 
 public abstract class AbstractUserManagementDAO<E extends User> implements UserManagementDAO<E> {
@@ -59,8 +60,12 @@ public abstract class AbstractUserManagementDAO<E extends User> implements UserM
   }
 
   @Override
-  public Stream<E> list() {
-    return this.dh.list().stream();
+  public Stream<E> list(ListingOptions listingOptions) {
+    return this.dh.list(listingOptions).stream();
+  }
+  
+  public long count() {
+    return this.dh.count();
   }
 
   @Override

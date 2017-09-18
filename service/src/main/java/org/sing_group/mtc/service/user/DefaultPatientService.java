@@ -29,6 +29,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.PatientDAO;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.service.spi.user.PatientService;
@@ -47,8 +48,13 @@ public class DefaultPatientService implements PatientService {
   }
 
   @Override
-  public Stream<Patient> list() {
-    return dao.list();
+  public Stream<Patient> list(ListingOptions listingOptions) {
+    return dao.list(listingOptions);
+  }
+
+  @Override
+  public long count() {
+    return this.dao.count();
   }
   
   @Override

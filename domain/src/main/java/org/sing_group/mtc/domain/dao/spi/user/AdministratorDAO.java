@@ -23,13 +23,16 @@ package org.sing_group.mtc.domain.dao.spi.user;
 
 import java.util.stream.Stream;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Administrator;
 
 public interface AdministratorDAO {
   
   public Administrator get(String login);
 
-  public Stream<Administrator> list();
+  public Stream<Administrator> list(ListingOptions listingOptions);
+  
+  public long count();
 
   public Administrator create(Administrator administrator);
 

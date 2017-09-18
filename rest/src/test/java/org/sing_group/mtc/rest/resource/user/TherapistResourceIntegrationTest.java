@@ -26,6 +26,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.MANAGER_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
+import static org.sing_group.mtc.domain.entities.UsersDataset.countTherapists;
 import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedTherapist;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newPasswordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newTherapist;
@@ -43,9 +44,11 @@ import static org.sing_group.mtc.rest.entity.GenericTypes.TherapistDataListType.
 import static org.sing_group.mtc.rest.entity.game.session.GamesSessionDataDataset.newGamesSessionData;
 import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.containsTherapistsInAnyOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.containsTherapistsInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.equalToTherapist;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.ws.rs.core.Response;
@@ -63,6 +66,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession;
@@ -131,6 +135,7 @@ public class TherapistResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", countTherapists()));
     
     final List<TherapistData> userData = response.readEntity(THERAPIST_DATA_LIST_TYPE);
     
@@ -142,6 +147,50 @@ public class TherapistResourceIntegrationTest {
   @ShouldMatchDataSet("users.xml")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterList() {}
+
+  @Test
+  @InSequence(13)
+  @UsingDataSet("users.xml")
+  public void beforeListFiltered() {}
+
+  @Test
+  @InSequence(14)
+  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListFiltered(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final int start = 1;
+    final int end = 3;
+    final Function<Therapist, String> getter = Therapist::getLogin;
+    final String order = "login";
+    final SortDirection sortDirection = SortDirection.DESC;
+    
+    final Stream<Therapist> therapists = therapists(
+      start, end, getter, sortDirection
+    );
+    
+    final Response response = webTarget
+      .queryParam("start", start)
+      .queryParam("end", end)
+      .queryParam("order", order)
+      .queryParam("sort", sortDirection)
+      .request()
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", countTherapists()));
+    
+    final List<TherapistData> therapistData = response.readEntity(THERAPIST_DATA_LIST_TYPE);
+    
+    assertThat(therapistData, containsTherapistsInOrder(therapists));
+  }
+
+  @Test
+  @InSequence(15)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListFiltered() {}
 
   @Test
   @InSequence(20)

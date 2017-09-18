@@ -32,6 +32,14 @@
   <!-- HTTP Basic token: YWRtaW4yOmFkbWluMnBhc3M= -->
   <user login="admin2" role="ADMIN" password="E0472CBC0BAFA482FF5479FE5BEAE860"/>
   <administrator login="admin2" email="admin2@email.com" name="Admin2" surname="Administrator2" />
+
+  <!-- HTTP Basic token: YWRtaW4zOmFkbWluM3Bhc3M= -->
+  <user login="admin3" role="ADMIN" password="D3E6CA5A66D2657A15136AA7DEF49098"/>
+  <administrator login="admin3" email="admin3@email.com" name="Admin3" surname="Administrator3" />
+
+  <!-- HTTP Basic token: YWRtaW40OmFkbWluNHBhc3M= -->
+  <user login="admin4" role="ADMIN" password="0B32DC614713204765BAB388A115C420"/>
+  <administrator login="admin4" email="admin4@email.com" name="Admin4" surname="Administrator4" />
   
   
   <!-- HTTP Basic token: bWFuYWdlcjptYW5hZ2VycGFzcw== -->
@@ -45,6 +53,14 @@
   <user login="manager2" password="DF6D7E524763F97CD09EE77EE05CC03B" role="MANAGER" />
   <manager login="manager2" email="manager2@email.com" name="Man2" surname="Manager2" />
   
+  <!-- HTTP Basic token: bWFuYWdlcjM6bWFuYWdlcjNwYXNz -->
+  <user login="manager3" password="3E6C99CB859479F45A54934102359930" role="MANAGER" />
+  <manager login="manager3" email="manager3@email.com" name="Man3" surname="Manager3" />
+  
+  <!-- HTTP Basic token: bWFuYWdlcjQ6bWFuYWdlcjRwYXNz -->
+  <user login="manager4" password="CF1F2B68DD65F424529E4FAE83811068" role="MANAGER" />
+  <manager login="manager4" email="manager4@email.com" name="Man4" surname="Manager4" />
+  
   
   <!-- HTTP Basic token: dGhlcmFwaXN0OnRoZXJhcGlzdHBhc3M= -->
   <user login="therapist" password="F15A0A52502E22F1E9D85DF282AACBCA" role="THERAPIST" />
@@ -53,6 +69,14 @@
   <!-- HTTP Basic token: dGhlcmFwaXN0Mjp0aGVyYXBpc3QycGFzcw== -->
   <user login="therapist2" password="E5B265BFF1ECCC63D185BC73923C19DB" role="THERAPIST" />
   <therapist login="therapist2" email="therapist2@email.com" name="Thera2" surname="Therapist2" institution="2" />
+  
+  <!-- HTTP Basic token: dGhlcmFwaXN0Mzp0aGVyYXBpc3QzcGFzcw== -->
+  <user login="therapist3" password="A9AB7BC14F659495C9A1069DF9CBB62D" role="THERAPIST" />
+  <therapist login="therapist3" email="therapist3@email.com" name="Thera3" surname="Therapist3" institution="2" />
+  
+  <!-- HTTP Basic token: dGhlcmFwaXN0Mjp0aGVyYXBpc3QycGFzcw== -->
+  <user login="therapist4" password="FEF077E8B6EB9AABD6FD7DE28A7EB869" role="THERAPIST" />
+  <therapist login="therapist4" email="therapist4@email.com" name="Thera4" surname="Therapist4" institution="2" />
   
   
   <!-- HTTP Basic token: cGF0aWVudDE6cGF0aWVudDFwYXNz -->

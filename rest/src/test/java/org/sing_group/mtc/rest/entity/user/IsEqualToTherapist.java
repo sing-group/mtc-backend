@@ -68,4 +68,19 @@ public class IsEqualToTherapist extends IsEqualToEntity<Therapist, TherapistData
   public static Matcher<Iterable<? extends TherapistData>> containsTherapistsInAnyOrder(Stream<Therapist> therapists) {
     return containsEntityInAnyOrder(IsEqualToTherapist::equalToTherapist, therapists);
   }
+  
+  @Factory
+  public static Matcher<Iterable<? extends TherapistData>> containsTherapistsInOrder(Therapist... therapists) {
+    return containsEntityInOrder(IsEqualToTherapist::equalToTherapist, therapists);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends TherapistData>> containsTherapistsInOrder(Iterable<Therapist> therapists) {
+    return containsEntityInOrder(IsEqualToTherapist::equalToTherapist, therapists);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends TherapistData>> containsTherapistsInOrder(Stream<Therapist> therapists) {
+    return containsEntityInOrder(IsEqualToTherapist::equalToTherapist, therapists);
+  }
 }

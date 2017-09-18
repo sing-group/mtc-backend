@@ -27,6 +27,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.game.session.GamesSessionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
@@ -58,8 +59,13 @@ public class DefaultTherapistService implements TherapistService {
   }
 
   @Override
-  public Stream<Therapist> list() {
-    return dao.list();
+  public Stream<Therapist> list(ListingOptions listingOptions) {
+    return dao.list(listingOptions);
+  }
+
+  @Override
+  public long count() {
+    return this.dao.count();
   }
   
   @Override

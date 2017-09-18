@@ -24,6 +24,7 @@ package org.sing_group.mtc.rest.resource.spi.user;
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
+import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
 
 @Local
@@ -31,7 +32,7 @@ public interface AdministratorResource {
 
   public Response get(String login);
 
-  public Response list();
+  public Response list(int start, int end, String order,SortDirection sort);
 
   public Response create(AdministratorEditionData data);
 

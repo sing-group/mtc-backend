@@ -19,25 +19,8 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.domain.dao.spi.user;
+package org.sing_group.mtc.domain.dao;
 
-import java.util.stream.Stream;
-
-import org.sing_group.mtc.domain.dao.ListingOptions;
-import org.sing_group.mtc.domain.entities.user.Manager;
-
-public interface ManagerDAO {
-  
-  public Manager get(String login);
-
-  public Stream<Manager> list(ListingOptions listingOptions);
-  
-  public long count();
-
-  public Manager create(Manager manager);
-
-  public Manager update(Manager manager);
-
-  public void delete(String login);
-
+public enum SortDirection {
+  ASC, DESC, NONE;
 }

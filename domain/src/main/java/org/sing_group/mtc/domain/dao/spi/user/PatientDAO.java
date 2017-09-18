@@ -23,13 +23,16 @@ package org.sing_group.mtc.domain.dao.spi.user;
 
 import java.util.stream.Stream;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 public interface PatientDAO {
   
   public Patient get(String login);
 
-  public Stream<Patient> list();
+  public Stream<Patient> list(ListingOptions listingOptions);
+  
+  public long count();
 
   public Patient create(Patient patient);
 

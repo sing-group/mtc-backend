@@ -123,10 +123,12 @@ public class ManagerResourceIntegrationTest {
     
     final Response response = webTarget
       .request()
+      .header("Origin", "localhost")
     .get();
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
+    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
     
     final List<ManagerData> userData = response.readEntity(MANAGER_DATA_LIST_TYPE);
     

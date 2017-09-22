@@ -77,7 +77,7 @@ import io.swagger.annotations.ResponseHeader;
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Stateless
 @Default
-@CrossDomain(exposedHeaders = { "X-Total-Count" }, allowRequestHeaders = true)
+@CrossDomain(allowedHeaders = { "X-Total-Count" }, allowRequestHeaders = true)
 public class DefaultPatientResource implements PatientResource {
   @Inject
   private PatientService service;

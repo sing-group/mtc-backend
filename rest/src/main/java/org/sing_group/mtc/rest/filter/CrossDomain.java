@@ -38,7 +38,6 @@ import javax.interceptor.InterceptorBinding;
 @Target({ METHOD, TYPE })
 public @interface CrossDomain {
   @Nonbinding public String allowedOrigin() default "*";
-  @Nonbinding public String[] exposedHeaders() default {};
   @Nonbinding public int maxAge() default -1;
   @Nonbinding public boolean allowCredentials() default false;
   @Nonbinding public String[] allowedMethods() default { "GET", "POST", "PUT", "DELETE", "OPTIONS" };

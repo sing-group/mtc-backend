@@ -124,10 +124,12 @@ public class AdministratorResourceIntegrationTest {
     
     final Response response = webTarget
       .request()
+      .header("Origin", "localhost")
     .get();
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countAdmins()));
+    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
     
     final List<AdministratorData> userData = response.readEntity(ADMINISTRATOR_DATA_LIST_TYPE);
     

@@ -76,7 +76,7 @@ import io.swagger.annotations.ResponseHeader;
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Stateless
 @Default
-@CrossDomain
+@CrossDomain(allowedHeaders = { "X-Total-Count" }, allowRequestHeaders = true)
 public class DefaultAdministratorResource implements AdministratorResource {
   @Inject
   private AdministratorService service;

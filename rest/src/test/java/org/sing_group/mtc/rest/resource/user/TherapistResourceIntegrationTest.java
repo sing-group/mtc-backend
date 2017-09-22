@@ -132,12 +132,14 @@ public class TherapistResourceIntegrationTest {
     
     final Response response = webTarget
       .request()
+      .header("Origin", "localhost")
     .get();
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countTherapists()));
     
     final List<TherapistData> userData = response.readEntity(THERAPIST_DATA_LIST_TYPE);
+    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
     
     assertThat(userData, containsTherapistsInAnyOrder(therapists));
   }

@@ -123,10 +123,12 @@ public class PatientResourceIntegrationTest {
     
     final Response response = webTarget
       .request()
+      .header("Origin", "localhost")
     .get();
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countPatients()));
+    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
     
     final List<PatientData> userData = response.readEntity(PATIENT_DATA_LIST_TYPE);
     

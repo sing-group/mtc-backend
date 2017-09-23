@@ -37,7 +37,6 @@ import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.ManagerDataListType.MANAGER_DATA_LIST_TYPE;
-import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.containsManagersInAnyOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.containsManagersInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.equalToManager;
@@ -59,10 +58,13 @@ import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
+import org.sing_group.mtc.rest.entity.mapper.user.DefaultUserMapper;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
 import org.sing_group.mtc.rest.resource.Deployments;
@@ -70,10 +72,17 @@ import org.sing_group.mtc.rest.resource.Deployments;
 @RunWith(Arquillian.class)
 public class ManagerResourceIntegrationTest {
   private static final String BASE_PATH = "api/manager/";
+  
+  private UserMapper userMapper;
 
   @Deployment
   public static Archive<?> createDeployment() {
     return Deployments.createDeployment();
+  }
+  
+  @Before
+  public void setUp() {
+    this.userMapper = new DefaultUserMapper();
   }
 
   @Test
@@ -198,7 +207,7 @@ public class ManagerResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Manager newAdmin = newManager();
-    final ManagerEditionData userData = toEditionData(newAdmin, passwordOf(newAdmin));
+    final ManagerEditionData userData = userMapper.toEditionData(newAdmin, passwordOf(newAdmin));
     
     final Response response = webTarget
       .request()
@@ -227,7 +236,7 @@ public class ManagerResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Manager modifiedAdmin = modifiedManager();
-    final ManagerEditionData userData = toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
+    final ManagerEditionData userData = userMapper.toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
     
     final Response response = webTarget
       .request()

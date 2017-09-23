@@ -23,8 +23,6 @@ package org.sing_group.mtc.rest.resource.user;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
-import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toAdministrator;
-import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toData;
 
 import java.net.URI;
 
@@ -48,7 +46,7 @@ import javax.ws.rs.core.UriInfo;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Administrator;
-import org.sing_group.mtc.rest.entity.mapper.UserMapper;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
@@ -76,10 +74,13 @@ import io.swagger.annotations.ResponseHeader;
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Stateless
 @Default
-@CrossDomain(allowedHeaders = { "X-Total-Count" }, allowRequestHeaders = true)
+@CrossDomain(allowedHeaders = { "X-Total-Count", "Location" }, allowRequestHeaders = true)
 public class DefaultAdministratorResource implements AdministratorResource {
   @Inject
   private AdministratorService service;
+  
+  @Inject
+  private UserMapper mapper;
   
   @Context
   private UriInfo uriInfo;
@@ -98,7 +99,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
   public Response get(@PathParam("login") String login) {
     final Administrator user = this.service.get(login);
 
-    return Response.ok(toData(user)).build();
+    return Response.ok(mapper.toData(user)).build();
   }
   
   @Override
@@ -108,7 +109,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
     response = AdministratorData.class,
     responseContainer = "List",
     code = 200,
-    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of therapists in the database.")
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of administrators in the database.")
   )
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
@@ -119,7 +120,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
     final ListingOptions options = new ListingOptions(start, end, order, sort);
     
     final AdministratorData[] admins = this.service.list(options)
-      .map(UserMapper::toData)
+      .map(mapper::toData)
     .toArray(AdministratorData[]::new);
     
     return Response.ok(admins)
@@ -138,7 +139,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
     @ApiResponse(code = 400, message = "Entity already exists")
   )
   public Response create(AdministratorEditionData data) {
-    final Administrator admin = this.service.create(toAdministrator(data));
+    final Administrator admin = this.service.create(mapper.toAdministrator(data));
     
     final URI userUri = this.buildUriFor(admin);
     
@@ -157,7 +158,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
   public Response update(
     AdministratorEditionData data
   ) {
-    this.service.update(toAdministrator(data));
+    this.service.update(mapper.toAdministrator(data));
     
     return Response.ok().build();
   }

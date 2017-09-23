@@ -50,7 +50,7 @@ import io.swagger.annotations.ApiResponses;
 @Api("user")
 @Stateless
 @Default
-@CrossDomain(allowedHeaders = { "X-Total-Count" }, allowRequestHeaders = true)
+@CrossDomain
 public class DefaultUserResource implements UserResource {
   private Logger LOG = LoggerFactory.getLogger(DefaultUserResource.class);
   

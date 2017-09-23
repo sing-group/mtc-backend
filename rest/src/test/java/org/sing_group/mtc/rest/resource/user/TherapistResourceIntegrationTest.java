@@ -42,7 +42,6 @@ import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.GamesSessionDataListType.GAMES_SESSION_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.GenericTypes.TherapistDataListType.THERAPIST_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.game.session.GamesSessionDataDataset.newGamesSessionData;
-import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.containsTherapistsInAnyOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.containsTherapistsInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.equalToTherapist;
@@ -64,12 +63,15 @@ import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
+import org.sing_group.mtc.rest.entity.mapper.user.DefaultUserMapper;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
@@ -79,10 +81,17 @@ import org.sing_group.mtc.rest.resource.Deployments;
 @RunWith(Arquillian.class)
 public class TherapistResourceIntegrationTest {
   private static final String BASE_PATH = "api/therapist/";
+  
+  private UserMapper userMapper;
 
   @Deployment
   public static Archive<?> createDeployment() {
     return Deployments.createDeployment();
+  }
+  
+  @Before
+  public void setUp() {
+    this.userMapper = new DefaultUserMapper();
   }
 
   @Test
@@ -206,15 +215,15 @@ public class TherapistResourceIntegrationTest {
   public void testCreate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Therapist newAdmin = newTherapist();
-    final TherapistEditionData userData = toEditionData(newAdmin, passwordOf(newAdmin));
+    final Therapist newTherapist = newTherapist();
+    final TherapistEditionData userData = userMapper.toEditionData(newTherapist, passwordOf(newTherapist));
     
     final Response response = webTarget
       .request()
     .post(json(userData));
     
     assertThat(response, hasCreatedStatus());
-    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(newAdmin.getLogin())));
+    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(newTherapist.getLogin())));
   }
 
   @Test
@@ -236,7 +245,7 @@ public class TherapistResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Therapist modifiedAdmin = modifiedTherapist();
-    final TherapistEditionData userData = toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
+    final TherapistEditionData userData = userMapper.toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
     
     final Response response = webTarget
       .request()

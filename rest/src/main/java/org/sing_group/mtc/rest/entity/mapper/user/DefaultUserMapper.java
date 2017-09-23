@@ -19,10 +19,12 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.entity.mapper;
+package org.sing_group.mtc.rest.entity.mapper.user;
 
 import java.net.URI;
 import java.util.function.Function;
+
+import javax.enterprise.inject.Default;
 
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
@@ -31,6 +33,7 @@ import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
@@ -40,8 +43,10 @@ import org.sing_group.mtc.rest.entity.user.PatientEditionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 
-public class UserMapper {
-  public static AdministratorData toData(Administrator admin) {
+@Default
+public class DefaultUserMapper implements UserMapper {
+  @Override
+  public AdministratorData toData(Administrator admin) {
     return new AdministratorData(
       admin.getLogin(),
       admin.getEmail(),
@@ -50,7 +55,8 @@ public class UserMapper {
     );
   }
   
-  public static AdministratorEditionData toEditionData(Administrator admin, String password) {
+  @Override
+  public AdministratorEditionData toEditionData(Administrator admin, String password) {
     return new AdministratorEditionData(
       admin.getLogin(),
       password,
@@ -60,7 +66,8 @@ public class UserMapper {
     );
   }
   
-  public static ManagerData toData(Manager manager, Function<Institution, URI> institutionToURI) {
+  @Override
+  public ManagerData toData(Manager manager, Function<Institution, URI> institutionToURI) {
     return new ManagerData(
       manager.getLogin(),
       manager.getEmail(),
@@ -72,7 +79,8 @@ public class UserMapper {
     );
   }
   
-  public static ManagerEditionData toEditionData(Manager manager, String password) {
+  @Override
+  public ManagerEditionData toEditionData(Manager manager, String password) {
     return new ManagerEditionData(
       manager.getLogin(),
       password,
@@ -82,7 +90,8 @@ public class UserMapper {
     );
   }
   
-  public static TherapistData toData(
+  @Override
+  public TherapistData toData(
     Therapist therapist,
     Function<Institution, URI> institutionToURI,
     Function<Patient, URI> patientToURI,
@@ -103,7 +112,8 @@ public class UserMapper {
     );
   }
   
-  public static TherapistEditionData toEditionData(Therapist therapist, String password) {
+  @Override
+  public TherapistEditionData toEditionData(Therapist therapist, String password) {
     return new TherapistEditionData(
       therapist.getLogin(),
       password,
@@ -114,7 +124,8 @@ public class UserMapper {
     );
   }
   
-  public static PatientData toData(
+  @Override
+  public PatientData toData(
     Patient patient,
     Function<Therapist, URI> therapistToUri,
     Function<AssignedGamesSession, URI> assignedSessionToURI
@@ -128,7 +139,8 @@ public class UserMapper {
     );
   }
   
-  public static PatientEditionData toEditionData(Patient patient, String password) {
+  @Override
+  public PatientEditionData toEditionData(Patient patient, String password) {
     return new PatientEditionData(
       patient.getLogin(),
       password,
@@ -136,19 +148,23 @@ public class UserMapper {
     );
   }
 
-  public static Administrator toAdministrator(AdministratorEditionData data) {
+  @Override
+  public Administrator toAdministrator(AdministratorEditionData data) {
     return new Administrator(data.getLogin(), data.getEmail(), data.getPassword(), data.getName(), data.getSurname());
   }
 
-  public static Manager toManager(ManagerEditionData data) {
+  @Override
+  public Manager toManager(ManagerEditionData data) {
     return new Manager(data.getLogin(), data.getEmail(), data.getPassword(), data.getName(), data.getSurname(), null);
   }
   
-  public static Therapist toTherapist(TherapistEditionData data, Institution institution) {
+  @Override
+  public Therapist toTherapist(TherapistEditionData data, Institution institution) {
     return new Therapist(data.getLogin(), data.getEmail(), data.getPassword(), institution, data.getName(), data.getSurname(), null, null);
   }
   
-  public static Patient toPatient(PatientEditionData data, Therapist therapist) {
+  @Override
+  public Patient toPatient(PatientEditionData data, Therapist therapist) {
     return new Patient(data.getLogin(), data.getPassword(), therapist);
   }
 }

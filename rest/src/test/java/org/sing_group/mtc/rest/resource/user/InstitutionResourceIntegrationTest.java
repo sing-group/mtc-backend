@@ -24,22 +24,22 @@ package org.sing_group.mtc.rest.resource.user;
 import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
-import static org.sing_group.mtc.domain.entities.UsersDataset.countPatients;
-import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedPatient;
-import static org.sing_group.mtc.domain.entities.UsersDataset.newPasswordOf;
-import static org.sing_group.mtc.domain.entities.UsersDataset.newPatient;
-import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
-import static org.sing_group.mtc.domain.entities.UsersDataset.patient;
-import static org.sing_group.mtc.domain.entities.UsersDataset.patientToDelete;
-import static org.sing_group.mtc.domain.entities.UsersDataset.patients;
+import static org.sing_group.mtc.domain.entities.UsersDataset.ADMIN_HTTP_BASIC_AUTH;
+import static org.sing_group.mtc.domain.entities.UsersDataset.countInstitutions;
+import static org.sing_group.mtc.domain.entities.UsersDataset.institution;
+import static org.sing_group.mtc.domain.entities.UsersDataset.institutionToDelete;
+import static org.sing_group.mtc.domain.entities.UsersDataset.institutionToModify;
+import static org.sing_group.mtc.domain.entities.UsersDataset.institutions;
+import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedInstitution;
+import static org.sing_group.mtc.domain.entities.UsersDataset.newInstitution;
+import static org.sing_group.mtc.domain.entities.UsersDataset.newInstitutionId;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
-import static org.sing_group.mtc.rest.entity.GenericTypes.PatientDataListType.PATIENT_DATA_LIST_TYPE;
-import static org.sing_group.mtc.rest.entity.user.IsEqualToPatient.containsPatientsInAnyOrder;
-import static org.sing_group.mtc.rest.entity.user.IsEqualToPatient.containsPatientsInOrder;
-import static org.sing_group.mtc.rest.entity.user.IsEqualToPatient.equalToPatient;
+import static org.sing_group.mtc.rest.entity.GenericTypes.InstitutionDataListType.INSTITUTION_DATA_LIST_TYPE;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.containsInstitutionsInAnyOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.containsInstitutionsInOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.equalToInstitution;
 
 import java.util.List;
 import java.util.function.Function;
@@ -62,18 +62,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
-import org.sing_group.mtc.domain.entities.user.Patient;
-import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
-import org.sing_group.mtc.rest.entity.mapper.user.DefaultUserMapper;
-import org.sing_group.mtc.rest.entity.user.PatientData;
-import org.sing_group.mtc.rest.entity.user.PatientEditionData;
+import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
+import org.sing_group.mtc.rest.entity.mapper.user.DefaultInstitutionMapper;
+import org.sing_group.mtc.rest.entity.user.InstitutionData;
+import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
 import org.sing_group.mtc.rest.resource.Deployments;
 
 @RunWith(Arquillian.class)
-public class PatientResourceIntegrationTest {
-  private static final String BASE_PATH = "api/patient/";
+public class InstitutionResourceIntegrationTest {
+  private static final String BASE_PATH = "api/institution/";
   
-  private UserMapper userMapper;
+  private InstitutionMapper userMapper;
 
   @Deployment
   public static Archive<?> createDeployment() {
@@ -82,7 +82,7 @@ public class PatientResourceIntegrationTest {
   
   @Before
   public void setUp() {
-    this.userMapper = new DefaultUserMapper();
+    this.userMapper = new DefaultInstitutionMapper();
   }
 
   @Test
@@ -92,22 +92,22 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(1)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
   @RunAsClient
   public void testGet(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Patient patient = patient();
+    final Institution institution = institution();
     
-    final Response response = webTarget.path(patient.getLogin())
+    final Response response = webTarget.path(institution.getId().toString())
       .request()
     .get();
     
     assertThat(response, hasOkStatus());
     
-    final PatientData userData = response.readEntity(PatientData.class);
+    final InstitutionData userData = response.readEntity(InstitutionData.class);
     
-    assertThat(userData, is(equalToPatient(patient)));
+    assertThat(userData, is(equalToInstitution(institution)));
   }
 
   @Test
@@ -123,12 +123,12 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(11)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
   @RunAsClient
   public void testList(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Stream<Patient> patients = patients();
+    final Stream<Institution> institutions = institutions();
     
     final Response response = webTarget
       .request()
@@ -136,12 +136,12 @@ public class PatientResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeader("X-Total-Count", countPatients()));
+    assertThat(response, hasHttpHeader("X-Total-Count", countInstitutions()));
     assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
     
-    final List<PatientData> userData = response.readEntity(PATIENT_DATA_LIST_TYPE);
+    final List<InstitutionData> userData = response.readEntity(INSTITUTION_DATA_LIST_TYPE);
     
-    assertThat(userData, containsPatientsInAnyOrder(patients));
+    assertThat(userData, containsInstitutionsInAnyOrder(institutions));
   }
 
   @Test
@@ -157,18 +157,18 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(14)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
   @RunAsClient
   public void testListFiltered(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final int start = 1;
+    final int start = 0;
     final int end = 2;
-    final Function<Patient, String> getter = Patient::getLogin;
-    final String order = "login";
+    final Function<Institution, String> getter = Institution::getName;
+    final String order = "name";
     final SortDirection sortDirection = SortDirection.DESC;
     
-    final Stream<Patient> patients = patients(
+    final Stream<Institution> institutions = institutions(
       start, end, getter, sortDirection
     );
     
@@ -181,11 +181,11 @@ public class PatientResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeader("X-Total-Count", countPatients()));
+    assertThat(response, hasHttpHeader("X-Total-Count", countInstitutions()));
     
-    final List<PatientData> patientData = response.readEntity(PATIENT_DATA_LIST_TYPE);
+    final List<InstitutionData> institutionData = response.readEntity(INSTITUTION_DATA_LIST_TYPE);
     
-    assertThat(patientData, containsPatientsInOrder(patients));
+    assertThat(institutionData, containsInstitutionsInOrder(institutions));
   }
 
   @Test
@@ -201,25 +201,25 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(21)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
   @RunAsClient
   public void testCreate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Patient newAdmin = newPatient();
-    final PatientEditionData userData = userMapper.toEditionData(newAdmin, passwordOf(newAdmin));
+    final Institution newInstitution = newInstitution();
+    final InstitutionEditionData userData = userMapper.toEditionData(newInstitution);
     
     final Response response = webTarget
       .request()
     .post(json(userData));
     
     assertThat(response, hasCreatedStatus());
-    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(newAdmin.getLogin())));
+    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(Integer.toString(newInstitutionId()))));
   }
 
   @Test
   @InSequence(22)
-  @ShouldMatchDataSet({ "users.xml", "users-create-patient.xml" })
+  @ShouldMatchDataSet({ "users.xml", "users-create-institution.xml" })
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterCreate() {}
   
@@ -230,24 +230,23 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(31)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
   @RunAsClient
   public void testUpdate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Patient modifiedAdmin = modifiedPatient();
-    final PatientEditionData userData = userMapper.toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
+    final InstitutionEditionData institutionData = userMapper.toEditionData(modifiedInstitution());
     
-    final Response response = webTarget
+    final Response response = webTarget.path(Integer.toString(institutionToModify()))
       .request()
-    .put(json(userData));
+    .put(json(institutionData));
     
     assertThat(response, hasOkStatus());
   }
 
   @Test
   @InSequence(32)
-  @ShouldMatchDataSet(value = "users-modify-patient.xml", orderBy = "user.login")
+  @ShouldMatchDataSet(value = "users-modify-institution.xml", orderBy = "user.login")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterUpdate() {}
 
@@ -258,14 +257,14 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(41)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
   @RunAsClient
   public void testDelete(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Patient patient = patientToDelete();
+    final Institution institution = institutionToDelete();
     
-    final Response response = webTarget.path(patient.getLogin())
+    final Response response = webTarget.path(institution.getId().toString())
       .request()
     .delete();
     
@@ -274,7 +273,7 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(42)
-  @ShouldMatchDataSet(value = "users-delete-patient.xml", orderBy = "user.login")
+  @ShouldMatchDataSet(value = "users-delete-institution.xml", orderBy = "user.login")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterDelete() {}
 

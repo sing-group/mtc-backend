@@ -76,16 +76,8 @@ public class UsersDataset {
     LOGIN_TO_NEW_PASSWORD.put("patient1", "patient1Modifiedpass");
   }
   
-  public static Stream<Institution> institutions() {
-    return managers()
-      .flatMap(Manager::getInstitutions);
-  }
-  
-  public static Institution institution(String name) {
-    return institutions()
-      .filter(institution -> institution.getName().equals(name))
-      .findFirst()
-    .orElseThrow(() -> new IllegalArgumentException("Unknown institution: " + name));
+  public static Institution institution() {
+    return institution(1);
   }
   
   public static Administrator admin() {
@@ -107,10 +99,12 @@ public class UsersDataset {
   public static Stream<User> users() {
     final List<Institution> institutions = asList(
       new Institution(1, "Institution 1", null),
-      new Institution(2, "Institution 2", null)
+      new Institution(2, "Institution 2", null),
+      new Institution(3, "Institution 3", null),
+      new Institution(4, "Institution 4", null)
     );
     
-    final Manager manager = new Manager("manager", "manager@email.com", passwordOf("manager"), "Man", "Manager", institutions);
+    final Manager manager = new Manager("manager", "manager@email.com", passwordOf("manager"), "Man", "Manager", institutions.subList(0, 2));
     
     final Therapist therapist = new Therapist("therapist", "therapist@email.com", passwordOf("therapist"), institutions.get(0), "Thera", "Therapist", null, null);
     
@@ -121,8 +115,8 @@ public class UsersDataset {
       new Administrator("admin4", "admin4@email.com", passwordOf("admin4"), "Admin4", "Administrator4"),
       manager,
       new Manager("manager2", "manager2@email.com", passwordOf("manager2"), "Man2", "Manager2", null),
-      new Manager("manager3", "manager3@email.com", passwordOf("manager3"), "Man3", "Manager3", null),
-      new Manager("manager4", "manager4@email.com", passwordOf("manager4"), "Man4", "Manager4", null),
+      new Manager("manager3", "manager3@email.com", passwordOf("manager3"), "Man3", "Manager3", institutions.subList(2, 3)),
+      new Manager("manager4", "manager4@email.com", passwordOf("manager4"), "Man4", "Manager4", institutions.subList(3, 4)),
       therapist,
       new Therapist("therapist2", "therapist2@email.com", passwordOf("therapist2"), institutions.get(1), "Thera2", "Therapist2", null, null),
       new Therapist("therapist3", "therapist3@email.com", passwordOf("therapist3"), institutions.get(1), "Thera3", "Therapist3", null, null),
@@ -240,11 +234,11 @@ public class UsersDataset {
   }
 
   public static Therapist newTherapist() {
-    return new Therapist("therapistNew", "therapistNew@email.com", passwordOf("therapistNew"), institution("Institution 2"), "TheraNew", "TherapistNew", null, null);
+    return new Therapist("therapistNew", "therapistNew@email.com", passwordOf("therapistNew"), institution(1), "TheraNew", "TherapistNew", null, null);
   }
 
   public static Therapist modifiedTherapist() {
-    return new Therapist("therapist", "therapistModified@email.com", newPasswordOf("therapist"), institution("Institution 1"), "TheraModified", "Therapist", null, null);
+    return new Therapist("therapist", "therapistModified@email.com", newPasswordOf("therapist"), institution(1), "TheraModified", "Therapist", null, null);
   }
 
   public static Therapist therapistToDelete() {
@@ -285,6 +279,51 @@ public class UsersDataset {
   public static Patient patientToDelete() {
     return user("patient2");
   }
+  
+  public static Institution newInstitution() {
+    return new Institution("New Institution", user("manager4"));
+  }
+  
+  public static int newInstitutionId() {
+    return (int) countInstitutions() + 1;
+  }
+  
+  public static int institutionToModify() {
+    return 1;
+  }
+  
+  public static Institution modifiedInstitution() {
+    return new Institution("Modified Institution", user("manager"), "Modified Description", "Modified Address", asList(user("therapist")));
+  }
+  
+  public static Institution institutionToDelete() {
+    return institution(1);
+  }
+  
+  public static <T extends Comparable<T>> Stream<Institution> institutions() {
+    return managers()
+      .flatMap(Manager::getInstitutions);
+  }
+  
+  public static <T extends Comparable<T>> Stream<Institution> institutions(
+    int start, int end, Function<Institution, T> getter, SortDirection sort
+  ) {
+    final Comparator<T> compare = sort == SortDirection.ASC
+      ? (c1, c2) -> c1.compareTo(c2)
+      : (c1, c2) -> -c1.compareTo(c2);
+      
+    return institutions()
+      .sorted((c1, c2) -> compare.compare(getter.apply(c1), getter.apply(c2)))
+      .skip(start)
+      .limit(end - start + 1);
+  }
+  
+  public static Institution institution(int id) {
+    return institutions()
+      .filter(institution -> institution.getId().equals(id))
+      .findFirst()
+    .orElseThrow(() -> new IllegalArgumentException("Unknown institution: " + id));
+  }
 
   public static long countAdmins() {
     return admins().count();
@@ -300,6 +339,10 @@ public class UsersDataset {
   
   public static long countPatients() {
     return patients().count();
+  }
+  
+  public static long countInstitutions() {
+    return institutions().count();
   }
   
 }

@@ -20,14 +20,8 @@
   <http://www.gnu.org/licenses/gpl-3.0.html>.
   #L%
   -->
-<!--
-  Users' password is the user's login followed by "pass".
-  For example, password for "admin" is "adminpass".
--->
-<dataset>  
+<dataset>
   
-  <!-- HTTP Basic token: dGhlcmFwaXN0TmV3OnRoZXJhcGlzdE5ld3Bhc3M= -->
-  <user login="therapistNew" password="A8A63412EAF5848942513F64C37EE6CA" role="THERAPIST" />
-  <therapist login="therapistNew" email="therapistNew@email.com" name="TheraNew" surname="TherapistNew" institution="1" />
+  <institution id="5" name="New Institution" manager="manager4" />
   
 </dataset>

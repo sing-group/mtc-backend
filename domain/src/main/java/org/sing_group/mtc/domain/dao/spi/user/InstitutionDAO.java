@@ -21,8 +21,21 @@
  */
 package org.sing_group.mtc.domain.dao.spi.user;
 
+import java.util.stream.Stream;
+
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Institution;
 
 public interface InstitutionDAO {
   public Institution get(int id);
+
+  public Stream<Institution> list(ListingOptions listingOptions);
+
+  public long count();
+
+  public Institution create(Institution institution);
+
+  public Institution update(Institution institution);
+
+  public void delete(int id);
 }

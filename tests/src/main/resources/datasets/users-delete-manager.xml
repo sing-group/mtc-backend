@@ -54,4 +54,7 @@
   <user login="manager4" password="CF1F2B68DD65F424529E4FAE83811068" role="MANAGER" />
   <manager login="manager4" email="manager4@email.com" name="Man4" surname="Manager4" />
   
+  <institution id="3" name="Institution 3" manager="manager3" />
+  <institution id="4" name="Institution 4" manager="manager4" />
+  
 </dataset>

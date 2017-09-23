@@ -37,7 +37,6 @@ import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.AdministratorDataListType.ADMINISTRATOR_DATA_LIST_TYPE;
-import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toEditionData;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToAdministrator.containsAdministratorsInAnyOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToAdministrator.containsAdministratorsInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToAdministrator.equalToAdministrator;
@@ -59,11 +58,13 @@ import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Administrator;
-import org.sing_group.mtc.rest.entity.mapper.UserMapper;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
+import org.sing_group.mtc.rest.entity.mapper.user.DefaultUserMapper;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
 import org.sing_group.mtc.rest.resource.Deployments;
@@ -71,10 +72,17 @@ import org.sing_group.mtc.rest.resource.Deployments;
 @RunWith(Arquillian.class)
 public class AdministratorResourceIntegrationTest {
   private static final String BASE_PATH = "api/admin/";
+  
+  private UserMapper userMapper;
 
   @Deployment
   public static Archive<?> createDeployment() {
     return Deployments.createDeployment();
+  }
+  
+  @Before
+  public void setUp() {
+    this.userMapper = new DefaultUserMapper();
   }
 
   @Test
@@ -199,7 +207,7 @@ public class AdministratorResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Administrator newAdmin = newAdministrator();
-    final AdministratorEditionData userData = UserMapper.toEditionData(newAdmin, passwordOf(newAdmin));
+    final AdministratorEditionData userData = userMapper.toEditionData(newAdmin, passwordOf(newAdmin));
     
     final Response response = webTarget
       .request()
@@ -228,7 +236,7 @@ public class AdministratorResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Administrator modifiedAdmin = modifiedAdministrator();
-    final AdministratorEditionData userData = toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
+    final AdministratorEditionData userData = userMapper.toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
     
     final Response response = webTarget
       .request()

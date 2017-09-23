@@ -1,6 +1,6 @@
 /*
  * #%L
- * Service
+ * REST
  * %%
  * Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
  * %%
@@ -19,26 +19,21 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.service.spi.user;
+package org.sing_group.mtc.rest.resource.spi.user;
 
-import java.util.stream.Stream;
+import javax.ws.rs.core.Response;
 
-import javax.ejb.Local;
+import org.sing_group.mtc.domain.dao.SortDirection;
+import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
 
-import org.sing_group.mtc.domain.dao.ListingOptions;
-import org.sing_group.mtc.domain.entities.user.Institution;
+public interface InstitutionResource {
+  public Response get(int id);
 
-@Local
-public interface InstitutionService {
-  public Institution get(int id);
+  public Response list(int start, int end, String order, SortDirection sort);
 
-  public Stream<Institution> list(ListingOptions listingOptions);
+  public Response create(InstitutionEditionData data);
 
-  public long count();
+  public Response update(int id, InstitutionEditionData data);
 
-  public Institution create(Institution institution);
-
-  public Institution update(Institution institution);
-
-  public void delete(int id);
+  public Response delete(int id);
 }

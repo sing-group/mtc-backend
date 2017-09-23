@@ -23,7 +23,6 @@ package org.sing_group.mtc.rest.resource.user;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
-import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toTherapist;
 
 import java.net.URI;
 
@@ -49,8 +48,8 @@ import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.rest.entity.mapper.GamesMapper;
-import org.sing_group.mtc.rest.entity.mapper.UserMapper;
+import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
@@ -81,13 +80,16 @@ import io.swagger.annotations.ResponseHeader;
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Stateless
 @Default
-@CrossDomain(allowedHeaders = { "X-Total-Count" }, allowRequestHeaders = true)
+@CrossDomain(allowedHeaders = { "X-Total-Count", "Location" }, allowRequestHeaders = true)
 public class DefaultTherapistResource implements TherapistResource {
   @Inject
   private TherapistService service;
   
   @Inject
   private InstitutionService institutionService;
+  
+  @Inject
+  private UserMapper userMapper;
   
   @Inject
   private GamesMapper gamesMapper;
@@ -149,7 +151,7 @@ public class DefaultTherapistResource implements TherapistResource {
   )
   @Override
   public Response create(TherapistEditionData data) {
-    final Therapist therapist = this.service.create(toTherapist(data, this.institutionService.get(data.getInstitution())));
+    final Therapist therapist = this.service.create(userMapper.toTherapist(data, this.institutionService.get(data.getInstitution())));
     
     final URI userUri = this.buildUriFor(therapist);
     
@@ -168,7 +170,7 @@ public class DefaultTherapistResource implements TherapistResource {
   public Response update(
     TherapistEditionData data
   ) {
-    this.service.update(toTherapist(data, this.institutionService.get(data.getInstitution())));
+    this.service.update(userMapper.toTherapist(data, this.institutionService.get(data.getInstitution())));
     
     return Response.ok().build();
   }
@@ -267,7 +269,7 @@ public class DefaultTherapistResource implements TherapistResource {
   }
   
   private TherapistData toData(Therapist therapist) {
-    return UserMapper.toData(
+    return userMapper.toData(
       therapist,
       institution -> this.buildUriForInstitution(therapist),
       this::buildUriForPatient,

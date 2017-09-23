@@ -37,12 +37,10 @@
   <user login="admin4" role="ADMIN" password="0B32DC614713204765BAB388A115C420"/>
   <administrator login="admin4" email="admin4@email.com" name="Admin4" surname="Administrator4" />
   
+  
   <!-- HTTP Basic token: bWFuYWdlcjptYW5hZ2VycGFzcw== -->
   <user login="manager" password="3FD7488B6FD40F33C5A8E857B6A944AA" role="MANAGER" />
   <manager login="manager" email="manager@email.com" name="Man" surname="Manager" />
-  
-  <institution id="1" name="Institution 1" manager="manager" />
-  <institution id="2" name="Institution 2" manager="manager" />
   
   <!-- HTTP Basic token: bWFuYWdlcjI6bWFuYWdlcjJwYXNz -->
   <user login="manager2" password="DF6D7E524763F97CD09EE77EE05CC03B" role="MANAGER" />
@@ -55,6 +53,11 @@
   <!-- HTTP Basic token: bWFuYWdlcjQ6bWFuYWdlcjRwYXNz -->
   <user login="manager4" password="CF1F2B68DD65F424529E4FAE83811068" role="MANAGER" />
   <manager login="manager4" email="manager4@email.com" name="Man4" surname="Manager4" />
+  
+  <institution id="1" name="Institution 1" manager="manager" />
+  <institution id="2" name="Institution 2" manager="manager" />
+  <institution id="3" name="Institution 3" manager="manager3" />
+  <institution id="4" name="Institution 4" manager="manager4" />
   
   
   <!-- HTTP Basic token: dGhlcmFwaXN0OnRoZXJhcGlzdHBhc3M= -->

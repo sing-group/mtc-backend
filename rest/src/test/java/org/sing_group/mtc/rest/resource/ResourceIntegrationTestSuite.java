@@ -26,6 +26,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.sing_group.mtc.rest.resource.game.session.GamesSessionResourceIntegrationTest;
 import org.sing_group.mtc.rest.resource.user.AdministratorResourceIntegrationTest;
+import org.sing_group.mtc.rest.resource.user.InstitutionResourceIntegrationTest;
 import org.sing_group.mtc.rest.resource.user.ManagerResourceIntegrationTest;
 import org.sing_group.mtc.rest.resource.user.PatientResourceIntegrationTest;
 import org.sing_group.mtc.rest.resource.user.TherapistResourceIntegrationTest;
@@ -37,6 +38,7 @@ import org.sing_group.mtc.rest.resource.user.UserResourceIntegrationTest;
 	ManagerResourceIntegrationTest.class,
 	TherapistResourceIntegrationTest.class,
 	PatientResourceIntegrationTest.class,
+	InstitutionResourceIntegrationTest.class,
 	GamesSessionResourceIntegrationTest.class
 })
 @RunWith(Suite.class)

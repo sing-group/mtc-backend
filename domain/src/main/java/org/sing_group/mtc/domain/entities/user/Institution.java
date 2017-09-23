@@ -118,7 +118,7 @@ public class Institution implements Serializable {
   public void setDescription(String description) {
     this.description = description == null
       ? null
-      : requireStringSize(name, 0, 1023, "'description' should be null or have a length between 0 and 1023");
+      : requireStringSize(description, 0, 1023, "'description' should be null or have a length between 0 and 1023");
   }
 
   public Optional<String> getAddress() {
@@ -128,7 +128,7 @@ public class Institution implements Serializable {
   public void setAddress(String address) {
     this.address = address == null
       ? null
-      : requireStringSize(name, 0, 1023, "'address' should be null or have a length between 0 and 1023");
+      : requireStringSize(address, 0, 1023, "'address' should be null or have a length between 0 and 1023");
   }
   
   public Optional<Manager> getManager() {

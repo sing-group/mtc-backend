@@ -23,7 +23,6 @@ package org.sing_group.mtc.rest.resource.user;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
-import static org.sing_group.mtc.rest.entity.mapper.UserMapper.toManager;
 
 import java.net.URI;
 
@@ -48,7 +47,7 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
-import org.sing_group.mtc.rest.entity.mapper.UserMapper;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
@@ -76,10 +75,13 @@ import io.swagger.annotations.ResponseHeader;
 @Consumes({ APPLICATION_JSON, APPLICATION_XML })
 @Stateless
 @Default
-@CrossDomain(allowedHeaders = { "X-Total-Count" }, allowRequestHeaders = true)
+@CrossDomain(allowedHeaders = { "X-Total-Count", "Location" }, allowRequestHeaders = true)
 public class DefaultManagerResource implements ManagerResource {
   @Inject
   private ManagerService service;
+  
+  @Inject
+  private UserMapper mapper;
   
   @Context
   private UriInfo uriInfo;
@@ -117,7 +119,7 @@ public class DefaultManagerResource implements ManagerResource {
     response = ManagerData.class,
     responseContainer = "List",
     code = 200,
-    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of therapists in the database.")
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of managers in the database.")
   )
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
@@ -147,7 +149,7 @@ public class DefaultManagerResource implements ManagerResource {
     @ApiResponse(code = 400, message = "Entity already exists")
   )
   public Response create(ManagerEditionData data) {
-    final Manager manager = this.service.create(toManager(data));
+    final Manager manager = this.service.create(mapper.toManager(data));
     
     final URI userUri = this.buildUriFor(manager);
     
@@ -166,7 +168,7 @@ public class DefaultManagerResource implements ManagerResource {
   public Response update(
     ManagerEditionData data
   ) {
-    this.service.update(UserMapper.toManager(data));
+    this.service.update(mapper.toManager(data));
     
     return Response.ok().build();
   }
@@ -195,6 +197,6 @@ public class DefaultManagerResource implements ManagerResource {
   }
   
   private ManagerData toData(Manager manager) {
-    return UserMapper.toData(manager, this::buildUriFor);
+    return mapper.toData(manager, this::buildUriFor);
   }
 }

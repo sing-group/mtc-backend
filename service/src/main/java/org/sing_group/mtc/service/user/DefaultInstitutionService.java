@@ -21,26 +21,64 @@
  */
 package org.sing_group.mtc.service.user;
 
+import java.util.stream.Stream;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.InstitutionDAO;
 import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.domain.entities.user.RoleType;
+import org.sing_group.mtc.service.security.SecurityGuard;
 import org.sing_group.mtc.service.spi.user.InstitutionService;
 
 @Default
 @Stateless
-@RolesAllowed({ "MANAGER", "THERAPIST" })
+@RolesAllowed("ADMIN")
 public class DefaultInstitutionService implements InstitutionService {
   @Inject
   private InstitutionDAO dao;
-  
 
+  @Inject
+  private SecurityGuard securityGuard;
+  
+  @RolesAllowed({ "MANAGER", "ADMIN", "THERAPIST" })
   @Override
   public Institution get(int id) {
-    return this.dao.get(id);
+    return this.securityGuard.ifAuthorized(
+      RoleType.ADMIN,
+      () -> dao.get(id).getManager().map(Manager::getLogin).orElse(""),
+      () -> dao.get(id)
+    );
+  }
+
+  @Override
+  public Stream<Institution> list(ListingOptions listingOptions) {
+    return this.dao.list(listingOptions);
+  }
+
+  @Override
+  public long count() {
+    return this.dao.count();
+  }
+
+  @Override
+  public Institution create(Institution institution) {
+    return this.dao.create(institution);
+  }
+
+  @Override
+  public Institution update(Institution institution) {
+    return this.dao.update(institution);
+  }
+
+  @Override
+  public void delete(int id) {
+    this.dao.delete(id);
   }
 
 }

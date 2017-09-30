@@ -48,8 +48,8 @@
         <artifactId>maven-ear-plugin</artifactId>
         <configuration>
           <applicationId>mtc</applicationId>
-          <applicationName>Java EE</applicationName>
-          <displayName>Java EE</displayName>
+          <applicationName>MTC</applicationName>
+          <displayName>MultiTasking Cubes</displayName>
           <earName>${project.parent.artifactId}-${project.version}</earName>
           <defaultLibBundleDir>lib/</defaultLibBundleDir>
           <skinnyWars>true</skinnyWars>

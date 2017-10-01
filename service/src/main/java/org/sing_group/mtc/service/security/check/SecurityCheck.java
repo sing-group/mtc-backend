@@ -19,16 +19,9 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.service.security;
+package org.sing_group.mtc.service.security.check;
 
-import javax.ejb.Local;
-
-import org.sing_group.mtc.domain.entities.user.User;
-import org.sing_group.mtc.service.security.check.SecurityCheck;
-
-@Local
-public interface SecurityGuard {
-  public <U extends User> U getLoggedUser();
-  
-  public AuthorizedExecutor ifAuthorized(SecurityCheck ... checks);
+@FunctionalInterface
+public interface SecurityCheck {
+  public SecurityCheckResult check();
 }

@@ -34,6 +34,7 @@ import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.service.security.SecurityGuard;
+import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.TherapistService;
 import org.sing_group.mtc.service.spi.user.UserService;
 
@@ -52,10 +53,17 @@ public class DefaultTherapistService implements TherapistService {
   @Inject
   private SecurityGuard securityGuard;
   
+  @Inject
+  private SecurityCheckBuilder checkThat;
+  
   @Override
   @RolesAllowed({ "MANAGER", "THERAPIST" })
   public Therapist get(String login) {
-    return this.securityGuard.ifAuthorized(RoleType.MANAGER, () -> login, () -> dao.get(login));
+    return this.securityGuard.ifAuthorized(
+        checkThat.hasRole(RoleType.MANAGER),
+        checkThat.hasLogin(login)
+      )
+    .call(() -> dao.get(login));
   }
 
   @Override
@@ -86,7 +94,11 @@ public class DefaultTherapistService implements TherapistService {
   @RolesAllowed("THERAPIST")
   @Override
   public GamesSession createGamesSession(String login, GamesSession gamesSession) {
-    return this.securityGuard.ifAuthorized(RoleType.MANAGER, () -> login, () -> {
+    return this.securityGuard.ifAuthorized(
+        checkThat.hasRole(RoleType.MANAGER),
+        checkThat.hasLogin(login)
+      )
+    .call(() -> {
       gamesSession.setTherapist(this.get(login));
       
       return this.gamesSessionDao.persist(gamesSession);
@@ -96,8 +108,10 @@ public class DefaultTherapistService implements TherapistService {
   @RolesAllowed("THERAPIST")
   @Override
   public Stream<GamesSession> listGameSessions(String login) {
-    return this.securityGuard.ifAuthorized(RoleType.MANAGER, () -> login, () -> {
-      return ((Therapist) this.userService.getCurrentUser()).getSessions();
-    });
+    return this.securityGuard.ifAuthorized(
+        checkThat.hasRole(RoleType.MANAGER),
+        checkThat.hasLogin(login)
+      )
+    .call(() -> ((Therapist) this.userService.getCurrentUser()).getSessions());
   }
 }

@@ -19,16 +19,32 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.service.security;
+package org.sing_group.mtc.service.security.check;
 
-import javax.ejb.Local;
+import java.util.Optional;
 
-import org.sing_group.mtc.domain.entities.user.User;
-import org.sing_group.mtc.service.security.check.SecurityCheck;
-
-@Local
-public interface SecurityGuard {
-  public <U extends User> U getLoggedUser();
+public class SecurityCheckResult {
+  private final boolean valid;
+  private final String reason;
   
-  public AuthorizedExecutor ifAuthorized(SecurityCheck ... checks);
+  public static SecurityCheckResult valid() {
+    return new SecurityCheckResult(true, null);
+  }
+  
+  public static SecurityCheckResult invalid(String reason) {
+    return new SecurityCheckResult(false, reason);
+  }
+  
+  protected SecurityCheckResult(boolean isValid, String reason) {
+    this.valid = isValid;
+    this.reason = reason;
+  }
+  
+  public boolean isValid() {
+    return this.valid;
+  }
+  
+  public Optional<String> getReason() {
+    return Optional.ofNullable(this.reason);
+  }
 }

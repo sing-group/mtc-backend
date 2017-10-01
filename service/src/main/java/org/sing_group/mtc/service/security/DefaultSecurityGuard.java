@@ -21,11 +21,8 @@
  */
 package org.sing_group.mtc.service.security;
 
-import static java.util.Arrays.stream;
 import static javax.ejb.TransactionAttributeType.REQUIRED;
 import static javax.ejb.TransactionAttributeType.SUPPORTS;
-
-import java.util.function.Supplier;
 
 import javax.annotation.Resource;
 import javax.annotation.security.PermitAll;
@@ -36,8 +33,8 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.spi.user.UserDAO;
-import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.User;
+import org.sing_group.mtc.service.security.check.SecurityCheck;
 
 @Stateless
 @Default
@@ -51,38 +48,8 @@ public class DefaultSecurityGuard implements SecurityGuard {
 
   @TransactionAttribute(SUPPORTS)
   @Override
-  public void ifAuthorized(RoleType[] roles, Supplier<String> loginSupplier, Runnable action) {
-    if (stream(roles).map(RoleType::name).anyMatch(this.context::isCallerInRole) ||
-      this.context.getCallerPrincipal().getName().equals(loginSupplier.get())
-    ) {
-      action.run();
-    } else {
-      throw new SecurityException("Illegal access of user: " + this.context.getCallerPrincipal().getName());
-    }
-  }
-
-  @TransactionAttribute(SUPPORTS)
-  @Override
-  public <T> T ifAuthorized(RoleType[] roles, Supplier<String> loginSupplier, Supplier<T> action) {
-    if (stream(roles).map(RoleType::name).anyMatch(this.context::isCallerInRole) ||
-      this.context.getCallerPrincipal().getName().equals(loginSupplier.get())
-    ) {
-      return action.get();
-    } else {
-      throw new SecurityException("Illegal access of user: " + this.context.getCallerPrincipal().getName());
-    }
-  }
-
-  @TransactionAttribute(SUPPORTS)
-  @Override
-  public void ifAuthorized(RoleType role, Supplier<String> loginSupplier, Runnable action) {
-    this.ifAuthorized(new RoleType[] { role }, loginSupplier, action);
-  }
-
-  @TransactionAttribute(SUPPORTS)
-  @Override
-  public <T> T ifAuthorized(RoleType role, Supplier<String> loginSupplier, Supplier<T> action) {
-    return this.ifAuthorized(new RoleType[] { role }, loginSupplier, action);
+  public AuthorizedExecutor ifAuthorized(SecurityCheck... checks) {
+    return new AuthorizedExecutor(checks);
   }
 
   @TransactionAttribute(REQUIRED)

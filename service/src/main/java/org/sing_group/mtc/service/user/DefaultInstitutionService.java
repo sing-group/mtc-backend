@@ -34,6 +34,7 @@ import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.service.security.SecurityGuard;
+import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.InstitutionService;
 
 @Default
@@ -46,16 +47,19 @@ public class DefaultInstitutionService implements InstitutionService {
   @Inject
   private SecurityGuard securityGuard;
   
+  @Inject
+  private SecurityCheckBuilder checkThat;
+  
   @RolesAllowed({ "MANAGER", "ADMIN", "THERAPIST" })
   @Override
   public Institution get(int id) {
     return this.securityGuard.ifAuthorized(
-      RoleType.ADMIN,
-      () -> dao.get(id).getManager().map(Manager::getLogin).orElse(""),
-      () -> dao.get(id)
-    );
+        checkThat.hasRole(RoleType.ADMIN),
+        checkThat.hasLogin(() -> dao.get(id).getManager().map(Manager::getLogin).orElse(""))
+      )
+    .call(() -> this.dao.get(id));
   }
-
+  
   @Override
   public Stream<Institution> list(ListingOptions listingOptions) {
     return this.dao.list(listingOptions);

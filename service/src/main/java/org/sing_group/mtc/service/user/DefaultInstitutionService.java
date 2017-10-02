@@ -30,6 +30,7 @@ import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.InstitutionDAO;
+import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.RoleType;
@@ -44,6 +45,9 @@ import org.sing_group.mtc.service.spi.user.InstitutionService;
 public class DefaultInstitutionService implements InstitutionService {
   @Inject
   private InstitutionDAO dao;
+  
+  @Inject
+  private TherapistDAO therapistDao;
 
   @Inject
   private SecurityGuard securityGuard;
@@ -59,7 +63,7 @@ public class DefaultInstitutionService implements InstitutionService {
         checkThat.hasLogin(() -> dao.get(id).getManager().map(Manager::getLogin).orElse("")),
         checkThat.hasAnyLoginOf(() -> dao.get(id).getTherapists().map(Therapist::getLogin).toArray(String[]::new))
       )
-    .call(() -> this.dao.get(id));
+    .call(() ->  this.dao.get(id));
   }
   
   @Override
@@ -85,6 +89,16 @@ public class DefaultInstitutionService implements InstitutionService {
   @Override
   public void delete(int id) {
     this.dao.delete(id);
+  }
+
+  @RolesAllowed({ "MANAGER", "ADMIN" })
+  @Override
+  public Stream<Therapist> listTherapists(int id, ListingOptions options) {
+    return this.securityGuard.ifAuthorized(
+        checkThat.hasRole(RoleType.ADMIN),
+        checkThat.hasLogin(() -> dao.get(id).getManager().map(Manager::getLogin).orElse(""))
+      )
+    .call(() -> this.therapistDao.listByInstitution(this.dao.get(id), options));
   }
 
 }

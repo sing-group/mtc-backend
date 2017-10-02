@@ -27,6 +27,7 @@ import javax.ejb.Local;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Local
 public interface InstitutionService {
@@ -41,4 +42,6 @@ public interface InstitutionService {
   public Institution update(Institution institution);
 
   public void delete(int id);
+
+  public Stream<Therapist> listTherapists(int id, ListingOptions options);
 }

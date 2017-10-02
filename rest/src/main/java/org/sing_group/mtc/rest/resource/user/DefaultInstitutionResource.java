@@ -45,14 +45,16 @@ import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
+import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
-import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
 import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
+import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.spi.user.InstitutionResource;
@@ -111,7 +113,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
   @GET
   @ApiOperation(
     value = "Returns all the institutions in the database.",
-    response = AdministratorData.class,
+    response = InstitutionData.class,
     responseContainer = "List",
     code = 200,
     responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of institutions in the database.")
@@ -148,7 +150,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
   public Response create(InstitutionEditionData data) {
     final Institution institution = this.service.create(mapper.toInstitution(data));
     
-    final URI institutionUri = this.buildUriFor(institution);
+    final URI institutionUri = this.buildUriForInstitution(institution);
     
     return Response.created(institutionUri).build();
   }
@@ -203,14 +205,87 @@ public class DefaultInstitutionResource implements InstitutionResource {
     final Manager manager = institution.getManager()
       .orElseThrow(() -> new IllegalArgumentException("No manager found for institution: " + id));
     
-    return Response.ok(this.userMapper.toData(manager, this::buildUriFor)).build();
+    return Response.ok(this.userMapper.toData(manager, this::buildUriForInstitution)).build();
+  }
+  
+  @GET
+  @Path("{id}/therapist")
+  @ApiOperation(
+    value = "Returns all the therapists that belong to an institution.",
+    response = TherapistData.class,
+    responseContainer = "List",
+    code = 200,
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of therapists that belong to the institution.")
+  )
+  @Override
+  public Response listTherapists(
+    @PathParam("id") int id,
+    @QueryParam("start") @DefaultValue("-1") int start,
+    @QueryParam("end") @DefaultValue("-1") int end,
+    @QueryParam("order") String order,
+    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+  ) {
+    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    
+    final Institution institution = this.service.get(id);
+    final TherapistData[] therapists = this.service.listTherapists(id, options)
+      .map(therapist -> this.userMapper.toData(therapist, this::buildUriForInstitution, this::buildUriForPatient, this::buildUriForSession))
+    .toArray(TherapistData[]::new);
+    
+    return Response.ok(therapists)
+      .header("X-Total-Count", institution.getTherapists().count())
+    .build();
+  }
+  
+  @GET
+  @Path("{id}/therapist/{login}")
+  @ApiOperation(
+    value = "Returns a therapists that belongs to an institution.",
+    response = TherapistData.class,
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown institution: {id} | Unknown login: {login}")
+  )
+  @Override
+  public Response getTherapists(
+    @PathParam("id") int id,
+    @PathParam("login") String login
+  ) {
+    final Institution institution = this.service.get(id);
+    final Therapist therapist = institution.getTherapists()
+      .filter(t -> t.getLogin().equals(login))
+      .findFirst()
+    .orElseThrow(() -> new IllegalArgumentException("Unknown therapist: " + login));
+    
+    return Response
+      .ok(this.userMapper.toData(therapist, this::buildUriForInstitution, this::buildUriForPatient, this::buildUriForSession))
+    .build();
   }
   
   private InstitutionData toData(Institution institution) {
-    return this.mapper.toData(institution, manager -> this.buildOwnManagerUri(institution), this::buildUriFor);
+    return this.mapper.toData(institution, manager -> this.buildOwnManagerUri(institution), this::buildUriForTherapist);
+  }
+  
+  private URI buildUriForPatient(Patient patient) {
+    return uriInfo.getBaseUriBuilder()
+      .path(DefaultTherapistResource.class.getAnnotation(Path.class).value())
+      .path(patient.getTherapist().getLogin())
+      .path("patient")
+      .path(patient.getLogin())
+    .build();
+  }
+  
+  private URI buildUriForSession(GamesSession session) {
+    return uriInfo.getBaseUriBuilder()
+      .path(DefaultTherapistResource.class.getAnnotation(Path.class).value())
+      .path(session.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
+      .path("gamesession")
+      .path(session.getId().toString())
+    .build();
   }
 
-  private URI buildUriFor(Institution institution) {
+  private URI buildUriForInstitution(Institution institution) {
     return uriInfo.getBaseUriBuilder()
       .path(this.getClass().getAnnotation(Path.class).value())
       .path("institution")
@@ -227,7 +302,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
     .build();
   }
   
-  private URI buildUriFor(Therapist therapist) {
+  private URI buildUriForTherapist(Therapist therapist) {
     return uriInfo.getBaseUriBuilder()
       .path(this.getClass().getAnnotation(Path.class).value())
       .path("institution")

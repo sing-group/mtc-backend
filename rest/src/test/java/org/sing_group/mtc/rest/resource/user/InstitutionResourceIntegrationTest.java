@@ -34,14 +34,19 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.institutions;
 import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedInstitution;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newInstitution;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newInstitutionId;
+import static org.sing_group.mtc.domain.entities.UsersDataset.therapists;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.InstitutionDataListType.INSTITUTION_DATA_LIST_TYPE;
+import static org.sing_group.mtc.rest.entity.GenericTypes.TherapistDataListType.THERAPIST_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.containsInstitutionsInAnyOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.containsInstitutionsInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.equalToInstitution;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.equalToManager;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.containsTherapistsInAnyOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.containsTherapistsInOrder;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.equalToTherapist;
 
 import java.util.List;
 import java.util.function.Function;
@@ -66,11 +71,13 @@ import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.mapper.user.DefaultInstitutionMapper;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
 import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
+import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.resource.Deployments;
 
 @RunWith(Arquillian.class)
@@ -363,5 +370,193 @@ public class InstitutionResourceIntegrationTest {
   @ShouldMatchDataSet("users.xml")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterGetManagerAsManager() {}
+  
+  private void testListTherapists(ResteasyWebTarget webTarget) {
+    final Institution institution = institution();
+    
+    final Stream<Therapist> therapists = institution.getTherapists();
+    
+    final Response response = webTarget.path(institution.getId().toString()).path("therapist")
+      .request()
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", institution.getTherapists().count()));
+    
+    final List<TherapistData> therapistData = response.readEntity(THERAPIST_DATA_LIST_TYPE);
+    
+    assertThat(therapistData, containsTherapistsInAnyOrder(therapists));
+  }
 
+  @Test
+  @InSequence(200)
+  @UsingDataSet("users.xml")
+  public void beforeListTherapistsAsAdmin() {}
+
+  @Test
+  @InSequence(201)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListTherapistsAsAdmin(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testListTherapists(webTarget);
+  }
+
+  @Test
+  @InSequence(202)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListTherapistsAsAdmin() {}
+
+  @Test
+  @InSequence(203)
+  @UsingDataSet("users.xml")
+  public void beforeListTherapistsAsManager() {}
+
+  @Test
+  @InSequence(204)
+  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListTherapistsAsManager(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testListTherapists(webTarget);
+  }
+
+  @Test
+  @InSequence(205)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListTherapistsAsManager() {}
+  
+  private void testListTherapistsFiltered(ResteasyWebTarget webTarget) {
+    final int start = 1;
+    final int end = 2;
+    final Function<Therapist, String> getter = Therapist::getEmail;
+    final String order = "email";
+    final SortDirection sortDirection = SortDirection.DESC;
+    
+    final Institution institution = institution(2);
+    
+    final Stream<Therapist> therapists = therapists(
+      institution.getTherapists(), start, end, getter, sortDirection
+    );
+    
+    final Response response = webTarget.path(institution.getId().toString()).path("therapist")
+      .queryParam("start", start)
+      .queryParam("end", end)
+      .queryParam("order", order)
+      .queryParam("sort", sortDirection)
+      .request()
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", institution.getTherapists().count()));
+    
+    final List<TherapistData> therapistData = response.readEntity(THERAPIST_DATA_LIST_TYPE);
+    
+    assertThat(therapistData, containsTherapistsInOrder(therapists));
+  }
+
+  @Test
+  @InSequence(206)
+  @UsingDataSet("users.xml")
+  public void beforeListTherapistsFilteredAsAdmin() {}
+
+  @Test
+  @InSequence(207)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListTherapistsFilteredAsAdmin(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testListTherapistsFiltered(webTarget);
+  }
+
+  @Test
+  @InSequence(208)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListTherapistsFilteredAsAdmin() {}
+
+  @Test
+  @InSequence(209)
+  @UsingDataSet("users.xml")
+  public void beforeListTherapistsFilteredAsManager() {}
+
+  @Test
+  @InSequence(210)
+  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListTherapistsFilteredAsManager(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testListTherapistsFiltered(webTarget);
+  }
+
+  @Test
+  @InSequence(211)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListTherapistsFilteredAsManager() {}
+
+  
+  private void testGetTherapist(ResteasyWebTarget webTarget) {
+    final Institution institution = institution();
+    
+    final Therapist therapist = institution.getTherapists().findFirst().orElseThrow(IllegalStateException::new);
+    
+    final Response response = webTarget.path(institution.getId().toString()).path("therapist").path(therapist.getLogin())
+      .request()
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    
+    final TherapistData therapistData = response.readEntity(TherapistData.class);
+    
+    assertThat(therapistData, is(equalToTherapist(therapist)));
+  }
+
+  @Test
+  @InSequence(212)
+  @UsingDataSet("users.xml")
+  public void beforeGetTherapistAsAdmin() {}
+
+  @Test
+  @InSequence(213)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testGetTherapistAsAdmin(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testGetTherapist(webTarget);
+  }
+
+  @Test
+  @InSequence(214)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterGetTherapistAsAdmin() {}
+
+  @Test
+  @InSequence(215)
+  @UsingDataSet("users.xml")
+  public void beforeGetTherapistAsManager() {}
+
+  @Test
+  @InSequence(216)
+  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testGetTherapistAsManager(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testGetTherapist(webTarget);
+  }
+
+  @Test
+  @InSequence(217)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterGetTherapistAsManager() {}
 }

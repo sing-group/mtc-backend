@@ -38,4 +38,8 @@ public interface InstitutionResource {
   public Response delete(int id);
 
   public Response getManager(int id);
+
+  public Response listTherapists(int id, int start, int end, String order, SortDirection sort);
+
+  public Response getTherapists(int id, String login);
 }

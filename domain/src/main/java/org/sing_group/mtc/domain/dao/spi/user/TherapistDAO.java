@@ -24,13 +24,16 @@ package org.sing_group.mtc.domain.dao.spi.user;
 import java.util.stream.Stream;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
 public interface TherapistDAO {
   
   public Therapist get(String login);
 
-  public Stream<Therapist> list(ListingOptions listingOptions);
+  public Stream<Therapist> list(ListingOptions options);
+
+  public Stream<Therapist> listByInstitution(Institution institution, ListingOptions options);
   
   public long count();
 

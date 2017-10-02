@@ -35,9 +35,9 @@ import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 
 public class DefaultInstitutionDAO implements InstitutionDAO {
-
   @PersistenceContext
   protected EntityManager em;
+  
   private DAOHelper<Integer, Institution> dh;
 
   public DefaultInstitutionDAO() {

@@ -35,7 +35,7 @@ public abstract class AbstractUserManagementDAO<E extends User> implements UserM
 
   @PersistenceContext
   protected EntityManager em;
-  private DAOHelper<String, E> dh;
+  protected DAOHelper<String, E> dh;
 
   public AbstractUserManagementDAO() {
     super();

@@ -230,7 +230,13 @@ public class UsersDataset {
   public static <T extends Comparable<T>> Stream<Therapist> therapists(
     int start, int end, Function<Therapist, T> getter, SortDirection sort
   ) {
-    return filterUsers(therapists(), start, end, getter, sort);
+    return therapists(therapists(), start, end, getter, sort);
+  }
+
+  public static <T extends Comparable<T>> Stream<Therapist> therapists(
+    Stream<Therapist> therapists, int start, int end, Function<Therapist, T> getter, SortDirection sort
+  ) {
+    return filterUsers(therapists, start, end, getter, sort);
   }
 
   public static Therapist newTherapist() {

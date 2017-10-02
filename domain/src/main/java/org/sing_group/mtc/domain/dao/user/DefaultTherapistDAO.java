@@ -21,12 +21,17 @@
  */
 package org.sing_group.mtc.domain.dao.user;
 
+import java.util.stream.Stream;
+
 import javax.enterprise.inject.Default;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.Predicate;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
+import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Default
@@ -48,9 +53,14 @@ implements TherapistDAO {
   
   @Override
   public Therapist create(Therapist user) {
-    System.err.println(user.getInstitution());
-    
     return super.create(user);
+  }
+
+  @Override
+  public Stream<Therapist> listByInstitution(Institution institution, ListingOptions options) {
+    return this.dh.list(options, (cb, root) -> new Predicate[] {
+      cb.equal(root.get("institution"), institution)
+    }).stream();
   }
 
 }

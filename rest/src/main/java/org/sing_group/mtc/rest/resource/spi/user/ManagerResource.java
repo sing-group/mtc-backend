@@ -39,5 +39,9 @@ public interface ManagerResource {
   public Response update(ManagerEditionData data);
 
   public Response delete(String login);
+  
+  public Response getInstitutions(String login, int start, int end, String order, SortDirection sort);
+
+  public Response getInstitution(String login, int id);
 
 }

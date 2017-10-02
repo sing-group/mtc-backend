@@ -47,7 +47,10 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.domain.entities.user.Therapist;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
+import org.sing_group.mtc.rest.entity.user.InstitutionData;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
@@ -82,6 +85,9 @@ public class DefaultManagerResource implements ManagerResource {
   
   @Inject
   private UserMapper mapper;
+  
+  @Inject
+  private InstitutionMapper institutionMapper;
   
   @Context
   private UriInfo uriInfo;
@@ -188,6 +194,56 @@ public class DefaultManagerResource implements ManagerResource {
     
     return Response.ok().build();
   }
+
+  @GET
+  @Path("{login}/institution")
+  @ApiOperation(
+    value = "Returns all the institutions of a manager.",
+    response = InstitutionData.class,
+    responseContainer = "List",
+    code = 200,
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of institutions of the manager.")
+  )
+  @Override
+  public Response getInstitutions(
+    @PathParam("login") String login,
+    @QueryParam("start") @DefaultValue("-1") int start,
+    @QueryParam("end") @DefaultValue("-1") int end,
+    @QueryParam("order") String order,
+    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+  ) {
+    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    
+    final Manager manager = this.service.get(login);
+    final InstitutionData[] institutions = this.service.listInstitutions(login, options)
+      .map(this::toData)
+    .toArray(InstitutionData[]::new);
+    
+    return Response.ok(institutions)
+      .header("X-Total-Count", manager.getInstitutions().count())
+    .build();
+  }
+
+  @GET
+  @Path("{login}/institution/{id}")
+  @ApiOperation(
+    value = "Returns an institutions.",
+    response = InstitutionData.class,
+    code = 200
+  )
+  @Override
+  public Response getInstitution(
+    @PathParam("login") String login,
+    @PathParam("id") int id
+  ) {
+    final Manager manager = this.service.get(login);
+    final Institution institution = manager.getInstitutions()
+      .filter(inst -> inst.getId() == id)
+      .findFirst()
+    .orElseThrow(() -> new IllegalArgumentException("Unknown institution with id: " + id));
+    
+    return Response.ok(this.toData(institution)).build();
+  }
   
   private URI buildUriFor(Manager manager) {
     return uriInfo.getBaseUriBuilder()
@@ -196,7 +252,22 @@ public class DefaultManagerResource implements ManagerResource {
     .build();
   }
   
+  private URI buildUriFor(Therapist therapist) {
+    return uriInfo.getBaseUriBuilder()
+      .path(this.getClass().getAnnotation(Path.class).value())
+      .path(therapist.getInstitution().getManager().map(Manager::getLogin).orElseThrow(IllegalStateException::new))
+      .path(DefaultInstitutionResource.class.getAnnotation(Path.class).value())
+      .path(therapist.getInstitution().getId().toString())
+      .path(DefaultTherapistResource.class.getAnnotation(Path.class).value())
+      .path(therapist.getLogin())
+    .build();
+  }
+  
   private ManagerData toData(Manager manager) {
     return mapper.toData(manager, this::buildUriFor);
+  }
+  
+  private InstitutionData toData(Institution institution) {
+    return institutionMapper.toData(institution, this::buildUriFor, this::buildUriFor);
   }
 }

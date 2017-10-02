@@ -27,6 +27,7 @@ import static org.sing_group.fluent.checker.Checks.requireNonNullArray;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -86,12 +87,27 @@ public class DAOHelper<K, T> {
   }
   
   public List<T> list(ListingOptions options) {
+    return this.list(options, (cb, r) -> new Predicate[0]);
+  }
+
+  public List<T> list(ListingOptions options, BiFunction<CriteriaBuilder, Root<T>, Predicate[]> predicatesBuilder) {
     final ListingOptionsQueryBuilder optionsBuilder = new ListingOptionsQueryBuilder(options);
     
     final CriteriaQuery<T> queryBuilder = createCBQuery();
     final Root<T> root = queryBuilder.from(getEntityType());
     
-    final CriteriaQuery<T> select = optionsBuilder.addOrder(cb(), queryBuilder.select(root), root);
+    CriteriaQuery<T> select = optionsBuilder.addOrder(cb(), queryBuilder.select(root), root);
+    
+    final Predicate[] predicates = predicatesBuilder.apply(cb(), root);
+    
+    if (predicates.length > 0)
+      select = select.where(predicates);
+    
+//    final Predicate[] predicates = filters.entrySet().stream()
+//      .map(entry -> cb().equal(root.get(entry.getKey()), entry.getValue()))
+//    .toArray(Predicate[]::new);
+    
+    select = select.where(predicates);
     
     final TypedQuery<T> query = optionsBuilder.addLimits(em.createQuery(select));
     

@@ -35,7 +35,19 @@ public interface SecurityCheckBuilder {
   public SecurityCheck hasAnyRoleOf(RoleType... roles);
 
   public SecurityCheck hasLogin(String login);
-
+  
   public SecurityCheck hasLogin(Supplier<String> loginSupplier);
+  
+  public SecurityCheck hasAnyLoginOf(String ... login);
+  
+  public SecurityCheck hasAnyLoginOf(Supplier<String[]> loginSupplier);
+  
+  public SecurityCheck hasLoginAndRole(String login, RoleType role);
+  
+  public SecurityCheck hasLoginAndRole(Supplier<String> loginSupplier, RoleType role);
+  
+  public SecurityCheck hasLoginAndAnyRoleOf(String login, RoleType ... roles);
+  
+  public SecurityCheck hasLoginAndAnyRoleOf(Supplier<String> loginSupplier, RoleType ... roles);
 
 }

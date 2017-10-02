@@ -26,11 +26,13 @@ import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.Predicate;
 
 import org.sing_group.mtc.domain.dao.DAOHelper;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.InstitutionDAO;
 import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Manager;
 
 public class DefaultInstitutionDAO implements InstitutionDAO {
 
@@ -61,6 +63,13 @@ public class DefaultInstitutionDAO implements InstitutionDAO {
   @Override
   public Stream<Institution> list(ListingOptions listingOptions) {
     return this.dh.list(listingOptions).stream();
+  }
+
+  @Override
+  public Stream<Institution> list(Manager manager, ListingOptions listingOptions) {
+    return this.dh.list(listingOptions, (cb, root) -> new Predicate[] {
+      cb.equal(root.get("manager"), manager)
+    }).stream();
   }
 
   @Override

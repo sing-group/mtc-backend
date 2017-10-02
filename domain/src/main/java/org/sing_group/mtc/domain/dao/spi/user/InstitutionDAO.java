@@ -25,11 +25,14 @@ import java.util.stream.Stream;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Manager;
 
 public interface InstitutionDAO {
   public Institution get(int id);
 
   public Stream<Institution> list(ListingOptions listingOptions);
+
+  public Stream<Institution> list(Manager manager, ListingOptions listingOptions);
 
   public long count();
 

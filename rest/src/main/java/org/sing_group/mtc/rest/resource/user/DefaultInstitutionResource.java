@@ -99,7 +99,6 @@ public class DefaultInstitutionResource implements InstitutionResource {
   )
   @Override
   public Response get(@PathParam("id") int id) {
-    System.err.println("ID: " + id);
     final Institution institution = this.service.get(id);
     
     return Response.ok(this.toData(institution)).build();

@@ -30,8 +30,13 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.dao.spi.user.InstitutionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.ManagerDAO;
+import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.domain.entities.user.RoleType;
+import org.sing_group.mtc.service.security.SecurityGuard;
+import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.ManagerService;
 
 @Stateless
@@ -39,12 +44,25 @@ import org.sing_group.mtc.service.spi.user.ManagerService;
 public class DefaultManagerService implements ManagerService {
   @Inject
   private ManagerDAO dao;
+  
+  @Inject
+  private InstitutionDAO institutionDao;
 
+  @Inject
+  private SecurityGuard securityGuard;
+  
+  @Inject
+  private SecurityCheckBuilder checkThat;
+
+  @RolesAllowed({ "ADMIN", "MANAGER" })
   @Override
   public Manager get(String login) {
     requireStringSize(login, 1, 100, "'login' should have a length between 1 and 100");
     
-    return dao.get(login);
+    return this.securityGuard.ifAuthorized(
+      checkThat.hasRole(RoleType.ADMIN),
+      checkThat.hasLoginAndRole(login, RoleType.MANAGER)
+    ).call(() -> dao.get(login));
   }
 
   @Override
@@ -70,5 +88,15 @@ public class DefaultManagerService implements ManagerService {
   @Override
   public void delete(String login) {
     dao.delete(login);
+  }
+
+  @RolesAllowed({ "ADMIN", "MANAGER" })
+  @Override
+  public Stream<Institution> listInstitutions(String login, ListingOptions listingOptions) {
+    return this.securityGuard.ifAuthorized(
+        checkThat.hasRole(RoleType.ADMIN),
+        checkThat.hasLoginAndRole(login, RoleType.MANAGER)
+      )
+    .call(() -> this.institutionDao.list(this.get(login), listingOptions));
   }
 }

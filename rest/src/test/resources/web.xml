@@ -58,7 +58,6 @@
     </auth-constraint>
   </security-constraint>
   
-  <!--Defining security constraint for type of roles available -->
   <security-constraint>
     <web-resource-collection>
       <web-resource-name>manager</web-resource-name>
@@ -67,6 +66,7 @@
     </web-resource-collection>
     <auth-constraint>
       <role-name>ADMIN</role-name>
+      <role-name>MANAGER</role-name>
     </auth-constraint>
   </security-constraint>
   

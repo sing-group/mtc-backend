@@ -33,6 +33,7 @@ import org.sing_group.mtc.domain.dao.spi.user.InstitutionDAO;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.RoleType;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.service.security.SecurityGuard;
 import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.InstitutionService;
@@ -55,7 +56,8 @@ public class DefaultInstitutionService implements InstitutionService {
   public Institution get(int id) {
     return this.securityGuard.ifAuthorized(
         checkThat.hasRole(RoleType.ADMIN),
-        checkThat.hasLogin(() -> dao.get(id).getManager().map(Manager::getLogin).orElse(""))
+        checkThat.hasLogin(() -> dao.get(id).getManager().map(Manager::getLogin).orElse("")),
+        checkThat.hasAnyLoginOf(() -> dao.get(id).getTherapists().map(Therapist::getLogin).toArray(String[]::new))
       )
     .call(() -> this.dao.get(id));
   }

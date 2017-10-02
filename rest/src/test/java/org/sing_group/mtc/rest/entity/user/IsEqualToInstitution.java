@@ -49,8 +49,8 @@ public class IsEqualToInstitution extends IsEqualToEntity<Institution, Instituti
   }
   
   @Factory
-  public static IsEqualToInstitution equalToInstitution(Institution admin) {
-    return new IsEqualToInstitution(admin);
+  public static IsEqualToInstitution equalToInstitution(Institution institution) {
+    return new IsEqualToInstitution(institution);
   }
   
   @Factory

@@ -308,11 +308,17 @@ public class UsersDataset {
   public static <T extends Comparable<T>> Stream<Institution> institutions(
     int start, int end, Function<Institution, T> getter, SortDirection sort
   ) {
+    return institutions(institutions(), start, end, getter, sort);
+  }
+  
+  public static <T extends Comparable<T>> Stream<Institution> institutions(
+    Stream<Institution> institutions, int start, int end, Function<Institution, T> getter, SortDirection sort
+  ) {
     final Comparator<T> compare = sort == SortDirection.ASC
       ? (c1, c2) -> c1.compareTo(c2)
       : (c1, c2) -> -c1.compareTo(c2);
       
-    return institutions()
+    return institutions
       .sorted((c1, c2) -> compare.compare(getter.apply(c1), getter.apply(c2)))
       .skip(start)
       .limit(end - start + 1);

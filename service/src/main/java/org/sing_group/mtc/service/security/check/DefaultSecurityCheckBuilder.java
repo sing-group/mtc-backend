@@ -22,6 +22,7 @@
 package org.sing_group.mtc.service.security.check;
 
 import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
 import static javax.ejb.TransactionAttributeType.SUPPORTS;
 
 import java.util.Arrays;
@@ -43,11 +44,21 @@ import org.sing_group.mtc.domain.entities.user.RoleType;
 public class DefaultSecurityCheckBuilder implements SecurityCheckBuilder {
   @Resource
   private SessionContext context;
+  
+  private boolean isInAnyRoleOf(RoleType ... roles) {
+    return stream(roles).map(RoleType::name).anyMatch(this.context::isCallerInRole);
+  }
+  
+  private boolean isUserWithAnyLoginOf(String ... logins) {
+    final String callerPrincipal = this.context.getCallerPrincipal().getName();
+    
+    return stream(logins).anyMatch(callerPrincipal::equals);
+  }
 
   @Override
   public SecurityCheck hasRole(RoleType role) {
     return () -> {
-      if (this.context.isCallerInRole(role.name())) {
+      if (isInAnyRoleOf(role)) {
         return SecurityCheckResult.valid();
       } else {
         return SecurityCheckResult.invalid("user is not in role: " + role);
@@ -58,7 +69,7 @@ public class DefaultSecurityCheckBuilder implements SecurityCheckBuilder {
   @Override
   public SecurityCheck hasAnyRoleOf(RoleType ... roles) {
     return () -> {
-      if (stream(roles).map(RoleType::name).anyMatch(this.context::isCallerInRole)) {
+      if (isInAnyRoleOf(roles)) {
         return SecurityCheckResult.valid();
       } else {
         return SecurityCheckResult.invalid("user is not in roles: " + Arrays.toString(roles));
@@ -74,10 +85,86 @@ public class DefaultSecurityCheckBuilder implements SecurityCheckBuilder {
   @Override
   public SecurityCheck hasLogin(Supplier<String> loginSupplier) {
     return () -> {
-      if (this.context.getCallerPrincipal().getName().equals(loginSupplier.get())) {
+      if (isUserWithAnyLoginOf(loginSupplier.get())) {
         return SecurityCheckResult.valid();
       } else {
         return SecurityCheckResult.invalid("user login is not the expected: " + loginSupplier.get());
+      }
+    };
+  }
+
+  @Override
+  public SecurityCheck hasAnyLoginOf(String... logins) {
+    return () -> {
+      if (isUserWithAnyLoginOf(logins)) {
+        return SecurityCheckResult.valid();
+      } else {
+        final String expectedLogins = stream(logins).collect(joining(", "));
+        return SecurityCheckResult.invalid("user login is not the expected: " + expectedLogins);
+      }
+    };
+  }
+
+  @Override
+  public SecurityCheck hasAnyLoginOf(Supplier<String[]> loginSuppliers) {
+    return () -> {
+      if (isUserWithAnyLoginOf(loginSuppliers.get())) {
+        return SecurityCheckResult.valid();
+      } else {
+        final String expectedLogins = String.join(", ", loginSuppliers.get());
+        return SecurityCheckResult.invalid("user login is not the expected: " + expectedLogins);
+      }
+    };
+  }
+
+  @Override
+  public SecurityCheck hasLoginAndRole(String login, RoleType role) {
+    return () -> {
+      if (!isUserWithAnyLoginOf(login)) {
+        return SecurityCheckResult.invalid("user login is not the expected: " + login);
+      } else if (!isInAnyRoleOf(role)) {
+        return SecurityCheckResult.invalid("user is not in role: " + role);
+      } else {
+        return SecurityCheckResult.valid();
+      }
+    };
+  }
+
+  @Override
+  public SecurityCheck hasLoginAndRole(Supplier<String> loginSupplier, RoleType role) {
+    return () -> {
+      if (!isUserWithAnyLoginOf(loginSupplier.get())) {
+        return SecurityCheckResult.invalid("user login is not the expected: " + loginSupplier.get());
+      } else if (!isInAnyRoleOf(role)) {
+        return SecurityCheckResult.invalid("user is not in role: " + role);
+      } else {
+        return SecurityCheckResult.valid();
+      }
+    };
+  }
+
+  @Override
+  public SecurityCheck hasLoginAndAnyRoleOf(String login, RoleType... roles) {
+    return () -> {
+      if (!isUserWithAnyLoginOf(login)) {
+        return SecurityCheckResult.invalid("user login is not the expected: " + login);
+      } else if (!isInAnyRoleOf(roles)) {
+        return SecurityCheckResult.invalid("user is not in roles: " + Arrays.toString(roles));
+      } else {
+        return SecurityCheckResult.valid();
+      }
+    };
+  }
+
+  @Override
+  public SecurityCheck hasLoginAndAnyRoleOf(Supplier<String> loginSupplier, RoleType... roles) {
+    return () -> {
+      if (!isUserWithAnyLoginOf(loginSupplier.get())) {
+        return SecurityCheckResult.invalid("user login is not the expected: " + loginSupplier.get());
+      } else if (!isInAnyRoleOf(roles)) {
+        return SecurityCheckResult.invalid("user is not in roles: " + Arrays.toString(roles));
+      } else {
+        return SecurityCheckResult.valid();
       }
     };
   }

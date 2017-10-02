@@ -25,6 +25,7 @@ import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.ADMIN_HTTP_BASIC_AUTH;
+import static org.sing_group.mtc.domain.entities.UsersDataset.MANAGER_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.countInstitutions;
 import static org.sing_group.mtc.domain.entities.UsersDataset.institution;
 import static org.sing_group.mtc.domain.entities.UsersDataset.institutionToDelete;
@@ -40,6 +41,7 @@ import static org.sing_group.mtc.rest.entity.GenericTypes.InstitutionDataListTyp
 import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.containsInstitutionsInAnyOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.containsInstitutionsInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.equalToInstitution;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.equalToManager;
 
 import java.util.List;
 import java.util.function.Function;
@@ -63,10 +65,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.mapper.user.DefaultInstitutionMapper;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
 import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
+import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.resource.Deployments;
 
 @RunWith(Arquillian.class)
@@ -84,19 +88,8 @@ public class InstitutionResourceIntegrationTest {
   public void setUp() {
     this.userMapper = new DefaultInstitutionMapper();
   }
-
-  @Test
-  @InSequence(0)
-  @UsingDataSet("users.xml")
-  public void beforeGet() {}
-
-  @Test
-  @InSequence(1)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
-  @RunAsClient
-  public void testGet(
-    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
-  ) {
+  
+  private void testGet(ResteasyWebTarget webTarget) {
     final Institution institution = institution();
     
     final Response response = webTarget.path(institution.getId().toString())
@@ -111,10 +104,46 @@ public class InstitutionResourceIntegrationTest {
   }
 
   @Test
+  @InSequence(0)
+  @UsingDataSet("users.xml")
+  public void beforeGetAsAdmin() {}
+
+  @Test
+  @InSequence(1)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testGetAsAdmin(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testGet(webTarget);
+  }
+
+  @Test
   @InSequence(2)
   @ShouldMatchDataSet("users.xml")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
-  public void afterGet() {}
+  public void afterGetAsAdmin() {}
+
+  @Test
+  @InSequence(3)
+  @UsingDataSet("users.xml")
+  public void beforeGetAsManager() {}
+
+  @Test
+  @InSequence(4)
+  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testGetAsManager(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testGet(webTarget);
+  }
+
+  @Test
+  @InSequence(5)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterGetAsManager() {}
 
   @Test
   @InSequence(10)
@@ -276,5 +305,63 @@ public class InstitutionResourceIntegrationTest {
   @ShouldMatchDataSet(value = "users-delete-institution.xml", orderBy = "user.login")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterDelete() {}
+  
+  private void testGetManager(ResteasyWebTarget webTarget) {
+    final Institution institution = institution();
+    final Manager expectedManager = institution.getManager().orElseThrow(IllegalStateException::new);
+    
+    final Response response = webTarget.path(institution.getId().toString()).path("manager")
+      .request()
+      .header("Origin", "localhost")
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    
+    final ManagerData userData = response.readEntity(ManagerData.class);
+    
+    assertThat(userData, is(equalToManager(expectedManager)));
+  }
+
+  @Test
+  @InSequence(100)
+  @UsingDataSet("users.xml")
+  public void beforeGetManagerAsAdmin() {}
+
+  @Test
+  @InSequence(101)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testGetManagerAsAdmin(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testGetManager(webTarget);
+  }
+
+  @Test
+  @InSequence(102)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterGetManagerAsAdmin() {}
+
+  @Test
+  @InSequence(103)
+  @UsingDataSet("users.xml")
+  public void beforeGetManagerAsManager() {}
+
+  @Test
+  @InSequence(104)
+  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testGetManagerAsManager(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testGetManager(webTarget);
+  }
+
+  @Test
+  @InSequence(105)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterGetManagerAsManager() {}
 
 }

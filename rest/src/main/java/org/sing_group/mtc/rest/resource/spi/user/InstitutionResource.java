@@ -36,4 +36,6 @@ public interface InstitutionResource {
   public Response update(int id, InstitutionEditionData data);
 
   public Response delete(int id);
+
+  public Response getManager(int id);
 }

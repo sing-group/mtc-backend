@@ -24,11 +24,6 @@
 	 http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
 	version="3.1">
 	<display-name>JavaEE Sample REST</display-name>
-
-	<!-- servlet-mapping>
-		<servlet-name>javax.ws.rs.core.Application</servlet-name>
-		<url-pattern>/api/*</url-pattern>
-	</servlet-mapping-->
   
   <security-constraint>
     <web-resource-collection>
@@ -79,6 +74,18 @@
     <auth-constraint>
       <role-name>MANAGER</role-name>
       <role-name>THERAPIST</role-name>
+    </auth-constraint>
+  </security-constraint>
+  
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>institution</web-resource-name>
+      <url-pattern>/api/institution/*</url-pattern>
+      <http-method-omission>OPTIONS</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>ADMIN</role-name>
+      <role-name>MANAGER</role-name>
     </auth-constraint>
   </security-constraint>
 

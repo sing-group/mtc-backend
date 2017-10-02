@@ -49,6 +49,7 @@ import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
+import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
 import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
@@ -83,6 +84,9 @@ public class DefaultInstitutionResource implements InstitutionResource {
   
   @Inject
   private InstitutionMapper mapper;
+  
+  @Inject
+  private UserMapper userMapper;
   
   @Context
   private UriInfo uriInfo;
@@ -184,8 +188,26 @@ public class DefaultInstitutionResource implements InstitutionResource {
     return Response.ok().build();
   }
   
+  @GET
+  @Path("{id}/manager")
+  @ApiOperation(
+    value = "Returns the manager of an institution.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown institution: {id}")
+  )
+  @Override
+  public Response getManager(@PathParam("id") int id) {
+    final Institution institution = this.service.get(id);
+    final Manager manager = institution.getManager()
+      .orElseThrow(() -> new IllegalArgumentException("No manager found for institution: " + id));
+    
+    return Response.ok(this.userMapper.toData(manager, this::buildUriFor)).build();
+  }
+  
   private InstitutionData toData(Institution institution) {
-    return this.mapper.toData(institution, this::buildUriFor, this::buildUriFor);
+    return this.mapper.toData(institution, manager -> this.buildOwnManagerUri(institution), this::buildUriFor);
   }
 
   private URI buildUriFor(Institution institution) {
@@ -196,17 +218,20 @@ public class DefaultInstitutionResource implements InstitutionResource {
     .build();
   }
   
-  private URI buildUriFor(Manager manager) {
+  private URI buildOwnManagerUri(Institution institution) {
     return uriInfo.getBaseUriBuilder()
       .path(this.getClass().getAnnotation(Path.class).value())
+      .path("institution")
+      .path(institution.getId().toString())
       .path("manager")
-      .path(manager.getLogin())
     .build();
   }
   
   private URI buildUriFor(Therapist therapist) {
     return uriInfo.getBaseUriBuilder()
       .path(this.getClass().getAnnotation(Path.class).value())
+      .path("institution")
+      .path(therapist.getInstitution().getId().toString())
       .path("therapist")
       .path(therapist.getLogin())
     .build();

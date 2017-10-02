@@ -70,19 +70,29 @@
     </auth-constraint>
   </security-constraint>
   
-  <!--Defining security constraint for type of roles available -->
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>session</web-resource-name>
-      <url-pattern>/api/game/session/*</url-pattern>
+      <web-resource-name>therapist</web-resource-name>
+      <url-pattern>/api/therapist/*</url-pattern>
       <http-method-omission>OPTIONS</http-method-omission>
     </web-resource-collection>
     <auth-constraint>
+      <role-name>MANAGER</role-name>
       <role-name>THERAPIST</role-name>
-      <role-name>PATIENT</role-name>
     </auth-constraint>
   </security-constraint>
-  <!--Defining security constraint for type of roles available -->
+  
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>institution</web-resource-name>
+      <url-pattern>/api/institution/*</url-pattern>
+      <http-method-omission>OPTIONS</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>ADMIN</role-name>
+      <role-name>MANAGER</role-name>
+    </auth-constraint>
+  </security-constraint>
 
   <!--Denining security role -->
   <security-role>

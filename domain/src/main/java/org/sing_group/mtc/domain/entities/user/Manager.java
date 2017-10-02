@@ -63,15 +63,19 @@ public class Manager extends IdentifiedUser {
   public Manager(String login, String email, String password, String name, String surname, Collection<Institution> institutions) {
     super(login, email, password, name, surname);
     
-    this.institutions = institutions == null
-      ? new HashSet<>()
-      : new HashSet<>(institutions);
+    this.institutions = new HashSet<>();
+    
+    if (institutions != null)
+      institutions.forEach(this::addInstitution);
   }
 
   public Manager(String login, String email, String password, String name, String surname, Collection<Institution> institutions, boolean encodedPassword) {
     super(login, email, password, name, surname, encodedPassword);
     
-    this.institutions = institutions == null ? new HashSet<>() : new HashSet<>(institutions);
+    this.institutions = new HashSet<>();
+    
+    if (institutions != null)
+      institutions.forEach(this::addInstitution);
   }
   
   public Stream<Institution> getInstitutions() {
@@ -98,7 +102,7 @@ public class Manager extends IdentifiedUser {
     requireNonNull(institution, "institution can't be null");
 
     if (this.hasInstitution(institution)) {
-      institution.setManager(this);
+      institution.setManager(null);
       
       return true;
     } else {
@@ -111,6 +115,6 @@ public class Manager extends IdentifiedUser {
   }
 
   protected boolean directAddInstitution(Institution institution) {
-    return this.institutions.remove(institution);
+    return this.institutions.add(institution);
   }
 }

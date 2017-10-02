@@ -94,7 +94,8 @@ public class AssignedGamesSession implements Serializable {
   @OneToMany(mappedBy = "assignedSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<GameResult> gameResults;
   
-
+  AssignedGamesSession() {}
+  
   public AssignedGamesSession(Date startDate, Date endDate, GamesSession session, Patient patient) {
     this(null, startDate, endDate, session, patient);
   }

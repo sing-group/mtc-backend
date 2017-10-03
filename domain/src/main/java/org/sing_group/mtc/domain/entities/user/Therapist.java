@@ -158,7 +158,7 @@ public class Therapist extends IdentifiedUser {
   }
 
   protected boolean directAddPatient(Patient patient) {
-    return this.patients.remove(patient);
+    return this.patients.add(patient);
   }
   
   public Stream<GamesSession> getSessions() {

@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.entity.session;
+package org.sing_group.mtc.rest.entity.game.session;
 
 import java.io.Serializable;
 import java.util.Arrays;

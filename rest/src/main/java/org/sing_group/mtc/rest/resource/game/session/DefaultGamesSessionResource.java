@@ -35,8 +35,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
-import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.spi.game.session.GamesSessionResource;

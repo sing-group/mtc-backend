@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.entity.session;
+package org.sing_group.mtc.rest.entity.game.session;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -35,6 +35,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.MapI18NLocaleDataStringAdapter;
+import org.sing_group.mtc.rest.entity.user.UserUri;
 
 import io.swagger.annotations.ApiModel;
 
@@ -51,7 +52,7 @@ public class GamesSessionData implements Serializable {
   
   private int id;
 
-  private URI therapist;
+  private UserUri therapist;
   
   @XmlElementWrapper(name = "configurations", nillable = false, required = true)
   private GameConfigurationData[] gameConfiguration;
@@ -70,13 +71,14 @@ public class GamesSessionData implements Serializable {
 
   public GamesSessionData(
     int id,
-    URI therapist,
+    URI therapistUri,
+    String therapistLogin,
     GameConfigurationData[] gameConfiguration,
     Map<I18NLocaleData, String> nameMessage,
     Map<I18NLocaleData, String> descriptionMessage
   ) {
     this.id = id;
-    this.therapist = therapist;
+    this.therapist = new UserUri(therapistLogin, therapistUri);
     this.gameConfiguration = gameConfiguration;
     this.nameMessage = nameMessage;
     this.descriptionMessage = descriptionMessage;
@@ -90,11 +92,11 @@ public class GamesSessionData implements Serializable {
     this.id = id;
   }
 
-  public URI getTherapist() {
+  public UserUri getTherapist() {
     return therapist;
   }
 
-  public void setTherapist(URI therapist) {
+  public void setTherapist(UserUri therapist) {
     this.therapist = therapist;
   }
 

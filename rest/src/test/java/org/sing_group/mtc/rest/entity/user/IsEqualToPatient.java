@@ -41,7 +41,13 @@ public class IsEqualToPatient extends IsEqualToEntity<Patient, PatientData> {
       this.addTemplatedValueDescription("actual", expected.toString());
       return false;
     } else {
-      return checkAttribute("login", Patient::getLogin, PatientData::getLogin, actual);
+      return checkAttribute("login", Patient::getLogin, PatientData::getLogin, actual)
+        && matchIterableAttribute("assignedSessions",
+          wrapStreamToIterableFunction(Patient::getAssignedGameSessions),
+          wrapArrayToIterableFunction(PatientData::getAssignedSession),
+          actual,
+          IsEqualToIdAndUri::containsAssignedSessionIdAndUrisInAnyOrder
+        );
     }
   }
   

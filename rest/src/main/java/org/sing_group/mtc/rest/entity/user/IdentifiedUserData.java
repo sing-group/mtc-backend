@@ -31,7 +31,9 @@ public abstract class IdentifiedUserData extends UserData implements Serializabl
   private static final long serialVersionUID = 1L;
   
   private String email;
+  
   private String name;
+  
   private String surname;
 
   IdentifiedUserData() {}

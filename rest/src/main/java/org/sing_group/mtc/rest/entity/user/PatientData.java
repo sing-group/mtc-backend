@@ -22,6 +22,7 @@
 package org.sing_group.mtc.rest.entity.user;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -45,34 +46,45 @@ import io.swagger.annotations.ApiModelProperty;
 public class PatientData extends UserData {
   private static final long serialVersionUID = 1L;
   
-  protected URI therapist;
+  protected UserUri therapist;
   
-  protected URI[] assignedSession;
+  protected IdAndUri[] assignedSession;
   
   PatientData() {}
 
-  public PatientData(String login, URI therapist, URI[] assignedSessions) {
+  public PatientData(
+    String login,
+    String therapistLogin,
+    URI therapistUri,
+    long[] assignedSessionIds,
+    URI[] assignedSessionUris
+  ) {
     super(login, RoleType.PATIENT);
     
-    this.therapist = therapist;
+    this.therapist = new UserUri(therapistLogin, therapistUri);
+    
+    this.assignedSession = new IdAndUri[assignedSessionIds.length];
+    for (int i = 0; i < assignedSessionIds.length; i++) {
+      this.assignedSession[i] = new IdAndUri(assignedSessionIds[i], assignedSessionUris[i]);
+    }
   }
 
   @XmlElement(name = "therapist", required = true)
-  public URI getTherapist() {
+  public UserUri getTherapist() {
     return therapist;
   }
 
-  public void setTherapist(URI therapist) {
+  public void setTherapist(UserUri therapist) {
     this.therapist = therapist;
   }
 
   @XmlElementWrapper(name = "assignedSessions")
   @XmlElement(name = "assignedSession", required = false)
-  public URI[] getAssignedSession() {
+  public IdAndUri[] getAssignedSession() {
     return assignedSession;
   }
 
-  public void setAssignedSession(URI[] assignedSession) {
+  public void setAssignedSession(IdAndUri[] assignedSession) {
     this.assignedSession = assignedSession;
   }
 
@@ -91,5 +103,33 @@ public class PatientData extends UserData {
   @Override
   public String toString() {
     return "PatientData [getLogin()=" + getLogin() + "]";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + Arrays.hashCode(assignedSession);
+    result = prime * result + ((therapist == null) ? 0 : therapist.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    PatientData other = (PatientData) obj;
+    if (!Arrays.equals(assignedSession, other.assignedSession))
+      return false;
+    if (therapist == null) {
+      if (other.therapist != null)
+        return false;
+    } else if (!therapist.equals(other.therapist))
+      return false;
+    return true;
   }
 }

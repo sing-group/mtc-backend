@@ -21,7 +21,6 @@
  */
 package org.sing_group.mtc.rest.entity.game.session;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -31,9 +30,8 @@ import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
-import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
-import org.sing_group.mtc.rest.entity.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.user.IsEqualToUserUri;
 
 public class IsEqualToGamesSession extends IsEqualToEntity<GamesSession, GamesSessionData> {
   public IsEqualToGamesSession(GamesSession expected) {
@@ -49,7 +47,7 @@ public class IsEqualToGamesSession extends IsEqualToEntity<GamesSession, GamesSe
       return false;
     } else {
       return checkAttribute("id", GamesSession::getId, GamesSessionData::getId, actual)
-        && checkAttribute("therapist", unwrapOptionalFuncion(GamesSession::getTherapist), GamesSessionData::getTherapist, actual, this::matchUriAndTherapist)
+        && matchAttribute("therapist", unwrapOptionalFuncion(GamesSession::getTherapist), GamesSessionData::getTherapist, actual, IsEqualToUserUri::equalToTherapistUri)
         && checkAttribute("nameMessages", GamesSession::getName, GamesSessionData::getNameMessage, actual, this::matchLocaleMessages)
         && checkAttribute("descriptionMessages", GamesSession::getDescription, GamesSessionData::getDescriptionMessage, actual, this::matchLocaleMessages)
         && matchIterableAttribute("gameConfigurations",
@@ -59,11 +57,6 @@ public class IsEqualToGamesSession extends IsEqualToEntity<GamesSession, GamesSe
           IsEqualToGameConfiguration::containsGameConfigurationInAnyOrder
         );
     }
-  }
-  
-  private boolean matchUriAndTherapist(Therapist therapist, URI uri) {
-    return uri.toString().endsWith("/therapist/" + therapist.getLogin())
-      || uri.toString().endsWith("therapist");
   }
   
   private boolean matchLocaleMessages(LocalizedMessage messages, Map<I18NLocaleData, String> data) {

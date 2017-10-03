@@ -100,15 +100,6 @@ public class DefaultManagerResource implements ManagerResource {
     this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
   }
   
-  public URI buildUriFor(Institution institution) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(institution.getManager().map(Manager::getLogin).orElseThrow(IllegalStateException::new))
-      .path("institution")
-      .path(institution.getId().toString())
-    .build();
-  }
-  
   @Override
   @GET
   @Path("{login}")

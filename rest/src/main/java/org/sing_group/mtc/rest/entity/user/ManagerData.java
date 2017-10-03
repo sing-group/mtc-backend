@@ -22,6 +22,7 @@
 package org.sing_group.mtc.rest.entity.user;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -45,23 +46,29 @@ import io.swagger.annotations.ApiModelProperty;
 public class ManagerData extends IdentifiedUserData {
   private static final long serialVersionUID = 1L;
   
-  private URI[] institutions;
+  private IdAndUri[] institutions;
   
   ManagerData() {}
 
-  public ManagerData(String login, String email, String name, String surname, URI[] institutions) {
+  public ManagerData(
+    String login, String email, String name, String surname,
+    long[] institutionIds, URI[] institutionUris
+  ) {
     super(login, email, name, surname, RoleType.MANAGER);
     
-    this.institutions = institutions;
+    this.institutions = new IdAndUri[institutionIds.length];
+    for (int i = 0; i < institutionIds.length; i++) {
+      this.institutions[i] = new IdAndUri(institutionIds[i], institutionUris[i]);
+    }
   }
 
   @XmlElementWrapper(name = "institutions", required = false)
   @XmlElement(name = "institutions")
-  public URI[] getInstitutions() {
+  public IdAndUri[] getInstitutions() {
     return institutions;
   }
 
-  public void setInstitutions(URI[] institutions) {
+  public void setInstitutions(IdAndUri[] institutions) {
     this.institutions = institutions;
   }
 
@@ -81,5 +88,27 @@ public class ManagerData extends IdentifiedUserData {
   public String toString() {
     return "ManagerData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()=" + getName()
       + ", getSurname()=" + getSurname() + "]";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + Arrays.hashCode(institutions);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    ManagerData other = (ManagerData) obj;
+    if (!Arrays.equals(institutions, other.institutions))
+      return false;
+    return true;
   }
 }

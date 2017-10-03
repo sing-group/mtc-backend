@@ -46,11 +46,11 @@ import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
+import org.sing_group.mtc.rest.entity.game.session.GameParamData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
-import org.sing_group.mtc.rest.entity.session.GameConfigurationData;
-import org.sing_group.mtc.rest.entity.session.GameParamData;
-import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
-import org.sing_group.mtc.rest.entity.session.GamesSessionData;
 import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.service.spi.game.GameService;
 
@@ -108,6 +108,7 @@ public class DefaultGamesMapper implements GamesMapper {
     return new GamesSessionData(
       session.getId(),
       therapistUrlBuilder.apply(session.getTherapist().orElseThrow(IllegalStateException::new)),
+      session.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new),
       session.getGameConfigurations()
         .map(this::mapToGameConfigurationData)
       .toArray(GameConfigurationData[]::new),

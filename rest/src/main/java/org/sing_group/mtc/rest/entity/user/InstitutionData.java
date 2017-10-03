@@ -52,21 +52,34 @@ public class InstitutionData implements Serializable {
   private String address;
 
   @XmlElement(name = "manager", required = true)
-  private URI manager;
+  private UserUri manager;
   
   @XmlElementWrapper(name = "therapists", required = false)
   @XmlElement(name = "therapist")
-  private URI[] therapists;
+  private UserUri[] therapists;
   
   InstitutionData() {}
   
-  public InstitutionData(int id, String name, String description, String address, URI manager, URI[] therapists) {
+  public InstitutionData(
+    int id,
+    String name,
+    String description,
+    String address,
+    String managerLogin,
+    URI managerUri,
+    String[] therapistLogins,
+    URI[] therapistUris
+  ) {
     this.id = id;
     this.name = name;
     this.description = description;
     this.address = address;
-    this.manager = manager;
-    this.therapists = therapists;
+    this.manager = new UserUri(managerLogin, managerUri);
+    this.therapists = new UserUri[therapistLogins.length];
+    
+    for (int i = 0; i < therapistLogins.length; i++) {
+      this.therapists[i] = new UserUri(therapistLogins[i], therapistUris[i]);
+    }
   }
   
   public int getId() {
@@ -101,19 +114,19 @@ public class InstitutionData implements Serializable {
     this.address = address;
   }
   
-  public URI getManager() {
+  public UserUri getManager() {
     return manager;
   }
 
-  public void setManager(URI manager) {
+  public void setManager(UserUri manager) {
     this.manager = manager;
   }
 
-  public URI[] getTherapists() {
+  public UserUri[] getTherapists() {
     return therapists;
   }
 
-  public void setTherapists(URI[] therapists) {
+  public void setTherapists(UserUri[] therapists) {
     this.therapists = therapists;
   }
 

@@ -78,9 +78,8 @@ public class DefaultUserMapper implements UserMapper {
       manager.getEmail(),
       manager.getName().orElse(null),
       manager.getSurname().orElse(null),
-      manager.getInstitutions()
-        .map(institutionToURI)
-      .toArray(URI[]::new)
+      manager.getInstitutions().mapToLong(Institution::getId).toArray(),
+      manager.getInstitutions().map(institutionToURI).toArray(URI[]::new)
     );
   }
   
@@ -108,13 +107,12 @@ public class DefaultUserMapper implements UserMapper {
       therapist.getEmail(),
       therapist.getName().orElse(null),
       therapist.getSurname().orElse(null),
+      therapist.getInstitution().getId(),
       institutionToURI.apply(therapist.getInstitution()),
-      therapist.getPatients()
-        .map(patientToURI)
-      .toArray(URI[]::new),
-      therapist.getSessions()
-        .map(sessionToURI)
-      .toArray(URI[]::new)
+      therapist.getPatients().map(Patient::getLogin).toArray(String[]::new),
+      therapist.getPatients().map(patientToURI).toArray(URI[]::new),
+      therapist.getSessions().mapToLong(GamesSession::getId).toArray(),
+      therapist.getSessions().map(sessionToURI).toArray(URI[]::new)
     );
   }
   
@@ -141,10 +139,10 @@ public class DefaultUserMapper implements UserMapper {
     
     return new PatientData(
       patient.getLogin(),
+      patient.getTherapist().getLogin(),
       therapistToUri.apply(patient.getTherapist()),
-      patient.getAssignedGameSessions()
-        .map(assignedSessionToURI)
-      .toArray(URI[]::new)
+      patient.getAssignedGameSessions().mapToLong(AssignedGamesSession::getId).toArray(),
+      patient.getAssignedGameSessions().map(assignedSessionToURI).toArray(URI[]::new)
     );
   }
   

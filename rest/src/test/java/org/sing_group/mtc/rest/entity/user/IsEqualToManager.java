@@ -27,7 +27,6 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.user.Manager;
-import org.sing_group.mtc.rest.entity.user.ManagerData;
 
 public class IsEqualToManager extends IsEqualToEntity<Manager, ManagerData> {
   public IsEqualToManager(Manager user) {
@@ -45,7 +44,13 @@ public class IsEqualToManager extends IsEqualToEntity<Manager, ManagerData> {
       return checkAttribute("login", Manager::getLogin, ManagerData::getLogin, actual)
         && checkAttribute("email", Manager::getEmail, ManagerData::getEmail, actual)
         && checkAttribute("name", unwrapOptionalFuncion(Manager::getName), ManagerData::getName, actual)
-        && checkAttribute("surname", unwrapOptionalFuncion(Manager::getSurname), ManagerData::getSurname, actual);
+        && checkAttribute("surname", unwrapOptionalFuncion(Manager::getSurname), ManagerData::getSurname, actual)
+        && matchIterableAttribute("institutions",
+          wrapStreamToIterableFunction(Manager::getInstitutions),
+          wrapArrayToIterableFunction(ManagerData::getInstitutions),
+          actual,
+          IsEqualToIdAndUri::containsInstitutionIdAndUrisInAnyOrder
+        );
     }
   }
   

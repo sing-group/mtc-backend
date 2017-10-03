@@ -43,7 +43,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.sing_group.mtc.rest.entity.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.resource.Deployments;
 
 @RunWith(Arquillian.class)

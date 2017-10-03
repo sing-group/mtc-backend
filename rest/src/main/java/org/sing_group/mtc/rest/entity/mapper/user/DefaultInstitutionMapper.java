@@ -56,12 +56,15 @@ public class DefaultInstitutionMapper implements InstitutionMapper {
     
     final Function<Manager, URI> managerToUri = manager -> pathBuilder.manager(manager).build();
     final Function<Therapist, URI> therapistToUri = therapist -> pathBuilder.therapist(therapist).build();
+    
     return new InstitutionData(
       institution.getId(),
       institution.getName(),
       institution.getDescription().orElse(null),
       institution.getAddress().orElse(null),
+      institution.getManager().map(Manager::getLogin).orElseThrow(IllegalStateException::new),
       institution.getManager().map(managerToUri).orElseThrow(IllegalStateException::new),
+      institution.getTherapists().map(Therapist::getLogin).toArray(String[]::new),
       institution.getTherapists().map(therapistToUri).toArray(URI[]::new)
     );
   }

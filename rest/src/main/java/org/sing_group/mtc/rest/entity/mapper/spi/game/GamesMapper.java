@@ -30,9 +30,9 @@ import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSessi
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
-import org.sing_group.mtc.rest.entity.session.GameConfigurationData;
-import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
-import org.sing_group.mtc.rest.entity.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 
 public interface GamesMapper {
 

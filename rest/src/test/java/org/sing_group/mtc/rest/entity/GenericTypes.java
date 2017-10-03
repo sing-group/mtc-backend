@@ -26,7 +26,7 @@ import java.util.List;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
-import org.sing_group.mtc.rest.entity.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.IdentifiedUserData;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;

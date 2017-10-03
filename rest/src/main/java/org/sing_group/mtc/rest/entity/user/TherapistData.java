@@ -22,6 +22,7 @@
 package org.sing_group.mtc.rest.entity.user;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -45,51 +46,64 @@ import io.swagger.annotations.ApiModelProperty;
 public class TherapistData extends IdentifiedUserData {
   private static final long serialVersionUID = 1L;
   
-  private URI institution;
+  private IdAndUri institution;
   
-  private URI[] patients;
+  private UserUri[] patients;
   
-  private URI[] sessions;
+  private IdAndUri[] sessions;
   
   TherapistData() {}
 
   public TherapistData(
     String login, String email, String name, String surname,
-    URI institution, URI[] patients, URI[] sessions
+    long institutionId,
+    URI institutionUri,
+    String[] patientLogins,
+    URI[] patientUris,
+    long[] sessionIds,
+    URI[] sessionUris
   ) {
     super(login, email, name, surname, RoleType.THERAPIST);
     
-    this.institution = institution;
-    this.patients = patients;
-    this.sessions = sessions;
+    this.institution = new IdAndUri(institutionId, institutionUri);
+    
+    this.patients = new UserUri[patientLogins.length];
+    for (int i = 0; i < patientLogins.length; i++) {
+      this.patients[i] = new UserUri(patientLogins[i], patientUris[i]);
+    }
+    
+    this.sessions = new IdAndUri[sessionIds.length];
+    for (int i = 0; i < sessionIds.length; i++) {
+      this.sessions[i] = new IdAndUri(sessionIds[i], sessionUris[i]);
+    }
   }
 
   @XmlElement(name = "institution", required = true)
-  public URI getInstitution() {
+  public IdAndUri getInstitution() {
     return institution;
   }
 
-  public void setInstitution(URI institution) {
+  public void setInstitution(IdAndUri institution) {
     this.institution = institution;
   }
 
   @XmlElementWrapper(name = "patients", required = false)
   @XmlElement(name = "patient")
-  public URI[] getPatients() {
+  public UserUri[] getPatients() {
     return patients;
   }
 
-  public void setPatients(URI[] patients) {
+  public void setPatients(UserUri[] patients) {
     this.patients = patients;
   }
 
   @XmlElementWrapper(name = "sessions", required = false)
   @XmlElement(name = "session")
-  public URI[] getSessions() {
+  public IdAndUri[] getSessions() {
     return sessions;
   }
 
-  public void setSessions(URI[] sessions) {
+  public void setSessions(IdAndUri[] sessions) {
     this.sessions = sessions;
   }
 
@@ -109,5 +123,36 @@ public class TherapistData extends IdentifiedUserData {
   public String toString() {
     return "TherapistData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()=" + getName()
       + ", getSurname()=" + getSurname() + "]";
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = super.hashCode();
+    result = prime * result + ((institution == null) ? 0 : institution.hashCode());
+    result = prime * result + Arrays.hashCode(patients);
+    result = prime * result + Arrays.hashCode(sessions);
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!super.equals(obj))
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    TherapistData other = (TherapistData) obj;
+    if (institution == null) {
+      if (other.institution != null)
+        return false;
+    } else if (!institution.equals(other.institution))
+      return false;
+    if (!Arrays.equals(patients, other.patients))
+      return false;
+    if (!Arrays.equals(sessions, other.sessions))
+      return false;
+    return true;
   }
 }

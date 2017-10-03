@@ -45,7 +45,20 @@ public class IsEqualToTherapist extends IsEqualToEntity<Therapist, TherapistData
       return checkAttribute("login", Therapist::getLogin, TherapistData::getLogin, actual)
         && checkAttribute("email", Therapist::getEmail, TherapistData::getEmail, actual)
         && checkAttribute("name", unwrapOptionalFuncion(Therapist::getName), TherapistData::getName, actual)
-        && checkAttribute("surname", unwrapOptionalFuncion(Therapist::getSurname), TherapistData::getSurname, actual);
+        && checkAttribute("surname", unwrapOptionalFuncion(Therapist::getSurname), TherapistData::getSurname, actual)
+        && matchAttribute("institution", Therapist::getInstitution, TherapistData::getInstitution, actual, IsEqualToIdAndUri::equalToInstitutionIdAndUri)
+        && matchIterableAttribute("patients",
+          wrapStreamToIterableFunction(Therapist::getPatients),
+          wrapArrayToIterableFunction(TherapistData::getPatients),
+          actual,
+          IsEqualToUserUri::containsPatientUrisInAnyOrder
+        )
+        && matchIterableAttribute("sessions",
+          wrapStreamToIterableFunction(Therapist::getSessions),
+          wrapArrayToIterableFunction(TherapistData::getSessions),
+          actual,
+          IsEqualToIdAndUri::containsGamesSessionIdAndUrisInAnyOrder
+        );
     }
   }
   

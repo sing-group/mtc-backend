@@ -25,7 +25,7 @@ import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
 import org.sing_group.mtc.domain.dao.SortDirection;
-import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 
 @Local

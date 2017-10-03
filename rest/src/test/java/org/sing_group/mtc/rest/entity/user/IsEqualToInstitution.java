@@ -44,7 +44,14 @@ public class IsEqualToInstitution extends IsEqualToEntity<Institution, Instituti
       return checkAttribute("id", Institution::getId, InstitutionData::getId, actual)
         && checkAttribute("name", Institution::getName, InstitutionData::getName, actual)
         && checkAttribute("description", unwrapOptionalFuncion(Institution::getDescription), InstitutionData::getDescription, actual)
-        && checkAttribute("address", unwrapOptionalFuncion(Institution::getAddress), InstitutionData::getAddress, actual);
+        && checkAttribute("address", unwrapOptionalFuncion(Institution::getAddress), InstitutionData::getAddress, actual)
+        && matchAttribute("manager", unwrapOptionalFuncion(Institution::getManager), InstitutionData::getManager, actual, IsEqualToUserUri::equalToManagerUri)
+        && matchIterableAttribute("therapists",
+          wrapStreamToIterableFunction(Institution::getTherapists),
+          wrapArrayToIterableFunction(InstitutionData::getTherapists),
+          actual,
+          IsEqualToUserUri::containsTherapistUrisInAnyOrder
+        );
     }
   }
   

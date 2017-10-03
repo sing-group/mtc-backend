@@ -19,20 +19,13 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.entity.mapper.spi.user;
+package org.sing_group.mtc.rest.resource.route;
 
 import javax.ws.rs.core.UriBuilder;
 
-import org.sing_group.mtc.domain.entities.user.Institution;
-import org.sing_group.mtc.rest.entity.user.InstitutionData;
-import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
-
-public interface InstitutionMapper {
-  public InstitutionData toData(Institution institution, UriBuilder uriBuilder);
-
-  public Institution toInstitution(InstitutionEditionData data);
-  
-  public Institution toInstitution(int id, InstitutionEditionData data);
-
-  public InstitutionEditionData toEditionData(Institution institution);
+public class GamesSessionWithIdRestPathBuilder extends GamesSessionWithoutIdRestPathBuilder {
+  public GamesSessionWithIdRestPathBuilder(UriBuilder builder, int id) {
+    super(builder);
+    this.builder.path(Integer.toString(id));
+  }
 }

@@ -21,15 +21,14 @@
  */
 package org.sing_group.mtc.rest.entity.mapper.spi.game;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.SortedSet;
-import java.util.function.Function;
+
+import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
-import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
@@ -41,7 +40,7 @@ public interface GamesMapper {
 
   public SortedSet<GameConfigurationForSession> mapToGameConfigurationForSession(GameConfigurationData[] gameConfigurations);
 
-  public GamesSessionData mapToGameSessionData(GamesSession session, Function<Therapist, URI> therapistUrlBuilder);
+  public GamesSessionData mapToGameSessionData(GamesSession session, UriBuilder uriBuilder);
 
   public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration);
 

@@ -30,6 +30,7 @@ import java.util.function.Function;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
@@ -37,6 +38,7 @@ import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
 import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.service.spi.user.ManagerService;
 
 @Default
@@ -48,9 +50,12 @@ public class DefaultInstitutionMapper implements InstitutionMapper {
   @Override
   public InstitutionData toData(
     Institution institution,
-    Function<Manager, URI> managerToUri,
-    Function<Therapist, URI> therapistToUri
+    UriBuilder uriBuilder
   ) {
+    final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
+    
+    final Function<Manager, URI> managerToUri = manager -> pathBuilder.manager(manager).build();
+    final Function<Therapist, URI> therapistToUri = therapist -> pathBuilder.therapist(therapist).build();
     return new InstitutionData(
       institution.getId(),
       institution.getName(),

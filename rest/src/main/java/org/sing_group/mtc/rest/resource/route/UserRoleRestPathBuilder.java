@@ -19,20 +19,22 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.entity.mapper.spi.user;
+package org.sing_group.mtc.rest.resource.route;
+
+import java.net.URI;
 
 import javax.ws.rs.core.UriBuilder;
 
-import org.sing_group.mtc.domain.entities.user.Institution;
-import org.sing_group.mtc.rest.entity.user.InstitutionData;
-import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
-
-public interface InstitutionMapper {
-  public InstitutionData toData(Institution institution, UriBuilder uriBuilder);
-
-  public Institution toInstitution(InstitutionEditionData data);
+public class UserRoleRestPathBuilder implements RestPathBuilder {
+  protected UriBuilder builder;
   
-  public Institution toInstitution(int id, InstitutionEditionData data);
+  public UserRoleRestPathBuilder(UriBuilder builder) {
+    this.builder = builder.clone().path("user").path("role");
+  }
 
-  public InstitutionEditionData toEditionData(Institution institution);
+  @Override
+  public URI build() {
+    return this.builder.build();
+  }
+
 }

@@ -25,6 +25,7 @@ import java.net.URI;
 import java.util.function.Function;
 
 import javax.enterprise.inject.Default;
+import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
@@ -42,6 +43,7 @@ import org.sing_group.mtc.rest.entity.user.PatientData;
 import org.sing_group.mtc.rest.entity.user.PatientEditionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 
 @Default
 public class DefaultUserMapper implements UserMapper {
@@ -67,7 +69,10 @@ public class DefaultUserMapper implements UserMapper {
   }
   
   @Override
-  public ManagerData toData(Manager manager, Function<Institution, URI> institutionToURI) {
+  public ManagerData toData(Manager manager, UriBuilder uriBuilder) {
+    final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
+    final Function<Institution, URI> institutionToURI = institution -> pathBuilder.institution(institution).build();
+    
     return new ManagerData(
       manager.getLogin(),
       manager.getEmail(),
@@ -91,12 +96,13 @@ public class DefaultUserMapper implements UserMapper {
   }
   
   @Override
-  public TherapistData toData(
-    Therapist therapist,
-    Function<Institution, URI> institutionToURI,
-    Function<Patient, URI> patientToURI,
-    Function<GamesSession, URI> sessionToURI
-  ) {
+  public TherapistData toData(Therapist therapist, UriBuilder uriBuilder) {
+    final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
+    
+    final Function<Institution, URI> institutionToURI = institution -> pathBuilder.institution(institution).build();
+    final Function<Patient, URI> patientToURI = patient -> pathBuilder.patient(patient).build();
+    final Function<GamesSession, URI> sessionToURI = session -> pathBuilder.gamesSession(session).build();
+    
     return new TherapistData(
       therapist.getLogin(),
       therapist.getEmail(),
@@ -125,11 +131,14 @@ public class DefaultUserMapper implements UserMapper {
   }
   
   @Override
-  public PatientData toData(
-    Patient patient,
-    Function<Therapist, URI> therapistToUri,
-    Function<AssignedGamesSession, URI> assignedSessionToURI
-  ) {
+  public PatientData toData(Patient patient, UriBuilder uriBuilder) {
+    final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
+    
+    final Function<Therapist, URI> therapistToUri =
+      therapist -> pathBuilder.therapist(therapist).build();
+    final Function<AssignedGamesSession, URI> assignedSessionToURI =
+      assigned -> pathBuilder.gamesSessionAssigned(assigned).build();
+    
     return new PatientData(
       patient.getLogin(),
       therapistToUri.apply(patient.getTherapist()),

@@ -26,6 +26,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import java.net.URI;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -51,6 +52,7 @@ import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.rest.resource.spi.user.AdministratorResource;
 import org.sing_group.mtc.service.spi.user.AdministratorService;
 
@@ -84,6 +86,13 @@ public class DefaultAdministratorResource implements AdministratorResource {
   
   @Context
   private UriInfo uriInfo;
+  
+  private BaseRestPathBuilder pathBuilder;
+  
+  @PostConstruct
+  private void createPathBuilder() {
+    this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
+  }
   
   @Override
   @GET
@@ -141,7 +150,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
   public Response create(AdministratorEditionData data) {
     final Administrator admin = this.service.create(mapper.toAdministrator(data));
     
-    final URI userUri = this.buildUriFor(admin);
+    final URI userUri = pathBuilder.admin(admin).build();
     
     return Response.created(userUri).build();
   }
@@ -177,12 +186,5 @@ public class DefaultAdministratorResource implements AdministratorResource {
     this.service.delete(login);
     
     return Response.ok().build();
-  }
-  
-  private URI buildUriFor(Administrator admin) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(admin.getLogin())
-    .build();
   }
 }

@@ -26,6 +26,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import java.net.URI;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -46,7 +47,6 @@ import javax.ws.rs.core.UriInfo;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
-import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
@@ -56,6 +56,7 @@ import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.rest.resource.spi.user.TherapistResource;
 import org.sing_group.mtc.service.spi.user.InstitutionService;
 import org.sing_group.mtc.service.spi.user.TherapistService;
@@ -97,6 +98,13 @@ public class DefaultTherapistResource implements TherapistResource {
   @Context
   private UriInfo uriInfo;
   
+  private BaseRestPathBuilder pathBuilder;
+  
+  @PostConstruct
+  private void createPathBuilder() {
+    this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
+  }
+  
   @GET
   @Path("{login}")
   @ApiOperation(
@@ -111,7 +119,7 @@ public class DefaultTherapistResource implements TherapistResource {
   public Response get(@PathParam("login") String login) {
     final Therapist user = this.service.get(login);
 
-    return Response.ok(toData(user)).build();
+    return Response.ok(toTherapistData(user)).build();
   }
   
   @GET
@@ -132,7 +140,7 @@ public class DefaultTherapistResource implements TherapistResource {
     final ListingOptions options = new ListingOptions(start, end, order, sort);
     
     final TherapistData[] therapists = this.service.list(options)
-      .map(this::toData)
+      .map(this::toTherapistData)
     .toArray(TherapistData[]::new);
     
     return Response.ok(therapists)
@@ -153,7 +161,7 @@ public class DefaultTherapistResource implements TherapistResource {
   public Response create(TherapistEditionData data) {
     final Therapist therapist = this.service.create(userMapper.toTherapist(data, this.institutionService.get(data.getInstitution())));
     
-    final URI userUri = this.buildUriFor(therapist);
+    final URI userUri = this.pathBuilder.therapist(therapist).build();
     
     return Response.created(userUri).build();
   }
@@ -213,8 +221,10 @@ public class DefaultTherapistResource implements TherapistResource {
       therapist, gamesMapper.mapToGameSession(data)
     );
     
+    final URI gamesSessionUri = this.pathBuilder.gamesSession(gamesSession).build();
+    
     return Response
-      .created(this.buildUriForSession(gamesSession))
+      .created(gamesSessionUri)
     .build();
   }
 
@@ -229,51 +239,13 @@ public class DefaultTherapistResource implements TherapistResource {
   )
   public Response listGamesSessions(@PathParam("login") String therapist) {
     final GamesSessionData[] sessions = this.service.listGameSessions(therapist)
-      .map(session -> gamesMapper.mapToGameSessionData(session, this::buildUriFor))
+      .map(session -> gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder()))
     .toArray(GamesSessionData[]::new);
     
     return Response.ok(sessions).build();
   }
   
-  private URI buildUriFor(Therapist therapist) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(therapist.getLogin())
-    .build();
-  }
-  
-  private URI buildUriForInstitution(Therapist therapist) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(therapist.getLogin())
-      .path("institution")
-    .build();
-  }
-  
-  private URI buildUriForPatient(Patient patient) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(patient.getTherapist().getLogin())
-      .path("patient")
-      .path(patient.getLogin())
-    .build();
-  }
-  
-  private URI buildUriForSession(GamesSession session) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(session.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
-      .path("gamesession")
-      .path(session.getId().toString())
-    .build();
-  }
-  
-  private TherapistData toData(Therapist therapist) {
-    return userMapper.toData(
-      therapist,
-      institution -> this.buildUriForInstitution(therapist),
-      this::buildUriForPatient,
-      this::buildUriForSession
-    );
+  private TherapistData toTherapistData(Therapist therapist) {
+    return userMapper.toData(therapist, this.uriInfo.getBaseUriBuilder());
   }
 }

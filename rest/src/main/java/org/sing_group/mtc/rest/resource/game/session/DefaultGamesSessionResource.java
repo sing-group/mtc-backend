@@ -21,8 +21,6 @@
  */
 package org.sing_group.mtc.rest.resource.game.session;
 
-import java.net.URI;
-
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -89,16 +87,8 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
     final GamesSession session = this.service.get(sessionId);
     
     final GamesSessionData sessionData =
-      this.gamesMapper.mapToGameSessionData(session, therapist -> this.buildUriForTherapist(session));
+      this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder());
     
     return Response.ok(sessionData).build();
-  }
-  
-  private URI buildUriForTherapist(GamesSession session) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(Integer.toString(session.getId()))
-      .path("therapist")
-    .build();
   }
 }

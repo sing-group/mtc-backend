@@ -26,6 +26,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import java.net.URI;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -45,10 +46,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
-import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
-import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
@@ -57,6 +56,7 @@ import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.rest.resource.spi.user.InstitutionResource;
 import org.sing_group.mtc.service.spi.user.InstitutionService;
 
@@ -92,6 +92,13 @@ public class DefaultInstitutionResource implements InstitutionResource {
   
   @Context
   private UriInfo uriInfo;
+  
+  private BaseRestPathBuilder pathBuilder;
+  
+  @PostConstruct
+  private void createPathBuilder() {
+    this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
+  }
 
   @GET
   @Path("{id}")
@@ -107,7 +114,9 @@ public class DefaultInstitutionResource implements InstitutionResource {
   public Response get(@PathParam("id") int id) {
     final Institution institution = this.service.get(id);
     
-    return Response.ok(this.toData(institution)).build();
+    return Response
+      .ok(this.mapper.toData(institution, this.uriInfo.getBaseUriBuilder()))
+    .build();
   }
   
   @GET
@@ -128,7 +137,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
     final ListingOptions options = new ListingOptions(start, end, order, sort);
     
     final InstitutionData[] institutions = this.service.list(options)
-      .map(this::toData)
+      .map(institution -> this.mapper.toData(institution, this.uriInfo.getBaseUriBuilder()))
     .toArray(InstitutionData[]::new);
     
     return Response.ok(institutions)
@@ -205,7 +214,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
     final Manager manager = institution.getManager()
       .orElseThrow(() -> new IllegalArgumentException("No manager found for institution: " + id));
     
-    return Response.ok(this.userMapper.toData(manager, this::buildUriForInstitution)).build();
+    return Response.ok(this.userMapper.toData(manager, this.uriInfo.getBaseUriBuilder())).build();
   }
   
   @GET
@@ -229,7 +238,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
     
     final Institution institution = this.service.get(id);
     final TherapistData[] therapists = this.service.listTherapists(id, options)
-      .map(therapist -> this.userMapper.toData(therapist, this::buildUriForInstitution, this::buildUriForPatient, this::buildUriForSession))
+      .map(therapist -> this.userMapper.toData(therapist, this.uriInfo.getBaseUriBuilder()))
     .toArray(TherapistData[]::new);
     
     return Response.ok(therapists)
@@ -259,56 +268,11 @@ public class DefaultInstitutionResource implements InstitutionResource {
     .orElseThrow(() -> new IllegalArgumentException("Unknown therapist: " + login));
     
     return Response
-      .ok(this.userMapper.toData(therapist, this::buildUriForInstitution, this::buildUriForPatient, this::buildUriForSession))
+      .ok(this.userMapper.toData(therapist, this.uriInfo.getBaseUriBuilder()))
     .build();
   }
   
-  private InstitutionData toData(Institution institution) {
-    return this.mapper.toData(institution, manager -> this.buildOwnManagerUri(institution), this::buildUriForTherapist);
-  }
-  
-  private URI buildUriForPatient(Patient patient) {
-    return uriInfo.getBaseUriBuilder()
-      .path(DefaultTherapistResource.class.getAnnotation(Path.class).value())
-      .path(patient.getTherapist().getLogin())
-      .path("patient")
-      .path(patient.getLogin())
-    .build();
-  }
-  
-  private URI buildUriForSession(GamesSession session) {
-    return uriInfo.getBaseUriBuilder()
-      .path(DefaultTherapistResource.class.getAnnotation(Path.class).value())
-      .path(session.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
-      .path("gamesession")
-      .path(session.getId().toString())
-    .build();
-  }
-
   private URI buildUriForInstitution(Institution institution) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path("institution")
-      .path(institution.getId().toString())
-    .build();
-  }
-  
-  private URI buildOwnManagerUri(Institution institution) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path("institution")
-      .path(institution.getId().toString())
-      .path("manager")
-    .build();
-  }
-  
-  private URI buildUriForTherapist(Therapist therapist) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path("institution")
-      .path(therapist.getInstitution().getId().toString())
-      .path("therapist")
-      .path(therapist.getLogin())
-    .build();
+    return this.pathBuilder.institution(institution).build();
   }
 }

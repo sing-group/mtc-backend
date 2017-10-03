@@ -26,6 +26,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import java.net.URI;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -45,13 +46,13 @@ import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
-import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.PatientData;
 import org.sing_group.mtc.rest.entity.user.PatientEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.rest.resource.spi.user.PatientResource;
 import org.sing_group.mtc.service.spi.user.PatientService;
 import org.sing_group.mtc.service.spi.user.TherapistService;
@@ -90,6 +91,13 @@ public class DefaultPatientResource implements PatientResource {
   @Context
   private UriInfo uriInfo;
   
+  private BaseRestPathBuilder pathBuilder;
+  
+  @PostConstruct
+  private void createPathBuilder() {
+    this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
+  }
+  
   @Override
   @GET
   @Path("{login}")
@@ -104,7 +112,7 @@ public class DefaultPatientResource implements PatientResource {
   public Response get(@PathParam("login") String login) {
     final Patient user = this.service.get(login);
 
-    return Response.ok(toData(user)).build();
+    return Response.ok(toPatientData(user)).build();
   }
   
   @Override
@@ -125,7 +133,7 @@ public class DefaultPatientResource implements PatientResource {
     final ListingOptions options = new ListingOptions(start, end, order, sort);
     
     final PatientData[] patients = this.service.list(options)
-      .map(this::toData)
+      .map(this::toPatientData)
     .toArray(PatientData[]::new);
     
     return Response.ok(patients)
@@ -146,7 +154,7 @@ public class DefaultPatientResource implements PatientResource {
   public Response create(PatientEditionData data) {
     final Patient patient = this.service.create(mapper.toPatient(data, therapistService.get(data.getTherapist())));
     
-    final URI userUri = this.buildUriFor(patient);
+    final URI userUri = this.pathBuilder.patient(patient).build();
     
     return Response.created(userUri).build();
   }
@@ -184,31 +192,7 @@ public class DefaultPatientResource implements PatientResource {
     return Response.ok().build();
   }
   
-  private URI buildUriFor(Patient patient) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(patient.getLogin())
-    .build();
-  }
-  
-  private URI buildUriForTherapist(Patient patient) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(patient.getLogin())
-      .path("therapist")
-    .build();
-  }
-  
-  private URI buildUriForAssignedSession(AssignedGamesSession session) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(session.getPatient().map(Patient::getLogin).orElseThrow(IllegalStateException::new))
-      .path("assignedsession")
-      .path(Integer.toString(session.getId()))
-    .build();
-  }
-  
-  private PatientData toData(Patient patient) {
-    return mapper.toData(patient, therapist -> this.buildUriForTherapist(patient), this::buildUriForAssignedSession);
+  private PatientData toPatientData(Patient patient) {
+    return mapper.toData(patient, this.uriInfo.getBaseUriBuilder());
   }
 }

@@ -26,6 +26,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import java.net.URI;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -47,7 +48,6 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
-import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
@@ -55,6 +55,7 @@ import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.rest.resource.spi.user.ManagerResource;
 import org.sing_group.mtc.service.spi.user.ManagerService;
 
@@ -92,6 +93,13 @@ public class DefaultManagerResource implements ManagerResource {
   @Context
   private UriInfo uriInfo;
   
+  private BaseRestPathBuilder pathBuilder;
+  
+  @PostConstruct
+  private void createPathBuilder() {
+    this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
+  }
+  
   public URI buildUriFor(Institution institution) {
     return uriInfo.getBaseUriBuilder()
       .path(this.getClass().getAnnotation(Path.class).value())
@@ -115,7 +123,7 @@ public class DefaultManagerResource implements ManagerResource {
   public Response get(@PathParam("login") String login) {
     final Manager user = this.service.get(login);
 
-    return Response.ok(toData(user)).build();
+    return Response.ok(toManagerData(user)).build();
   }
   
   @Override
@@ -136,7 +144,7 @@ public class DefaultManagerResource implements ManagerResource {
     final ListingOptions options = new ListingOptions(start, end, order, sort);
     
     final ManagerData[] managers = this.service.list(options)
-      .map(this::toData)
+      .map(this::toManagerData)
     .toArray(ManagerData[]::new);
     
     return Response.ok(managers)
@@ -157,7 +165,7 @@ public class DefaultManagerResource implements ManagerResource {
   public Response create(ManagerEditionData data) {
     final Manager manager = this.service.create(mapper.toManager(data));
     
-    final URI userUri = this.buildUriFor(manager);
+    final URI userUri = this.pathBuilder.manager(manager).build();
     
     return Response.created(userUri).build();
   }
@@ -216,7 +224,7 @@ public class DefaultManagerResource implements ManagerResource {
     
     final Manager manager = this.service.get(login);
     final InstitutionData[] institutions = this.service.listInstitutions(login, options)
-      .map(this::toData)
+      .map(this::toInstitutionData)
     .toArray(InstitutionData[]::new);
     
     return Response.ok(institutions)
@@ -242,32 +250,14 @@ public class DefaultManagerResource implements ManagerResource {
       .findFirst()
     .orElseThrow(() -> new IllegalArgumentException("Unknown institution with id: " + id));
     
-    return Response.ok(this.toData(institution)).build();
+    return Response.ok(this.toInstitutionData(institution)).build();
   }
   
-  private URI buildUriFor(Manager manager) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(manager.getLogin())
-    .build();
+  private ManagerData toManagerData(Manager manager) {
+    return mapper.toData(manager, this.uriInfo.getBaseUriBuilder());
   }
   
-  private URI buildUriFor(Therapist therapist) {
-    return uriInfo.getBaseUriBuilder()
-      .path(this.getClass().getAnnotation(Path.class).value())
-      .path(therapist.getInstitution().getManager().map(Manager::getLogin).orElseThrow(IllegalStateException::new))
-      .path(DefaultInstitutionResource.class.getAnnotation(Path.class).value())
-      .path(therapist.getInstitution().getId().toString())
-      .path(DefaultTherapistResource.class.getAnnotation(Path.class).value())
-      .path(therapist.getLogin())
-    .build();
-  }
-  
-  private ManagerData toData(Manager manager) {
-    return mapper.toData(manager, this::buildUriFor);
-  }
-  
-  private InstitutionData toData(Institution institution) {
-    return institutionMapper.toData(institution, this::buildUriFor, this::buildUriFor);
+  private InstitutionData toInstitutionData(Institution institution) {
+    return institutionMapper.toData(institution, this.uriInfo.getBaseUriBuilder());
   }
 }

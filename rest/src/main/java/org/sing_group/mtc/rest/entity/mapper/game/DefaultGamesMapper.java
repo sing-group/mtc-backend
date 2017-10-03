@@ -37,6 +37,7 @@ import java.util.function.Function;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession;
@@ -50,6 +51,7 @@ import org.sing_group.mtc.rest.entity.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.session.GameParamData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.session.GamesSessionData;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.service.spi.game.GameService;
 
 @Default
@@ -98,7 +100,11 @@ public class DefaultGamesMapper implements GamesMapper {
   }
   
   @Override
-  public GamesSessionData mapToGameSessionData(GamesSession session, Function<Therapist, URI> therapistUrlBuilder) {
+  public GamesSessionData mapToGameSessionData(GamesSession session, UriBuilder uriBuilder) {
+    final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
+    
+    final Function<Therapist, URI> therapistUrlBuilder = therapist -> pathBuilder.therapist(therapist).build();
+    
     return new GamesSessionData(
       session.getId(),
       therapistUrlBuilder.apply(session.getTherapist().orElseThrow(IllegalStateException::new)),

@@ -21,11 +21,8 @@
  */
 package org.sing_group.mtc.rest.entity.mapper.spi.user;
 
-import java.net.URI;
-import java.util.function.Function;
+import javax.ws.rs.core.UriBuilder;
 
-import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
-import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Administrator;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
@@ -46,24 +43,15 @@ public interface UserMapper {
 
   public AdministratorEditionData toEditionData(Administrator admin, String password);
 
-  public ManagerData toData(Manager manager, Function<Institution, URI> institutionToURI);
+  public ManagerData toData(Manager manager, UriBuilder uriBuilder);
 
   public ManagerEditionData toEditionData(Manager manager, String password);
 
-  public TherapistData toData(
-    Therapist therapist,
-    Function<Institution, URI> institutionToURI,
-    Function<Patient, URI> patientToURI,
-    Function<GamesSession, URI> sessionToURI
-  );
+  public TherapistData toData(Therapist therapist, UriBuilder uriBuilder);
 
   public TherapistEditionData toEditionData(Therapist therapist, String password);
 
-  public PatientData toData(
-    Patient patient,
-    Function<Therapist, URI> therapistToUri,
-    Function<AssignedGamesSession, URI> assignedSessionToURI
-  );
+  public PatientData toData(Patient patient, UriBuilder uriBuilder);
 
   public PatientEditionData toEditionData(Patient patient, String password);
 

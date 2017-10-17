@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.domain.entities.game.session;
 
+import static javax.persistence.GenerationType.IDENTITY;
 import static org.sing_group.fluent.checker.Checks.requireAfter;
 import static org.sing_group.fluent.checker.Checks.requirePositive;
 
@@ -36,8 +37,8 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
@@ -45,28 +46,37 @@ import javax.persistence.MapKeyColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.sing_group.mtc.domain.entities.game.Game;
-import org.sing_group.mtc.domain.entities.game.session.GameResult.GameResultId;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 @Entity
-@Table(name = "game_result")
-@IdClass(GameResultId.class)
-public class GameResult {
+@Table(
+  name = "game_result",
+  uniqueConstraints = @UniqueConstraint(columnNames = { "session", "game", "gameOrder", "assignmentDate", "patient" })
+)
+public class GameResult implements Serializable {
+  private static final long serialVersionUID = 1L;
+
   @Id
+  @GeneratedValue(strategy = IDENTITY)
+  private Integer id;
+  
+  @Column(name = "session")
   private Integer session;
 
-  @Id
+  @Column(name = "game", length = 255, columnDefinition = "VARCHAR(255)")
   private String game;
 
-  @Id
+  @Column(name = "gameOrder")
   private Integer gameOrder;
 
-  @Id
+  @Temporal(TemporalType.TIMESTAMP)
+  @Column(name = "assignmentDate")
   private Date assignmentDate;
 
-  @Id
+  @Column(name = "patient", length = 100, nullable = false, unique = true)
   private String patient;
   
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -133,6 +143,10 @@ public class GameResult {
     this.setAssignedSession(assignedSession);
     this.setGameConfiguration(gameConfiguration);
   }
+  
+  public Integer getId() {
+    return id;
+  }
 
   public int getAttempt() {
     return attempt;
@@ -168,9 +182,7 @@ public class GameResult {
         throw new IllegalArgumentException("assignedSession should have a patient");
       }
       
-      if (this.gameConfiguration != null && !assignedSession.getSession().map(GamesSession::getId).equals(Optional.of(this.session))) {
-        throw new IllegalArgumentException("assignedSession should have the same session as the assigned gameConfiguration");
-      }
+      checkSameGameSession(this.assignedSession, gameConfiguration);
     }
     
     if (this.assignedSession != null) {
@@ -202,19 +214,23 @@ public class GameResult {
     return Optional.ofNullable(gameConfiguration);
   }
   
+  public Optional<GamesSession> getGamesSession() {
+    if (this.gameConfiguration != null) {
+      return this.getGameConfiguration().map(GameConfigurationForSession::getSession);
+    } else if (this.assignedSession != null) {
+      return this.getAssignedSession().map(AssignedGamesSession::getSession).get();
+    } else {
+      return Optional.empty();
+    }
+  }
+  
   public void setGameConfiguration(GameConfigurationForSession gameConfiguration) {
     if (gameConfiguration != null) {
-      if (gameConfiguration.getSession() == null) {
-        throw new IllegalArgumentException("gameConfiguration should have an assigned session");
-      }
-      
       if (gameConfiguration.getGame() == null) {
-        throw new IllegalArgumentException("gameConfiguration should have an assignment game");
+        throw new IllegalArgumentException("gameConfiguration should have an assigned game");
       }
       
-      if (this.assignedSession != null && !gameConfiguration.getSession().getId().equals(this.session)) {
-        throw new IllegalArgumentException("gameConfiguration should have the same session as the assigned assignedSession");
-      }
+      checkSameGameSession(this.assignedSession, gameConfiguration);
     }
     
     this.gameConfiguration = gameConfiguration;
@@ -232,15 +248,31 @@ public class GameResult {
     }
   }
   
+  private static void checkSameGameSession(
+    AssignedGamesSession assignedSession,
+    GameConfigurationForSession gameConfiguration
+  ) {
+    if (assignedSession != null && gameConfiguration != null) {
+      if (gameConfiguration.getSession() == null) 
+        throw new IllegalArgumentException("gameConfiguration should have an assigned session");
+      
+      if (assignedSession.getSession() == null)
+        throw new IllegalArgumentException("assignedSession should have an assigned session");
+      
+      final int gsIdConfig = gameConfiguration.getSession().getId();
+      final int gsIdAssigned = assignedSession.getSession().map(GamesSession::getId).get();
+      
+      if (gsIdConfig != gsIdAssigned) {
+        throw new IllegalArgumentException("gameConfiguration should have the same session as the assignedSession");
+      }
+    }
+  }
+  
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((assignedSession == null) ? 0 : assignedSession.hashCode());
-    result = prime * result + ((assignmentDate == null) ? 0 : assignmentDate.hashCode());
-    result = prime * result + ((game == null) ? 0 : game.hashCode());
-    result = prime * result + ((gameOrder == null) ? 0 : gameOrder.hashCode());
-    result = prime * result + ((patient == null) ? 0 : patient.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
     return result;
   }
 
@@ -253,117 +285,11 @@ public class GameResult {
     if (getClass() != obj.getClass())
       return false;
     GameResult other = (GameResult) obj;
-    if (assignedSession == null) {
-      if (other.assignedSession != null)
+    if (id == null) {
+      if (other.id != null)
         return false;
-    } else if (!assignedSession.equals(other.assignedSession))
-      return false;
-    if (assignmentDate == null) {
-      if (other.assignmentDate != null)
-        return false;
-    } else if (!assignmentDate.equals(other.assignmentDate))
-      return false;
-    if (game == null) {
-      if (other.game != null)
-        return false;
-    } else if (!game.equals(other.game))
-      return false;
-    if (gameOrder == null) {
-      if (other.gameOrder != null)
-        return false;
-    } else if (!gameOrder.equals(other.gameOrder))
-      return false;
-    if (patient == null) {
-      if (other.patient != null)
-        return false;
-    } else if (!patient.equals(other.patient))
+    } else if (!id.equals(other.id))
       return false;
     return true;
-  }
-
-
-
-  public static class GameResultId implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    private int session;
-    
-    private String game;
-    
-    private int gameOrder;
-    
-    private Date assignmentDate;
-    
-    private String patient;
-    
-    // For JPA
-    GameResultId() {}
-    
-    
-    public int getSession() {
-      return this.session;
-    }
-
-    public String getGame() {
-      return this.game;
-    }
-
-    public int getGameOrder() {
-      return this.gameOrder;
-    }
-
-    public Date getAssignmentDate() {
-      return assignmentDate;
-    }
-
-    public String getPatient() {
-      return patient;
-    }
-
-
-    @Override
-    public int hashCode() {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((assignmentDate == null) ? 0 : assignmentDate.hashCode());
-      result = prime * result + ((game == null) ? 0 : game.hashCode());
-      result = prime * result + gameOrder;
-      result = prime * result + ((patient == null) ? 0 : patient.hashCode());
-      result = prime * result + session;
-      return result;
-    }
-
-
-    @Override
-    public boolean equals(Object obj) {
-      if (this == obj)
-        return true;
-      if (obj == null)
-        return false;
-      if (getClass() != obj.getClass())
-        return false;
-      GameResultId other = (GameResultId) obj;
-      if (assignmentDate == null) {
-        if (other.assignmentDate != null)
-          return false;
-      } else if (!assignmentDate.equals(other.assignmentDate))
-        return false;
-      if (game == null) {
-        if (other.game != null)
-          return false;
-      } else if (!game.equals(other.game))
-        return false;
-      if (gameOrder != other.gameOrder)
-        return false;
-      if (patient == null) {
-        if (other.patient != null)
-          return false;
-      } else if (!patient.equals(other.patient))
-        return false;
-      if (session != other.session)
-        return false;
-      return true;
-    }
-    
   }
 }

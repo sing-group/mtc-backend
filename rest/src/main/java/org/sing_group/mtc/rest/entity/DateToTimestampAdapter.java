@@ -19,27 +19,22 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource.spi.user;
+package org.sing_group.mtc.rest.entity;
 
-import javax.ejb.Local;
-import javax.ws.rs.core.Response;
+import java.util.Date;
 
-import org.sing_group.mtc.domain.dao.SortDirection;
-import org.sing_group.mtc.rest.entity.user.PatientEditionData;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-@Local
-public interface PatientResource {
+public class DateToTimestampAdapter extends XmlAdapter<Long, Date> {
 
-  public Response get(String login);
+  @Override
+  public Date unmarshal(Long timestamp) throws Exception {
+    return new Date(timestamp);
+  }
 
-  public Response list(int start, int end, String order, SortDirection sort);
-  
-  public Response create(PatientEditionData data);
-
-  public Response update(PatientEditionData data);
-
-  public Response delete(String login);
-
-  public Response listAssignedSessions(String login, int start, int end, String order, SortDirection sort);
+  @Override
+  public Long marshal(Date date) throws Exception {
+    return date.getTime();
+  }
 
 }

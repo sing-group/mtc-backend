@@ -26,6 +26,7 @@ import java.net.URI;
 import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Administrator;
 import org.sing_group.mtc.domain.entities.user.Institution;
@@ -118,6 +119,18 @@ public final class BaseRestPathBuilder implements RestPathBuilder {
   
   public UserRoleRestPathBuilder userRole() {
     return new UserRoleRestPathBuilder(this.builder);
+  }
+  
+  public GameResultRestPathBuilder gameResult() {
+    return new GameResultRestPathBuilder(this.builder);
+  }
+  
+  public GameResultRestPathBuilder gameResult(int id) {
+    return new GameResultRestPathBuilder(this.builder, id);
+  }
+  
+  public GameResultRestPathBuilder gameResult(GameResult result) {
+    return gameResult(result.getId());
   }
 
   public URI build() {

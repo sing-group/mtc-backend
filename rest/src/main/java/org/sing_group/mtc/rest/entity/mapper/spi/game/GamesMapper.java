@@ -26,10 +26,12 @@ import java.util.SortedSet;
 
 import javax.ws.rs.core.UriBuilder;
 
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
@@ -45,5 +47,7 @@ public interface GamesMapper {
   public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration);
 
   public Map<I18NLocaleData, String> mapToLocaleMessages(LocalizedMessage message);
+
+  public AssignedGamesSessionData mapAssignedGamesSesion(AssignedGamesSession assignedSession, UriBuilder uriBuilder);
 
 }

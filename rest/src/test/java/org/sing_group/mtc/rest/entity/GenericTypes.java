@@ -26,6 +26,7 @@ import java.util.List;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.IdentifiedUserData;
@@ -103,6 +104,14 @@ public final class GenericTypes {
     
     public static List<InstitutionData> readEntity(Response response) {
       return response.readEntity(INSTITUTION_DATA_LIST_TYPE);
+    }
+  }
+  
+  public static class AssignedGamesSessionDataListType extends GenericType<List<AssignedGamesSessionData>> {
+    public static AssignedGamesSessionDataListType ASSIGNED_GAMES_SESSION_DATA_LIST_TYPE = new AssignedGamesSessionDataListType();
+    
+    public static List<AssignedGamesSessionData> readEntity(Response response) {
+      return response.readEntity(ASSIGNED_GAMES_SESSION_DATA_LIST_TYPE);
     }
   }
 }

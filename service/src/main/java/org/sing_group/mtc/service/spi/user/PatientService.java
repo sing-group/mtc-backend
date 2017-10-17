@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 import javax.ejb.Local;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 @Local
@@ -41,4 +42,6 @@ public interface PatientService {
   public Patient update(Patient patient);
 
   public void delete(String login);
+
+  public Stream<AssignedGamesSession> listAssignedSessions(String login, ListingOptions options);
 }

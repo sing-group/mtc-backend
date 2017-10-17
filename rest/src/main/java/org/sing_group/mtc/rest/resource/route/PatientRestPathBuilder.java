@@ -35,6 +35,10 @@ public class PatientRestPathBuilder implements RestPathBuilder {
   public PatientRestPathBuilder(UriBuilder builder, String login) {
     this.builder = builder.clone().path("patient").path(login);
   }
+  
+  public AssignedGamesSessionRestPathBuilder assignedGamesSession() {
+    return new AssignedGamesSessionRestPathBuilder(builder);
+  }
 
   @Override
   public URI build() {

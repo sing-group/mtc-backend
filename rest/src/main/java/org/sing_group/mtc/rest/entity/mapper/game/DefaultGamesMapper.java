@@ -40,17 +40,22 @@ import javax.transaction.Transactional;
 import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.game.Game;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
+import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.game.session.GameParamData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
+import org.sing_group.mtc.rest.entity.user.IdAndUri;
+import org.sing_group.mtc.rest.entity.user.UserUri;
 import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.service.spi.game.GameService;
 
@@ -137,5 +142,25 @@ public class DefaultGamesMapper implements GamesMapper {
       ));
     
     return messages;
+  }
+  
+  @Override
+  public AssignedGamesSessionData mapAssignedGamesSesion(AssignedGamesSession assignedSession, UriBuilder uriBuilder) {
+    final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
+    
+    final GamesSession gamesSession = assignedSession.getSession().orElseThrow(IllegalStateException::new);
+    final Patient patient = assignedSession.getPatient().orElseThrow(IllegalStateException::new);
+    
+    return new AssignedGamesSessionData(
+      assignedSession.getId(),
+      assignedSession.getAssignmentDate(),
+      assignedSession.getStartDate(),
+      assignedSession.getEndDate(),
+      new IdAndUri(gamesSession.getId(), pathBuilder.gamesSession(gamesSession).build()),
+      new UserUri(patient.getLogin(), pathBuilder.patient(patient).build()),
+      assignedSession.getGameResults()
+        .map(result -> new IdAndUri(result.getId(), pathBuilder.gameResult(result).build()))
+      .toArray(IdAndUri[]::new)
+    );
   }
 }

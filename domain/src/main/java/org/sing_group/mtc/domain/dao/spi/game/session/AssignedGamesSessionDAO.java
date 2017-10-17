@@ -1,6 +1,6 @@
 /*
  * #%L
- * REST
+ * Domain
  * %%
  * Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
  * %%
@@ -19,27 +19,14 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource.spi.user;
+package org.sing_group.mtc.domain.dao.spi.game.session;
 
-import javax.ejb.Local;
-import javax.ws.rs.core.Response;
+import java.util.stream.Stream;
 
-import org.sing_group.mtc.domain.dao.SortDirection;
-import org.sing_group.mtc.rest.entity.user.PatientEditionData;
+import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.user.Patient;
 
-@Local
-public interface PatientResource {
-
-  public Response get(String login);
-
-  public Response list(int start, int end, String order, SortDirection sort);
-  
-  public Response create(PatientEditionData data);
-
-  public Response update(PatientEditionData data);
-
-  public Response delete(String login);
-
-  public Response listAssignedSessions(String login, int start, int end, String order, SortDirection sort);
-
+public interface AssignedGamesSessionDAO {
+  public Stream<AssignedGamesSession> listByPatient(Patient patient, ListingOptions options);
 }

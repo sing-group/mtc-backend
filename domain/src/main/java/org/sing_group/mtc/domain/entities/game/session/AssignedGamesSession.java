@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.domain.entities.game.session;
 
+import static java.util.Collections.emptySet;
 import static java.util.Objects.requireNonNull;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.sing_group.fluent.checker.Checks.requireAfter;
@@ -96,18 +97,25 @@ public class AssignedGamesSession implements Serializable {
   
   AssignedGamesSession() {}
   
+  AssignedGamesSession(
+    Integer id, Date assignmentDate, Date startDate, Date endDate, GamesSession session, Patient patient,
+    Set<GameResult> gameResults
+  ) {
+    this.id = id;
+    this.assignmentDate = assignmentDate;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.session = session;
+    this.patient = patient;
+    this.gameResults = gameResults;
+  }
+
   public AssignedGamesSession(Date startDate, Date endDate, GamesSession session, Patient patient) {
     this(null, startDate, endDate, session, patient);
   }
 
   public AssignedGamesSession(Integer id, Date startDate, Date endDate, GamesSession session, Patient patient) {
-    this.id = id;
-    
-    this.assignmentDate = new Date();
-    this.setStartDate(startDate);
-    this.setEndDate(endDate);
-    this.setSession(session);
-    this.setPatient(patient);
+    this(id, new Date(), startDate, endDate, session, patient, emptySet());
   }
 
   public Integer getId() {

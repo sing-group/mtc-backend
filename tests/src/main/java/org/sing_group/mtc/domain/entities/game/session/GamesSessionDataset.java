@@ -25,10 +25,14 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
+import static org.sing_group.mtc.domain.entities.UsersDataset.patient;
 import static org.sing_group.mtc.domain.entities.UsersDataset.therapist;
 import static org.sing_group.mtc.domain.entities.game.GameTaskType.RECOGNITION;
 import static org.sing_group.mtc.domain.entities.game.GameTaskType.VERBAL_FLUENCY;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -36,11 +40,19 @@ import java.util.stream.Stream;
 import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.game.parameter.IntegerParameter;
 import org.sing_group.mtc.domain.entities.game.parameter.SecondsParameter;
-import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession;
-import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 
 public final class GamesSessionDataset {
+  private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  
+  private final static Date parseDate(String date) {
+    try {
+      return DATE_FORMAT.parse(date);
+    } catch (ParseException e) {
+      throw new RuntimeException(e);
+    }
+  }
+  
   private GamesSessionDataset() {}
 
   public static Game recognitionGame() {
@@ -117,5 +129,19 @@ public final class GamesSessionDataset {
     new GameConfigurationForSession(session, recognitionGame(), 3, paramValues2);
 
     return session;
+  }
+  
+  public static AssignedGamesSession[] assignedGamesSessions() {
+    return new AssignedGamesSession[] {
+      new AssignedGamesSession(
+        1,
+        parseDate("2017-10-13 17:50:10"),
+        parseDate("2017-11-01 00:00:00"),
+        parseDate("2017-11-10 23:59:59"),
+        session1(),
+        patient(),
+        emptySet()
+      )
+    };
   }
 }

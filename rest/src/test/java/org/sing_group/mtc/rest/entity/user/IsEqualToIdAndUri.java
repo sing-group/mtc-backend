@@ -32,6 +32,7 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
@@ -151,5 +152,25 @@ public class IsEqualToIdAndUri<T> extends IsEqualToEntity<T, IdAndUri> {
   @Factory
   public static Matcher<Iterable<? extends IdAndUri>> containsAssignedSessionIdAndUrisInAnyOrder(Stream<AssignedGamesSession> assignedSessions) {
     return containsEntityInAnyOrder(IsEqualToIdAndUri::equalToAssignedSessionIdAndUri, assignedSessions);
+  }
+  
+  @Factory
+  public static IsEqualToIdAndUri<GameResult> equalToGameResultIdAndUri(GameResult gamesSession) {
+    return equalToIdAndUri(gamesSession, (pathBuilder, gs) -> pathBuilder.gameResult(gs.getId()).build(), GameResult::getId);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends IdAndUri>> containsGameResultIdAndUrisInAnyOrder(GameResult... gamesSessions) {
+    return containsEntityInAnyOrder(IsEqualToIdAndUri::equalToGameResultIdAndUri, gamesSessions);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends IdAndUri>> containsGameResultIdAndUrisInAnyOrder(Iterable<GameResult> gamesSessions) {
+    return containsEntityInAnyOrder(IsEqualToIdAndUri::equalToGameResultIdAndUri, gamesSessions);
+  }
+  
+  @Factory
+  public static Matcher<Iterable<? extends IdAndUri>> containsGameResultIdAndUrisInAnyOrder(Stream<GameResult> gamesSessions) {
+    return containsEntityInAnyOrder(IsEqualToIdAndUri::equalToGameResultIdAndUri, gamesSessions);
   }
 }

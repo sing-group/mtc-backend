@@ -21,6 +21,7 @@
 ---
 DELETE FROM `session_i18n`;
 DELETE FROM `i18n`;
+DELETE FROM `assigned_session`;
 DELETE FROM `game_result_value`;
 DELETE FROM `game_result`;
 DELETE FROM `session_game_param_value`;

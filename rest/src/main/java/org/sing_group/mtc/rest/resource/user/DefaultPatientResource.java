@@ -42,11 +42,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
+import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.PatientData;
 import org.sing_group.mtc.rest.entity.user.PatientEditionData;
@@ -87,6 +90,9 @@ public class DefaultPatientResource implements PatientResource {
   
   @Inject
   private UserMapper mapper;
+  
+  @Inject
+  private GamesMapper gamesMapper;
   
   @Context
   private UriInfo uriInfo;
@@ -190,6 +196,39 @@ public class DefaultPatientResource implements PatientResource {
     this.service.delete(login);
     
     return Response.ok().build();
+  }
+  
+  @GET
+  @Path("{login}/session/assigned")
+  @ApiOperation(
+    value = "Returns the games sessions assigned to the patient.",
+    response = AssignedGamesSessionData.class,
+    responseContainer = "List",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown user: {login}")
+  )
+  @Override
+  public Response listAssignedSessions(
+    @PathParam("login") String login,
+    @QueryParam("start") @DefaultValue("-1") int start,
+    @QueryParam("end") @DefaultValue("-1") int end,
+    @QueryParam("order") String order,
+    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+  ) {
+    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final UriBuilder uriBuilder = this.uriInfo.getBaseUriBuilder();
+    
+    final Patient patient = this.service.get(login);
+    final AssignedGamesSessionData[] assignedSessions = this.service.listAssignedSessions(login, options)
+      .map(assignedSession -> this.gamesMapper.mapAssignedGamesSesion(assignedSession, uriBuilder))
+    .toArray(AssignedGamesSessionData[]::new);
+    
+    return Response
+      .ok(assignedSessions)
+      .header("X-Total-Count", patient.getAssignedGameSessions().count())
+    .build();
   }
   
   private PatientData toPatientData(Patient patient) {

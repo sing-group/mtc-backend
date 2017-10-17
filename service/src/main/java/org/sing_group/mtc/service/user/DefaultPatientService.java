@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.service.user;
 
+import static java.util.Objects.requireNonNull;
 import static org.sing_group.fluent.checker.Checks.requireStringSize;
 
 import java.util.stream.Stream;
@@ -30,8 +31,13 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.PatientDAO;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.domain.entities.user.RoleType;
+import org.sing_group.mtc.service.security.SecurityGuard;
+import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.PatientService;
 
 @Stateless
@@ -39,12 +45,25 @@ import org.sing_group.mtc.service.spi.user.PatientService;
 public class DefaultPatientService implements PatientService {
   @Inject
   private PatientDAO dao;
+  
+  @Inject
+  private AssignedGamesSessionDAO assignedSessionsDao;
 
+  @Inject
+  private SecurityGuard securityGuard;
+  
+  @Inject
+  private SecurityCheckBuilder checkThat;
+
+  @RolesAllowed({ "THERAPIST", "PATIENT" })
   @Override
   public Patient get(String login) {
     requireStringSize(login, 1, 100, "'login' should have a length between 1 and 100");
     
-    return dao.get(login);
+    return this.securityGuard.ifAuthorized(
+      checkThat.hasLoginAndRole(login, RoleType.PATIENT),
+      checkThat.hasLoginAndRole(() -> this.dao.get(login).getTherapist().getLogin(), RoleType.THERAPIST)
+    ).call(() -> dao.get(login));
   }
 
   @Override
@@ -70,5 +89,17 @@ public class DefaultPatientService implements PatientService {
   @Override
   public void delete(String login) {
     dao.delete(login);
+  }
+
+  @RolesAllowed({ "THERAPIST", "PATIENT" })
+  @Override
+  public Stream<AssignedGamesSession> listAssignedSessions(String login, ListingOptions options) {
+    requireStringSize(login, 1, 100, "'login' should have a length between 1 and 100");
+    requireNonNull(options, "'options' can't be null");
+    
+    return this.securityGuard.ifAuthorized(
+      checkThat.hasLoginAndRole(login, RoleType.PATIENT),
+      checkThat.hasLoginAndRole(() -> this.dao.get(login).getTherapist().getLogin(), RoleType.THERAPIST)
+    ).call(() -> this.assignedSessionsDao.listByPatient(this.dao.get(login), options));
   }
 }

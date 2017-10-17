@@ -19,27 +19,22 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.resource.spi.user;
+package org.sing_group.mtc.rest.resource.route;
 
-import javax.ejb.Local;
-import javax.ws.rs.core.Response;
+import java.net.URI;
 
-import org.sing_group.mtc.domain.dao.SortDirection;
-import org.sing_group.mtc.rest.entity.user.PatientEditionData;
+import javax.ws.rs.core.UriBuilder;
 
-@Local
-public interface PatientResource {
-
-  public Response get(String login);
-
-  public Response list(int start, int end, String order, SortDirection sort);
+public class AssignedGamesSessionRestPathBuilder implements RestPathBuilder {
+  private final UriBuilder builder;
   
-  public Response create(PatientEditionData data);
+  public AssignedGamesSessionRestPathBuilder(UriBuilder builder) {
+    this.builder = builder.clone().path("session").path("assigned");
+  }
 
-  public Response update(PatientEditionData data);
-
-  public Response delete(String login);
-
-  public Response listAssignedSessions(String login, int start, int end, String order, SortDirection sort);
+  @Override
+  public URI build() {
+    return this.builder.clone().build();
+  }
 
 }

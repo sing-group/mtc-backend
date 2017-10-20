@@ -35,27 +35,40 @@ import org.hamcrest.TypeSafeMatcher;
 public class HasHttpHeader extends TypeSafeMatcher<Response> {
   private final String header;
   private final Predicate<String> valueChecker;
+  private final String valueDescription;
   
   public HasHttpHeader(String header) {
-    this(header, Objects::nonNull);
+    this(header, Objects::nonNull, " to be present");
   }
 
   public HasHttpHeader(String header, String expected) {
-    this(header, actual -> expected.equals(actual));
+    this(header, actual -> expected.equals(actual), " to have value \"" + expected + "\"");
     
     requireNonNull(expected);
   }
   
-  public HasHttpHeader(String header, Predicate<String> valueChecker) {
+  public HasHttpHeader(String header, Predicate<String> valueChecker, String valueDescription) {
     this.header = requireNonNull(header);
     this.valueChecker = requireNonNull(valueChecker);
+    this.valueDescription = requireNonNull(valueDescription);
   }
 
   @Override
   public void describeTo(Description description) {
-    description.appendValue(this.header + ": " + this.valueChecker);
+    description.appendValue(this.header).appendText(" header").appendText(this.valueDescription);
   }
 
+  @Override
+  protected void describeMismatchSafely(Response response, Description description) {
+    description.appendValue(this.header).appendText(" header");
+    
+    if (response.getHeaders().containsKey(this.header)) {
+      description.appendText(" had value ").appendValue(response.getHeaderString(this.header));
+    } else {
+      description.appendText(" was not present");
+    }
+  }
+  
   @Override
   protected boolean matchesSafely(Response response) {
     return response.getHeaders().containsKey(this.header)
@@ -88,7 +101,22 @@ public class HasHttpHeader extends TypeSafeMatcher<Response> {
   }
   
   @Factory
-  public static HasHttpHeader hasHttpHeader(String header, Predicate<String> valueChecker) {
-    return new HasHttpHeader(header, valueChecker);
+  public static HasHttpHeader hasHttpHeader(String header, Predicate<String> valueChecker, String valueDescription) {
+    return new HasHttpHeader(header, valueChecker, valueDescription);
+  }
+  
+  @Factory
+  public static HasHttpHeader hasHttpHeaderEndingWith(String header, String value) {
+    return new HasHttpHeader(header, h -> h.endsWith(value), " that ends with \"" + value + "\" value");
+  }
+  
+  @Factory
+  public static HasHttpHeader hasHttpHeaderStartingWith(String header, String value) {
+    return new HasHttpHeader(header, h -> h.startsWith(value), " that starts with \"" + value + "\" value");
+  }
+  
+  @Factory
+  public static HasHttpHeader hasHttpHeaderContaining(String header, String value) {
+    return new HasHttpHeader(header, h -> h.contains(value), " that contains \"" + value + "\" value");
   }
 }

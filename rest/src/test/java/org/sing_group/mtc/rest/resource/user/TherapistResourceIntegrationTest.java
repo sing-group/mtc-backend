@@ -37,6 +37,8 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.therapists;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.newGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderContaining;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderEndingWith;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.GamesSessionDataListType.GAMES_SESSION_DATA_LIST_TYPE;
@@ -148,7 +150,7 @@ public class TherapistResourceIntegrationTest {
     assertThat(response, hasHttpHeader("X-Total-Count", countTherapists()));
     
     final List<TherapistData> userData = response.readEntity(THERAPIST_DATA_LIST_TYPE);
-    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     
     assertThat(userData, containsTherapistsInAnyOrder(therapists));
   }
@@ -223,7 +225,7 @@ public class TherapistResourceIntegrationTest {
     .post(json(userData));
     
     assertThat(response, hasCreatedStatus());
-    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(newTherapist.getLogin())));
+    assertThat(response, hasHttpHeaderEndingWith("Location", newTherapist.getLogin()));
   }
 
   @Test
@@ -309,7 +311,7 @@ public class TherapistResourceIntegrationTest {
     .post(json(newSessionData));
     
     assertThat(response, hasCreatedStatus());
-    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(expectedSession.getId().toString())));
+    assertThat(response, hasHttpHeaderEndingWith("Location", expectedSession.getId().toString()));
   }
 
   @Test

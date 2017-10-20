@@ -31,4 +31,6 @@ public interface SecurityGuard {
   public <U extends User> U getLoggedUser();
   
   public AuthorizedExecutor ifAuthorized(SecurityCheck ... checks);
+
+  public AuthorizedExecutor ifFullyAuthorized(SecurityCheck ... checks);
 }

@@ -29,6 +29,7 @@ import static org.sing_group.fluent.checker.Checks.requireBefore;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -78,7 +79,7 @@ public class AssignedGamesSession implements Serializable {
   @JoinColumn(
     name = "session",
     referencedColumnName = "id",
-    nullable = false, insertable = false, updatable = false,
+    nullable = false,
     foreignKey = @ForeignKey(name = "FK_assignedsession_gamesession")
   )
   private GamesSession session;
@@ -87,7 +88,7 @@ public class AssignedGamesSession implements Serializable {
   @JoinColumn(
     name = "patient",
     referencedColumnName = "login",
-    nullable = false, insertable = false, updatable = false,
+    nullable = false,
     foreignKey = @ForeignKey(name = "FK_assignedsession_patient")
   )
   private Patient patient;
@@ -105,9 +106,10 @@ public class AssignedGamesSession implements Serializable {
     this.assignmentDate = assignmentDate;
     this.startDate = startDate;
     this.endDate = endDate;
-    this.session = session;
-    this.patient = patient;
-    this.gameResults = gameResults;
+    this.setSession(session);
+    this.setPatient(patient);
+    this.gameResults = new HashSet<>();
+    gameResults.forEach(this::addGameResult);
   }
 
   public AssignedGamesSession(Date startDate, Date endDate, GamesSession session, Patient patient) {

@@ -36,6 +36,8 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.newInstitution;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newInstitutionId;
 import static org.sing_group.mtc.domain.entities.UsersDataset.therapists;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderContaining;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderEndingWith;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.InstitutionDataListType.INSTITUTION_DATA_LIST_TYPE;
@@ -173,7 +175,7 @@ public class InstitutionResourceIntegrationTest {
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countInstitutions()));
-    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     
     final List<InstitutionData> userData = response.readEntity(INSTITUTION_DATA_LIST_TYPE);
     
@@ -250,7 +252,7 @@ public class InstitutionResourceIntegrationTest {
     .post(json(userData));
     
     assertThat(response, hasCreatedStatus());
-    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(Integer.toString(newInstitutionId()))));
+    assertThat(response, hasHttpHeaderEndingWith("Location", Integer.toString(newInstitutionId())));
   }
 
   @Test

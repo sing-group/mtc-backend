@@ -25,6 +25,7 @@ import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
 import org.sing_group.mtc.domain.dao.SortDirection;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.user.PatientEditionData;
 
 @Local
@@ -41,5 +42,7 @@ public interface PatientResource {
   public Response delete(String login);
 
   public Response listAssignedSessions(String login, int start, int end, String order, SortDirection sort);
+
+  public Response assignSession(String login, AssignedGamesSessionCreationData creationData);
 
 }

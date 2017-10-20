@@ -144,4 +144,13 @@ public final class GamesSessionDataset {
       )
     };
   }
+  
+  public static AssignedGamesSession newAssignedGamesSession() {
+    return new AssignedGamesSession(
+      parseDate("3017-11-01 00:00:00"),
+      parseDate("3017-11-10 23:59:59"),
+      session1(),
+      patient()
+    );
+  }
 }

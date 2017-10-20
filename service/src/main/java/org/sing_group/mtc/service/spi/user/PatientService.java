@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.service.spi.user;
 
+import java.util.Date;
 import java.util.stream.Stream;
 
 import javax.ejb.Local;
@@ -44,4 +45,6 @@ public interface PatientService {
   public void delete(String login);
 
   public Stream<AssignedGamesSession> listAssignedSessions(String login, ListingOptions options);
+
+  public AssignedGamesSession assignSession(String login, int gamesSessionId, Date startDate, Date endDate);
 }

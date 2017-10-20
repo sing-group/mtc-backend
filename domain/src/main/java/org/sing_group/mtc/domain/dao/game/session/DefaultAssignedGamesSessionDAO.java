@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.domain.dao.game.session;
 
+import java.util.Date;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
@@ -32,6 +33,7 @@ import org.sing_group.mtc.domain.dao.DAOHelper;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
@@ -57,6 +59,13 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
     return this.dh.list(options, (cb, root) -> new Predicate[] {
       cb.equal(root.get("patient"), patient)
     }).stream();
+  }
+
+  @Override
+  public AssignedGamesSession assignSession(Patient patient, GamesSession gamesSession, Date startDate, Date endDate) {
+    final AssignedGamesSession assigned = new AssignedGamesSession(startDate, endDate, gamesSession, patient);
+    
+    return this.dh.persist(assigned);
   }
 
 }

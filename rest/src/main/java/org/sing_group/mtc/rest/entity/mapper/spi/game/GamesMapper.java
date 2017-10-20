@@ -31,6 +31,7 @@ import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSessi
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
@@ -49,5 +50,7 @@ public interface GamesMapper {
   public Map<I18NLocaleData, String> mapToLocaleMessages(LocalizedMessage message);
 
   public AssignedGamesSessionData mapAssignedGamesSesion(AssignedGamesSession assignedSession, UriBuilder uriBuilder);
+
+  public AssignedGamesSessionCreationData mapAssignedGamesSesionCreation(AssignedGamesSession assignedSession);
 
 }

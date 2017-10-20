@@ -47,7 +47,9 @@ import javax.ws.rs.core.UriInfo;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
@@ -204,7 +206,8 @@ public class DefaultPatientResource implements PatientResource {
     value = "Returns the games sessions assigned to the patient.",
     response = AssignedGamesSessionData.class,
     responseContainer = "List",
-    code = 200
+    code = 200,
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of games sessions assigned to the patient.")
   )
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
@@ -225,10 +228,23 @@ public class DefaultPatientResource implements PatientResource {
       .map(assignedSession -> this.gamesMapper.mapAssignedGamesSesion(assignedSession, uriBuilder))
     .toArray(AssignedGamesSessionData[]::new);
     
-    return Response
-      .ok(assignedSessions)
+    return Response.ok(assignedSessions)
       .header("X-Total-Count", patient.getAssignedGameSessions().count())
     .build();
+  }
+  
+  @POST
+  @Path("{login}/session/assigned")
+  @Override
+  public Response assignSession(
+    @PathParam("login") String login,
+    AssignedGamesSessionCreationData creationData
+  ) {
+    final AssignedGamesSession assignedSession = this.service.assignSession(
+      login, creationData.getGamesSessionId(), creationData.getStartDate(), creationData.getEndDate()
+    );
+    
+    return Response.created(pathBuilder.gamesSessionAssigned(assignedSession).build()).build();
   }
   
   private PatientData toPatientData(Patient patient) {

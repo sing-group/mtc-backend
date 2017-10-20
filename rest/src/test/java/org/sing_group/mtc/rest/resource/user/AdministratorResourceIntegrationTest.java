@@ -34,6 +34,8 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.newAdministrator;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newPasswordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderContaining;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderEndingWith;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.AdministratorDataListType.ADMINISTRATOR_DATA_LIST_TYPE;
@@ -137,7 +139,7 @@ public class AdministratorResourceIntegrationTest {
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countAdmins()));
-    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     
     final List<AdministratorData> userData = response.readEntity(ADMINISTRATOR_DATA_LIST_TYPE);
     
@@ -214,7 +216,7 @@ public class AdministratorResourceIntegrationTest {
     .post(json(userData));
     
     assertThat(response, hasCreatedStatus());
-    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(newAdmin.getLogin())));
+    assertThat(response, hasHttpHeaderEndingWith("Location", newAdmin.getLogin()));
   }
 
   @Test

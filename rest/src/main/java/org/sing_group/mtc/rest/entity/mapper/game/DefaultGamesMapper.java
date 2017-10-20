@@ -48,6 +48,7 @@ import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.game.session.GameParamData;
@@ -161,6 +162,17 @@ public class DefaultGamesMapper implements GamesMapper {
       assignedSession.getGameResults()
         .map(result -> new IdAndUri(result.getId(), pathBuilder.gameResult(result).build()))
       .toArray(IdAndUri[]::new)
+    );
+  }
+  
+  @Override
+  public AssignedGamesSessionCreationData mapAssignedGamesSesionCreation(AssignedGamesSession assignedSession) {
+    return new AssignedGamesSessionCreationData(
+      assignedSession.getStartDate(),
+      assignedSession.getEndDate(),
+      assignedSession.getSession()
+        .map(GamesSession::getId)
+      .orElseThrow(IllegalStateException::new)
     );
   }
 }

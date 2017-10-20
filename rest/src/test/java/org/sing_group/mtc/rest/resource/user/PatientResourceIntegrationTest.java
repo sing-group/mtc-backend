@@ -24,8 +24,8 @@ package org.sing_group.mtc.rest.resource.user;
 import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT1_HTTP_BASIC_AUTH;
+import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.countPatients;
 import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedPatient;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newPasswordOf;
@@ -35,7 +35,10 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.patient;
 import static org.sing_group.mtc.domain.entities.UsersDataset.patientToDelete;
 import static org.sing_group.mtc.domain.entities.UsersDataset.patients;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessions;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.newAssignedGamesSession;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderContaining;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderEndingWith;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.AssignedGamesSessionDataListType.ASSIGNED_GAMES_SESSION_DATA_LIST_TYPE;
@@ -66,8 +69,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
+import org.sing_group.mtc.rest.entity.mapper.game.DefaultGamesMapper;
+import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.mapper.user.DefaultUserMapper;
 import org.sing_group.mtc.rest.entity.user.PatientData;
@@ -79,6 +86,8 @@ public class PatientResourceIntegrationTest {
   private static final String BASE_PATH = "api/patient/";
   
   private UserMapper userMapper;
+  
+  private GamesMapper gamesMapper;
 
   @Deployment
   public static Archive<?> createDeployment() {
@@ -88,6 +97,7 @@ public class PatientResourceIntegrationTest {
   @Before
   public void setUp() {
     this.userMapper = new DefaultUserMapper();
+    this.gamesMapper = new DefaultGamesMapper();
   }
 
   @Test
@@ -142,7 +152,7 @@ public class PatientResourceIntegrationTest {
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countPatients()));
-    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     
     final List<PatientData> userData = response.readEntity(PATIENT_DATA_LIST_TYPE);
     
@@ -211,15 +221,15 @@ public class PatientResourceIntegrationTest {
   public void testCreate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Patient newAdmin = newPatient();
-    final PatientEditionData userData = userMapper.toEditionData(newAdmin, passwordOf(newAdmin));
+    final Patient newPatient = newPatient();
+    final PatientEditionData userData = userMapper.toEditionData(newPatient, passwordOf(newPatient));
     
     final Response response = webTarget
       .request()
     .post(json(userData));
     
     assertThat(response, hasCreatedStatus());
-    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(newAdmin.getLogin())));
+    assertThat(response, hasHttpHeaderEndingWith("Location", newPatient.getLogin()));
   }
 
   @Test
@@ -288,13 +298,18 @@ public class PatientResourceIntegrationTest {
     
     final Response response = webTarget.path(patient.getLogin()).path("session").path("assigned")
       .request()
+      .header("Origin", "localhost")
     .get();
     
+    final AssignedGamesSession[] expected = assignedGamesSessions();
+    
     assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", expected.length));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     
     final List<AssignedGamesSessionData> assignedData = response.readEntity(ASSIGNED_GAMES_SESSION_DATA_LIST_TYPE);
     
-    assertThat(assignedData, containsAssignedGamesSessionsInAnyOrder(assignedGamesSessions()));
+    assertThat(assignedData, containsAssignedGamesSessionsInAnyOrder(expected));
   }
 
   @Test
@@ -339,4 +354,36 @@ public class PatientResourceIntegrationTest {
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterGetAssignedSessionsAsPatient() {}
 
+  @Test
+  @InSequence(106)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml" })
+  public void beforeAssignSession() {}
+
+  @Test
+  @InSequence(107)
+  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void assignSession(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final Patient patient = patient();
+    
+    final AssignedGamesSessionCreationData data = this.gamesMapper.mapAssignedGamesSesionCreation(newAssignedGamesSession());
+    
+    final Response response = webTarget.path(patient.getLogin()).path("session").path("assigned")
+      .request()
+    .post(json(data));
+    
+    assertThat(response, hasCreatedStatus());
+    assertThat(response, hasHttpHeader("Location"));
+  }
+
+  @Test
+  @InSequence(108)
+  @ShouldMatchDataSet(
+    value = { "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml", "assigned-games-sessions-create.xml" },
+    excludeColumns = "assigned_session.assignmentDate"
+  )
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterAssignSession() {}
 }

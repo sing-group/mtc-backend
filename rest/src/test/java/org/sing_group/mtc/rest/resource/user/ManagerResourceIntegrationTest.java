@@ -36,6 +36,8 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.newManager;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newPasswordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderContaining;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderEndingWith;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.InstitutionDataListType.INSTITUTION_DATA_LIST_TYPE;
@@ -143,7 +145,7 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
     
     final List<ManagerData> userData = response.readEntity(MANAGER_DATA_LIST_TYPE);
@@ -189,7 +191,7 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
     
     final List<ManagerData> managerData = response.readEntity(MANAGER_DATA_LIST_TYPE);
@@ -215,15 +217,15 @@ public class ManagerResourceIntegrationTest {
   public void testCreate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Manager newAdmin = newManager();
-    final ManagerEditionData userData = userMapper.toEditionData(newAdmin, passwordOf(newAdmin));
+    final Manager newManager = newManager();
+    final ManagerEditionData userData = userMapper.toEditionData(newManager, passwordOf(newManager));
     
     final Response response = webTarget
       .request()
     .post(json(userData));
     
     assertThat(response, hasCreatedStatus());
-    assertThat(response, hasHttpHeader("Location", value -> value.endsWith(newAdmin.getLogin())));
+    assertThat(response, hasHttpHeaderEndingWith("Location", newManager.getLogin()));
   }
 
   @Test
@@ -296,8 +298,8 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
     assertThat(response, hasHttpHeader("X-Total-Count", manager.getInstitutions().count()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     
     final List<InstitutionData> institutionData = response.readEntity(INSTITUTION_DATA_LIST_TYPE);
     
@@ -375,8 +377,8 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeader("Access-Control-Allow-Headers", header -> header.contains("X-Total-Count")));
     assertThat(response, hasHttpHeader("X-Total-Count", manager.getInstitutions().count()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
     
     final List<InstitutionData> institutionData = response.readEntity(INSTITUTION_DATA_LIST_TYPE);
     

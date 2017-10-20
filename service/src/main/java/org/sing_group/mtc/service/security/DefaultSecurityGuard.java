@@ -49,7 +49,13 @@ public class DefaultSecurityGuard implements SecurityGuard {
   @TransactionAttribute(SUPPORTS)
   @Override
   public AuthorizedExecutor ifAuthorized(SecurityCheck... checks) {
-    return new AuthorizedExecutor(checks);
+    return new AuthorizedExecutor(false, checks);
+  }
+
+  @TransactionAttribute(SUPPORTS)
+  @Override
+  public AuthorizedExecutor ifFullyAuthorized(SecurityCheck... checks) {
+    return new AuthorizedExecutor(true, checks);
   }
 
   @TransactionAttribute(REQUIRED)

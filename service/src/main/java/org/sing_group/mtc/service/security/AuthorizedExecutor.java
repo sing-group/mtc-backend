@@ -34,8 +34,10 @@ import org.sing_group.mtc.service.security.check.SecurityCheckResult;
 public class AuthorizedExecutor {
   private SecurityCheck[] checks;
   private Function<String, RuntimeException> throwableBuilder;
+  private boolean shouldPassAllTheChecks;
   
-  public AuthorizedExecutor(SecurityCheck ... checks) {
+  public AuthorizedExecutor(boolean shouldPassAllTheChecks, SecurityCheck ... checks) {
+    this.shouldPassAllTheChecks = shouldPassAllTheChecks;
     this.checks = checks;
     
     this.throwableBuilder = cause -> new SecurityException("Illegal access. Cause: " + cause);
@@ -47,6 +49,12 @@ public class AuthorizedExecutor {
     return this;
   }
   
+  private boolean checkValidity(SecurityCheckResult...results) {
+    return this.shouldPassAllTheChecks
+      ? stream(results).allMatch(SecurityCheckResult::isValid)
+      : stream(results).anyMatch(SecurityCheckResult::isValid);
+  }
+  
   public AuthorizedExecutor throwing(RuntimeException throwableBuilder) {
     return this.throwing(cause -> throwableBuilder);
   }
@@ -56,7 +64,7 @@ public class AuthorizedExecutor {
       .map(SecurityCheck::check)
     .toArray(SecurityCheckResult[]::new);
     
-    if (stream(results).anyMatch(SecurityCheckResult::isValid)) {
+    if (checkValidity(results)) {
       return true;
     } else {
       final String cause = stream(results)

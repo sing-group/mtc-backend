@@ -24,6 +24,7 @@ package org.sing_group.mtc.service.user;
 import static java.util.Objects.requireNonNull;
 import static org.sing_group.fluent.checker.Checks.requireStringSize;
 
+import java.util.Date;
 import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
@@ -32,10 +33,12 @@ import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
+import org.sing_group.mtc.domain.dao.spi.game.session.GamesSessionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.PatientDAO;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.RoleType;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.service.security.SecurityGuard;
 import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.PatientService;
@@ -45,6 +48,9 @@ import org.sing_group.mtc.service.spi.user.PatientService;
 public class DefaultPatientService implements PatientService {
   @Inject
   private PatientDAO dao;
+  
+  @Inject
+  private GamesSessionDAO gamesSessionDao;
   
   @Inject
   private AssignedGamesSessionDAO assignedSessionsDao;
@@ -101,5 +107,21 @@ public class DefaultPatientService implements PatientService {
       checkThat.hasLoginAndRole(login, RoleType.PATIENT),
       checkThat.hasLoginAndRole(() -> this.dao.get(login).getTherapist().getLogin(), RoleType.THERAPIST)
     ).call(() -> this.assignedSessionsDao.listByPatient(this.dao.get(login), options));
+  }
+
+  @Override
+  public AssignedGamesSession assignSession(String login, int gamesSessionId, Date startDate, Date endDate) {
+    requireStringSize(login, 1, 100, "'login' should have a length between 1 and 100");
+    requireNonNull(startDate, "'startDate' can't be null");
+    requireNonNull(endDate, "'startDate' can't be null");
+
+    return this.securityGuard.ifFullyAuthorized(
+      checkThat.hasLogin(() -> this.dao.get(login).getTherapist().getLogin()),
+      checkThat.hasLogin(() -> this.gamesSessionDao.get(gamesSessionId).getTherapist().map(Therapist::getLogin).orElse(""))
+    ).call(() -> this.assignedSessionsDao.assignSession(
+      this.dao.get(login),
+      this.gamesSessionDao.get(gamesSessionId),
+      startDate, endDate
+    ));
   }
 }

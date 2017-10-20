@@ -48,9 +48,9 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 
-@Path("game/session")
+@Path("games-session")
 @Api(
-  value = "game/session",
+  value = "games-session",
   authorizations = @Authorization("basicAuth")
 )
 @ApiResponses({

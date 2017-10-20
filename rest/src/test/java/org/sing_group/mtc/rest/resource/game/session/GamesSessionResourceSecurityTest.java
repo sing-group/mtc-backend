@@ -49,7 +49,7 @@ import org.sing_group.mtc.rest.resource.Deployments;
 
 @RunWith(Arquillian.class)
 public class GamesSessionResourceSecurityTest {
-  private static final String BASE_PATH = "api/game/session";
+  private static final String BASE_PATH = "api/games-session";
   
   @Deployment
   public static Archive<?> createDeployment() {

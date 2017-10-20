@@ -201,7 +201,7 @@ public class DefaultPatientResource implements PatientResource {
   }
   
   @GET
-  @Path("{login}/session/assigned")
+  @Path("{login}/games-session/assigned")
   @ApiOperation(
     value = "Returns the games sessions assigned to the patient.",
     response = AssignedGamesSessionData.class,
@@ -234,7 +234,7 @@ public class DefaultPatientResource implements PatientResource {
   }
   
   @POST
-  @Path("{login}/session/assigned")
+  @Path("{login}/games-session/assigned")
   @Override
   public Response assignSession(
     @PathParam("login") String login,

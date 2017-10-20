@@ -296,7 +296,7 @@ public class PatientResourceIntegrationTest {
   private void testGetAssignedSessions(ResteasyWebTarget webTarget) {
     final Patient patient = patient();
     
-    final Response response = webTarget.path(patient.getLogin()).path("session").path("assigned")
+    final Response response = webTarget.path(patient.getLogin()).path("games-session").path("assigned")
       .request()
       .header("Origin", "localhost")
     .get();
@@ -370,7 +370,7 @@ public class PatientResourceIntegrationTest {
     
     final AssignedGamesSessionCreationData data = this.gamesMapper.mapAssignedGamesSesionCreation(newAssignedGamesSession());
     
-    final Response response = webTarget.path(patient.getLogin()).path("session").path("assigned")
+    final Response response = webTarget.path(patient.getLogin()).path("games-session").path("assigned")
       .request()
     .post(json(data));
     

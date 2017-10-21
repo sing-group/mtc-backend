@@ -30,6 +30,8 @@ import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 public interface AssignedGamesSessionDAO {
+  public AssignedGamesSession get(int assignedId);
+
   public Stream<AssignedGamesSession> listByPatient(Patient patient, ListingOptions options);
 
   public AssignedGamesSession assignSession(Patient patient, GamesSession gamesSession, Date startDate, Date endDate);

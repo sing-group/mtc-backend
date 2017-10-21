@@ -24,7 +24,7 @@ package org.sing_group.mtc.rest.resource.user;
 import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT1_HTTP_BASIC_AUTH;
+import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.countPatients;
 import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedPatient;
@@ -340,7 +340,7 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(104)
-  @Header(name = "Authorization", value = PATIENT1_HTTP_BASIC_AUTH)
+  @Header(name = "Authorization", value = PATIENT_HTTP_BASIC_AUTH)
   @RunAsClient
   public void testGetAssignedSessionsAsPatient(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -363,7 +363,7 @@ public class PatientResourceIntegrationTest {
   @InSequence(107)
   @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
   @RunAsClient
-  public void assignSession(
+  public void testAssignSession(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Patient patient = patient();

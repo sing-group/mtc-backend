@@ -34,12 +34,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.spi.game.session.GamesSessionResource;
+import org.sing_group.mtc.service.spi.game.session.AssignedGamesSessionService;
 import org.sing_group.mtc.service.spi.game.session.GamesSessionService;
 
 import io.swagger.annotations.Api;
@@ -65,6 +68,9 @@ import io.swagger.annotations.Authorization;
 public class DefaultGamesSessionResource implements GamesSessionResource {
   @Inject
   private GamesSessionService service;
+  
+  @Inject
+  private AssignedGamesSessionService assignedService;
 
   @Inject
   private GamesMapper gamesMapper;
@@ -72,17 +78,17 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   @Context
   private UriInfo uriInfo;
   
-  @Override
   @GET
   @Path("{id}")
   @ApiOperation(
-    value = "Finds game sessions by identifier.",
+    value = "Finds a game sessions by identifier.",
     response = GamesSessionData.class,
     code = 200
   )
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown session: {id}")
   )
+  @Override
   public Response get(@PathParam("id") int sessionId) {
     final GamesSession session = this.service.get(sessionId);
     
@@ -90,5 +96,26 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
       this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder());
     
     return Response.ok(sessionData).build();
+  }
+
+  @GET
+  @Path("assigned/{id}")
+  @ApiOperation(
+    value = "Finds an assigned game sessions by identifier.",
+    response = AssignedGamesSessionData.class,
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown session: {id}")
+  )
+  @Override
+  public Response getAssigned(@PathParam("id") int assignedId) {
+    final AssignedGamesSession assignedSession = this.assignedService.get(assignedId);
+    
+    final AssignedGamesSessionData assignedSessionData = this.gamesMapper.mapAssignedGamesSesion(
+      assignedSession, this.uriInfo.getBaseUriBuilder()
+    );
+    
+    return Response.ok(assignedSessionData).build();
   }
 }

@@ -28,5 +28,7 @@ import javax.ws.rs.core.Response;
 public interface GamesSessionResource {
 
   public Response get(int sessionId);
+  
+  public Response getAssigned(int assignedId);
 
 }

@@ -31,5 +31,5 @@ public interface GamesSessionService {
   public GamesSession createSession(GamesSession gameSession);
 
   public GamesSession get(int sessionId);
-
+  
 }

@@ -43,7 +43,7 @@ public class UsersDataset {
   public final static String ADMIN_HTTP_BASIC_AUTH = "Basic YWRtaW46YWRtaW5wYXNz";
   public final static String MANAGER_HTTP_BASIC_AUTH = "Basic bWFuYWdlcjptYW5hZ2VycGFzcw==";
   public final static String THERAPIST_HTTP_BASIC_AUTH = "Basic dGhlcmFwaXN0OnRoZXJhcGlzdHBhc3M=";
-  public final static String PATIENT1_HTTP_BASIC_AUTH = "Basic cGF0aWVudDE6cGF0aWVudDFwYXNz";
+  public final static String PATIENT_HTTP_BASIC_AUTH = "Basic cGF0aWVudDE6cGF0aWVudDFwYXNz";
   
   private final static Map<String, String> LOGIN_TO_PASSWORD = new HashMap<>();
   private final static Map<String, String> LOGIN_TO_NEW_PASSWORD = new HashMap<>();

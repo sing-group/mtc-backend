@@ -55,6 +55,12 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
   }
 
   @Override
+  public AssignedGamesSession get(int assignedId) {
+    return this.dh.get(assignedId)
+      .orElseThrow(() -> new IllegalArgumentException("Unknown assigned games session: " + assignedId));
+  }
+
+  @Override
   public Stream<AssignedGamesSession> listByPatient(Patient patient, ListingOptions options) {
     return this.dh.list(options, (cb, root) -> new Predicate[] {
       cb.equal(root.get("patient"), patient)

@@ -131,6 +131,10 @@ public final class GamesSessionDataset {
     return session;
   }
   
+  public static AssignedGamesSession assignedGamesSession() {
+    return assignedGamesSessions()[0];
+  }
+  
   public static AssignedGamesSession[] assignedGamesSessions() {
     return new AssignedGamesSession[] {
       new AssignedGamesSession(

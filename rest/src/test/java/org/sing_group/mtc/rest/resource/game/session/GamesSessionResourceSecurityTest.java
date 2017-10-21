@@ -105,7 +105,7 @@ public class GamesSessionResourceSecurityTest {
   @Test
   @InSequence(32)
   @RunAsClient
-  @Header(name = "Authorization", value = UsersDataset.PATIENT1_HTTP_BASIC_AUTH)
+  @Header(name = "Authorization", value = UsersDataset.PATIENT_HTTP_BASIC_AUTH)
   public void testGetAsPatient(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {

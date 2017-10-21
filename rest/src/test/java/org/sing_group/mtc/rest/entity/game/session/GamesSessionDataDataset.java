@@ -50,13 +50,13 @@ public final class GamesSessionDataDataset {
     final Map<I18NLocaleData, String> nameMessages = new HashMap<>();
     final Map<I18NLocaleData, String> descriptionMessages = new HashMap<>();
 
-    nameMessages.put(I18NLocaleData.EN_US, "Recognition 2");
-    nameMessages.put(I18NLocaleData.ES_ES, "Reconocimiento 2");
-    nameMessages.put(I18NLocaleData.GL_ES, "Recoñecemento 2");
+    nameMessages.put(I18NLocaleData.EN_US, "New Session");
+    nameMessages.put(I18NLocaleData.ES_ES, "Nueva sesión");
+    nameMessages.put(I18NLocaleData.GL_ES, "Nova sesión");
 
-    descriptionMessages.put(I18NLocaleData.EN_US, "Recognition game.");
-    descriptionMessages.put(I18NLocaleData.ES_ES, "Juego de reconocimiento.");
-    descriptionMessages.put(I18NLocaleData.GL_ES, "Xogo de recoñecemento.");
+    descriptionMessages.put(I18NLocaleData.EN_US, "New session description.");
+    descriptionMessages.put(I18NLocaleData.ES_ES, "Descripción de una nueva sesión.");
+    descriptionMessages.put(I18NLocaleData.GL_ES, "Descrición dunha nova sesión.");
     
     return new GamesSessionEditionData(games, nameMessages, descriptionMessages);
   }

@@ -35,4 +35,6 @@ public interface GamesSessionResource {
 
   public Response modify(int sessionId, GamesSessionEditionData data);
 
+  public Response delete(int sessionId);
+
 }

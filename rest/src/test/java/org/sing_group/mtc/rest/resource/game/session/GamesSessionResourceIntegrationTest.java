@@ -27,6 +27,7 @@ import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSession;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.gamesSessionToDelete;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
@@ -109,12 +110,12 @@ public class GamesSessionResourceIntegrationTest {
   public void afterGet() {}
 
   @Test
-  @InSequence(5)
+  @InSequence(4)
   @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
   public void beforeModify() {}
 
   @Test
-  @InSequence(6)
+  @InSequence(5)
   @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
   @RunAsClient
   public void testModify(
@@ -135,10 +136,35 @@ public class GamesSessionResourceIntegrationTest {
   }
 
   @Test
-  @InSequence(7)
+  @InSequence(6)
   @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions-modify.xml" })
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterModify() {}
+
+  @Test
+  @InSequence(7)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
+  public void beforeDelete() {}
+
+  @Test
+  @InSequence(8)
+  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testDelete(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final Response response = webTarget.path(Integer.toString(gamesSessionToDelete()))
+      .request()
+    .delete();
+    
+    assertThat(response, hasOkStatus());
+  }
+
+  @Test
+  @InSequence(9)
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions-delete.xml" })
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterDelete() {}
   
   private void testGetAssigned(ResteasyWebTarget webTarget) {
     final AssignedGamesSession expected = assignedGamesSession();

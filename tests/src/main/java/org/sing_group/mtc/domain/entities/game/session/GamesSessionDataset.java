@@ -72,7 +72,7 @@ public final class GamesSessionDataset {
   }
 
   public static Stream<GamesSession> sessions() {
-    return Stream.of(session1());
+    return Stream.of(session1(), session2());
   }
 
   public static GamesSession session1() {
@@ -84,18 +84,42 @@ public final class GamesSessionDataset {
     final Map<I18NLocale, String> nameMessages = new HashMap<>();
     final Map<I18NLocale, String> descriptionMessages = new HashMap<>();
 
-    nameMessages.put(I18NLocale.EN_US, "Recognition");
-    nameMessages.put(I18NLocale.ES_ES, "Reconocimiento");
-    nameMessages.put(I18NLocale.GL_ES, "Recoñecemento");
+    nameMessages.put(I18NLocale.EN_US, "Session 1");
+    nameMessages.put(I18NLocale.ES_ES, "Sesión 1");
+    nameMessages.put(I18NLocale.GL_ES, "Sesión 1");
 
-    descriptionMessages.put(I18NLocale.EN_US, "Recognition game.");
-    descriptionMessages.put(I18NLocale.ES_ES, "Juego de reconocimiento.");
-    descriptionMessages.put(I18NLocale.GL_ES, "Xogo de recoñecemento.");
+    descriptionMessages.put(I18NLocale.EN_US, "Session 1 description.");
+    descriptionMessages.put(I18NLocale.ES_ES, "Descripción de la sesión 1.");
+    descriptionMessages.put(I18NLocale.GL_ES, "Descrición da sesión 1.");
 
     final GamesSession session = new GamesSession(1, therapist(), nameMessages, descriptionMessages);
 
     new GameConfigurationForSession(session, recognitionGame(), 1, paramValues);
     new GameConfigurationForSession(session, verbalFluencyGame(), 2, emptyMap());
+
+    return session;
+  }
+
+  public static GamesSession session2() {
+    final Map<String, String> paramValues = new HashMap<>();
+    paramValues.put("maxRepetitions", "2");
+    paramValues.put("numOfStimuli", "6");
+    paramValues.put("diceShowTime", "3");
+
+    final Map<I18NLocale, String> nameMessages = new HashMap<>();
+    final Map<I18NLocale, String> descriptionMessages = new HashMap<>();
+
+    nameMessages.put(I18NLocale.EN_US, "Second session");
+    nameMessages.put(I18NLocale.ES_ES, "Segunda sesión");
+    nameMessages.put(I18NLocale.GL_ES, "Segunda sesión");
+
+    descriptionMessages.put(I18NLocale.EN_US, "Session with a recognition game.");
+    descriptionMessages.put(I18NLocale.ES_ES, "Sesión con un juego de reconocimiento.");
+    descriptionMessages.put(I18NLocale.GL_ES, "Sesión con un xogo de recoñecemento.");
+
+    final GamesSession session = new GamesSession(2, therapist(), nameMessages, descriptionMessages);
+
+    new GameConfigurationForSession(session, recognitionGame(), 1, paramValues);
 
     return session;
   }
@@ -114,15 +138,15 @@ public final class GamesSessionDataset {
     final Map<I18NLocale, String> nameMessages = new HashMap<>();
     final Map<I18NLocale, String> descriptionMessages = new HashMap<>();
 
-    nameMessages.put(I18NLocale.EN_US, "Recognition 2");
-    nameMessages.put(I18NLocale.ES_ES, "Reconocimiento 2");
-    nameMessages.put(I18NLocale.GL_ES, "Recoñecemento 2");
+    nameMessages.put(I18NLocale.EN_US, "New Session");
+    nameMessages.put(I18NLocale.ES_ES, "Nueva sesión");
+    nameMessages.put(I18NLocale.GL_ES, "Nova sesión");
 
-    descriptionMessages.put(I18NLocale.EN_US, "Recognition game.");
-    descriptionMessages.put(I18NLocale.ES_ES, "Juego de reconocimiento.");
-    descriptionMessages.put(I18NLocale.GL_ES, "Xogo de recoñecemento.");
+    descriptionMessages.put(I18NLocale.EN_US, "New session description.");
+    descriptionMessages.put(I18NLocale.ES_ES, "Descripción de una nueva sesión.");
+    descriptionMessages.put(I18NLocale.GL_ES, "Descrición dunha nova sesión.");
 
-    final GamesSession session = new GamesSession(2, therapist(), nameMessages, descriptionMessages);
+    final GamesSession session = new GamesSession(3, therapist(), nameMessages, descriptionMessages);
 
     new GameConfigurationForSession(session, recognitionGame(), 1, paramValues1);
     new GameConfigurationForSession(session, verbalFluencyGame(), 2, emptyMap());
@@ -146,12 +170,12 @@ public final class GamesSessionDataset {
     final Map<I18NLocale, String> descriptionMessages = new HashMap<>();
 
     nameMessages.put(I18NLocale.EN_US, "Modified recognition");
-    nameMessages.put(I18NLocale.ES_ES, "Reconocimiento");
-    nameMessages.put(I18NLocale.GL_ES, "Recoñecemento");
+    nameMessages.put(I18NLocale.ES_ES, "Sesión 1");
+    nameMessages.put(I18NLocale.GL_ES, "Sesión 1");
 
     descriptionMessages.put(I18NLocale.EN_US, "Modified recognition game.");
-    descriptionMessages.put(I18NLocale.ES_ES, "Juego de reconocimiento.");
-    descriptionMessages.put(I18NLocale.GL_ES, "Xogo de recoñecemento.");
+    descriptionMessages.put(I18NLocale.ES_ES, "Descripción de la sesión 1.");
+    descriptionMessages.put(I18NLocale.GL_ES, "Descrición da sesión 1.");
 
     final GamesSession session = new GamesSession(1, therapist(), nameMessages, descriptionMessages);
 
@@ -159,6 +183,10 @@ public final class GamesSessionDataset {
     new GameConfigurationForSession(session, recognitionGame(), 2, paramValues2);
 
     return session;
+  }
+  
+  public static int gamesSessionToDelete() {
+    return 1;
   }
   
   public static AssignedGamesSession assignedGamesSession() {

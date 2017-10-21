@@ -173,6 +173,12 @@ public class GamesSession implements Serializable {
       this.therapist.addSession(this);
     }
   }
+  
+  public String getTherapistLogin() {
+    return this.getTherapist()
+      .map(Therapist::getLogin)
+    .orElseThrow(() -> new IllegalStateException("No therapist assigned"));
+  }
 
   private String getKeyPrefix() {
     return "session." + this.id;

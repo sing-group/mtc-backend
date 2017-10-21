@@ -22,42 +22,42 @@
   -->
 
 <dataset>
-  <session id="2" therapist="therapist" />
+  <session id="3" therapist="therapist" />
 
-  <session_game game="recognition" gameOrder="1" session="2" />
-  <session_game game="verbalFluency" gameOrder="2" session="2" />
-  <session_game game="recognition" gameOrder="3" session="2" />
+  <session_game game="recognition" gameOrder="1" session="3" />
+  <session_game game="verbalFluency" gameOrder="2" session="3" />
+  <session_game game="recognition" gameOrder="3" session="3" />
 
   <session_game_param_value param="maxRepetitions"
-    value="2" game="recognition" gameOrder="1" session="2" />
+    value="2" game="recognition" gameOrder="1" session="3" />
   <session_game_param_value param="numOfStimuli" value="6"
-    game="recognition" gameOrder="1" session="2" />
+    game="recognition" gameOrder="1" session="3" />
   <session_game_param_value param="diceShowTime" value="3"
-    game="recognition" gameOrder="1" session="2" />
+    game="recognition" gameOrder="1" session="3" />
 
   <session_game_param_value param="maxRepetitions"
-    value="1" game="recognition" gameOrder="3" session="2" />
+    value="1" game="recognition" gameOrder="3" session="3" />
   <session_game_param_value param="numOfStimuli" value="8"
-    game="recognition" gameOrder="3" session="2" />
+    game="recognition" gameOrder="3" session="3" />
   <session_game_param_value param="diceShowTime" value="5"
-    game="recognition" gameOrder="3" session="2" />
+    game="recognition" gameOrder="3" session="3" />
 
-  <i18n messageKey="session.2.name" locale="EN_US" value="Recognition 2" />
-  <i18n messageKey="session.2.name" locale="ES_ES" value="Reconocimiento 2" />
-  <i18n messageKey="session.2.name" locale="GL_ES" value="Recoñecemento 2" />
-  <i18n messageKey="session.2.description" locale="EN_US" value="Recognition game." />
-  <i18n messageKey="session.2.description" locale="ES_ES"
-    value="Juego de reconocimiento." />
-  <i18n messageKey="session.2.description" locale="GL_ES" value="Xogo de recoñecemento." />
+  <i18n messageKey="session.3.name" locale="EN_US" value="New Session" />
+  <i18n messageKey="session.3.name" locale="ES_ES" value="Nueva sesión" />
+  <i18n messageKey="session.3.name" locale="GL_ES" value="Nova sesión" />
+  <i18n messageKey="session.3.description" locale="EN_US" value="New session description." />
+  <i18n messageKey="session.3.description" locale="ES_ES"
+    value="Descripción de una nueva sesión." />
+  <i18n messageKey="session.3.description" locale="GL_ES" value="Descrición dunha nova sesión." />
 
-  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="EN_US" />
-  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="ES_ES" />
-  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="GL_ES" />
-  <session_i18n session="2" i18nKey="session.2.description"
+  <session_i18n session="3" i18nKey="session.3.name" i18nLocale="EN_US" />
+  <session_i18n session="3" i18nKey="session.3.name" i18nLocale="ES_ES" />
+  <session_i18n session="3" i18nKey="session.3.name" i18nLocale="GL_ES" />
+  <session_i18n session="3" i18nKey="session.3.description"
     i18nLocale="EN_US" />
-  <session_i18n session="2" i18nKey="session.2.description"
+  <session_i18n session="3" i18nKey="session.3.description"
     i18nLocale="ES_ES" />
-  <session_i18n session="2" i18nKey="session.2.description"
+  <session_i18n session="3" i18nKey="session.3.description"
     i18nLocale="GL_ES" />
     
     <!-- 
@@ -109,16 +109,16 @@ Sample JSON for games session creation:
   ],
   "name": {
     "values": [
-      { "key": "en_US", "value": "Recognition 2" },
-      { "key": "es_ES", "value": "Reconocimiento 2" },
-      { "key": "gl_ES", "value": "Recoñecemento 2" }
+      { "key": "en_US", "value": "New session" },
+      { "key": "es_ES", "value": "Nueva sesión" },
+      { "key": "gl_ES", "value": "Nova sesión" }
     ]
   },
   "description": {
     "values": [
-      { "key": "en_US", "value": "Recognition game." },
-      { "key": "es_ES", "value": "Juego de reconocimiento." },
-      { "key": "gl_ES", "value": "Xogo de recoñecemento." }
+      { "key": "en_US", "value": "New session description." },
+      { "key": "es_ES", "value": "Descripción de una nueva sesión." },
+      { "key": "gl_ES", "value": "Descrición dunha nova sesión." }
     ]
   }
 }

@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import org.sing_group.mtc.domain.dao.spi.game.session.GamesSessionDAO;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.service.security.SecurityGuard;
+import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.game.session.GamesSessionService;
 
 @Stateless
@@ -41,6 +42,9 @@ public class DefaultGamesSessionService implements GamesSessionService {
   @Inject
   private SecurityGuard securityManager;
   
+  @Inject
+  private SecurityCheckBuilder checkThat;
+  
   @Override
   public GamesSession create(GamesSession gameSession) {
     gameSession.setTherapist(this.securityManager.getLoggedUser());
@@ -50,11 +54,24 @@ public class DefaultGamesSessionService implements GamesSessionService {
 
   @Override
   public GamesSession get(int sessionId) {
-    return this.sessionDao.get(sessionId);
+    final GamesSession gamesSession = this.sessionDao.get(sessionId);
+    
+    return this.securityManager.ifAuthorized(
+      checkThat.hasLogin(gamesSession.getTherapistLogin())
+    ).call(() -> gamesSession);
   }
   
   @Override
   public GamesSession modify(GamesSession session) {
-    return this.sessionDao.modify(session);
+    return this.securityManager.ifAuthorized(
+      checkThat.hasLogin(this.get(session.getId()).getTherapistLogin())
+    ).call(() -> this.sessionDao.modify(session));
+  }
+  
+  @Override
+  public void delete(int sessionId) {
+    this.securityManager.ifAuthorized(
+      checkThat.hasLogin(this.get(sessionId).getTherapistLogin())
+    ).run(() -> this.sessionDao.delete(sessionId));
   }
 }

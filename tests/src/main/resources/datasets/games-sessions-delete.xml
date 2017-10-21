@@ -22,37 +22,6 @@
   -->
 
 <dataset>
-  <session id="1" therapist="therapist" />
-
-  <session_game game="recognition" gameOrder="1" session="1" />
-  <session_game game="verbalFluency" gameOrder="2" session="1" />
-
-  <session_game_param_value param="diceShowTime" value="3"
-    game="recognition" gameOrder="1" session="1" />
-  <session_game_param_value param="maxRepetitions"
-    value="2" game="recognition" gameOrder="1" session="1" />
-  <session_game_param_value param="numOfStimuli" value="6"
-    game="recognition" gameOrder="1" session="1" />
-
-  <i18n messageKey="session.1.name" locale="EN_US" value="Session 1" />
-  <i18n messageKey="session.1.name" locale="ES_ES" value="Sesión 1" />
-  <i18n messageKey="session.1.name" locale="GL_ES" value="Sesión 1" />
-  <i18n messageKey="session.1.description" locale="EN_US" value="Session 1 description." />
-  <i18n messageKey="session.1.description" locale="ES_ES"
-    value="Descripción de la sesión 1." />
-  <i18n messageKey="session.1.description" locale="GL_ES" value="Descrición da sesión 1." />
-
-  <session_i18n session="1" i18nKey="session.1.name" i18nLocale="EN_US" />
-  <session_i18n session="1" i18nKey="session.1.name" i18nLocale="ES_ES" />
-  <session_i18n session="1" i18nKey="session.1.name" i18nLocale="GL_ES" />
-  <session_i18n session="1" i18nKey="session.1.description"
-    i18nLocale="EN_US" />
-  <session_i18n session="1" i18nKey="session.1.description"
-    i18nLocale="ES_ES" />
-  <session_i18n session="1" i18nKey="session.1.description"
-    i18nLocale="GL_ES" />
-
-
   <session id="2" therapist="therapist" />
 
   <session_game game="recognition" gameOrder="1" session="2" />

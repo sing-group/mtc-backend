@@ -29,4 +29,6 @@ public interface GamesSessionDAO {
   public GamesSession get(int sessionId);
 
   public GamesSession modify(GamesSession session);
+
+  public void delete(int sessionId);
 }

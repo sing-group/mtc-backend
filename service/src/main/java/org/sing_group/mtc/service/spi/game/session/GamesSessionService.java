@@ -33,5 +33,7 @@ public interface GamesSessionService {
   public GamesSession get(int sessionId);
 
   public GamesSession modify(GamesSession mapToGameSession);
+
+  public void delete(int sessionId);
   
 }

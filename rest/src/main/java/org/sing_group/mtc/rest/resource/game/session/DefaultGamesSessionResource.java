@@ -25,6 +25,7 @@ import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -123,6 +124,22 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
       this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder());
     
     return Response.ok(sessionData).build();
+  }
+  
+  @DELETE
+  @Path("{id}")
+  @ApiOperation(
+    value = "Deletes a game sessions.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown session: {id}")
+  )
+  @Override
+  public Response delete(@PathParam("id") int sessionId) {
+    this.service.delete(sessionId);
+    
+    return Response.ok().build();
   }
 
   @GET

@@ -52,8 +52,8 @@ import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationD
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.game.session.GameParamData;
-import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.user.IdAndUri;
 import org.sing_group.mtc.rest.entity.user.UserUri;
@@ -71,7 +71,7 @@ public class DefaultGamesMapper implements GamesMapper {
   }
   
   @Override
-  public GamesSession mapToGameSession(GamesSessionCreationData data) {
+  public GamesSession mapToGameSession(GamesSessionEditionData data) {
     final GamesSession session = new GamesSession();
     
     session.setNameMessages(extractMessages(data.getName()));
@@ -82,6 +82,15 @@ public class DefaultGamesMapper implements GamesMapper {
     
     return session;
   }
+
+  @Override
+  public GamesSession mapToGameSession(int id, GamesSessionEditionData data) {
+    final GamesSession session = mapToGameSession(data);
+    
+    session.setId(id);
+    
+    return session;
+  }
   
   private Map<I18NLocale, String> extractMessages(Map<I18NLocaleData, String> messages) {
     return messages.entrySet().stream()
@@ -89,6 +98,17 @@ public class DefaultGamesMapper implements GamesMapper {
         entry -> I18NLocale.valueOf(entry.getKey().name()),
         Entry::getValue
       ));
+  }
+
+  @Override
+  public GamesSessionEditionData mapToGameSessionEditionData(GamesSession session) {
+    return new GamesSessionEditionData(
+      session.getGameConfigurations()
+        .map(this::mapToGameConfigurationData)
+      .toArray(GameConfigurationData[]::new),
+      this.mapToLocaleMessages(session.getName()),
+      this.mapToLocaleMessages(session.getDescription())
+    );
   }
   
   @Override

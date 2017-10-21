@@ -21,14 +21,17 @@
  */
 package org.sing_group.mtc.rest.resource.game.session;
 
+import static javax.ws.rs.client.Entity.json;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSession;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToAssignedGamesSession.equalToAssignedGameSession;
+import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession.equalToGamesSession;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSessionData.equalToGamesSession;
 
 import javax.ws.rs.core.Response;
@@ -44,20 +47,32 @@ import org.jboss.arquillian.persistence.ShouldMatchDataSet;
 import org.jboss.arquillian.persistence.UsingDataSet;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.jboss.shrinkwrap.api.Archive;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
+import org.sing_group.mtc.rest.entity.mapper.game.DefaultGamesMapper;
+import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.resource.Deployments;
 
 @RunWith(Arquillian.class)
 public class GamesSessionResourceIntegrationTest {
   private static final String BASE_PATH = "api/games-session";
+  
+  private GamesMapper gamesMapper;
 
   @Deployment
   public static Archive<?> createDeployment() {
     return Deployments.createDeployment();
+  }
+  
+  @Before
+  public void setUp() {
+    this.gamesMapper = new DefaultGamesMapper();
   }
 
   @Test
@@ -93,98 +108,37 @@ public class GamesSessionResourceIntegrationTest {
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterGet() {}
 
-//  @Test
-//  @InSequence(5)
-//  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
-//  public void beforeCreate() {}
-//
-//  @Test
-//  @InSequence(6)
-//  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
-//  @RunAsClient
-//  public void testCreate(
-//    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
-//  ) {
-//    final Response response = webTarget
-//      .request()
-//    .post(json(newGamesSessionData()));
-//    
-//    assertThat(response, hasCreatedStatus());
-//    assertThat(response, hasHttpHeader("Location", value -> value.endsWith("game/session/2")));
-//  }
-//
-//  @Test
-//  @InSequence(7)
-//  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "games-sessions-create.xml" })
-//  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
-//  public void afterCreate() {}
-//
-//  @Test
-//  @InSequence(10)
-//  @UsingDataSet("users.xml")
-//  public void beforeInvalidEmails() {}
-//
-//  @Test
-//  @InSequence(11)
-//  @RunAsClient
-//  public void testInvalidEmails(
-//    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
-//  ) {
-//    final Consumer<String> testUnathorized = email -> testUnauthorized(webTarget, email);
-//    
-//    invalidEmails().forEach(testUnathorized);
-//  }
-//
-//  @Test
-//  @InSequence(12)
-//  @ShouldMatchDataSet("users.xml")
-//  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
-//  public void afterInvalidEmails() {}
-//  
-//  private static void testAuthorized(ResteasyWebTarget webTarget, User expectedUser) {
-//    Optional<Response> responseRef = Optional.empty();
-//    
-//    try {
-//      final String password = passwordOfUser(expectedUser);
-//      
-//      final Response response = webTarget
-//        .queryParam("email", expectedUser.getEmail())
-//        .queryParam("password", password)
-//        .request()
-//      .get();
-//      
-//      assertThat(response, hasOkStatus());
-//      
-//      final IdentifiedUserData user = response.readEntity(IdentifiedUserData.class);
-//      
-//      assertThat(user, is(equalToUser(expectedUser)));
-//    } finally {
-//      responseRef.ifPresent(Response::close);
-//    }
-//  }
-//  
-//  private static void testUnauthorized(ResteasyWebTarget webTarget, String email) {
-//    testUnauthorized(webTarget, email, false);
-//  }
-//  
-//  private static void testUnauthorized(ResteasyWebTarget webTarget, String email, boolean breakPassword) {
-//    Optional<Response> responseRef = Optional.empty();
-//    
-//    try {
-//      final Response response = webTarget.clone()
-//        .queryParam("email", email)
-//        .queryParam("password", passwordOfUser(email) + (breakPassword ? "break" : ""))
-//        .request()
-//      .get();
-//      
-//      responseRef = Optional.of(response);
-//      
-//      assertThat(response, hasUnauthorizedStatus());
-//    } finally {
-//      responseRef.ifPresent(Response::close);
-//    }
-//    
-//  }
+  @Test
+  @InSequence(5)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml" })
+  public void beforeModify() {}
+
+  @Test
+  @InSequence(6)
+  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testModify(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final GamesSession modifiedSession = modifiedGamesSession();
+    
+    final GamesSessionEditionData expected = this.gamesMapper.mapToGameSessionEditionData(modifiedSession);
+    
+    final Response response = webTarget.path(modifiedSession.getId().toString())
+      .request()
+    .put(json(expected));
+    
+    final GamesSessionData actual = response.readEntity(GamesSessionData.class);
+    
+    assertThat(response, hasOkStatus());
+    assertThat(actual, is(equalToGamesSession(modifiedSession)));
+  }
+
+  @Test
+  @InSequence(7)
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions-modify.xml" })
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterModify() {}
   
   private void testGetAssigned(ResteasyWebTarget webTarget) {
     final AssignedGamesSession expected = assignedGamesSession();

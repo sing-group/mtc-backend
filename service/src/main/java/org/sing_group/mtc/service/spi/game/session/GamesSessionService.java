@@ -28,8 +28,10 @@ import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 @Local
 public interface GamesSessionService {
 
-  public GamesSession createSession(GamesSession gameSession);
+  public GamesSession create(GamesSession gameSession);
 
   public GamesSession get(int sessionId);
+
+  public GamesSession modify(GamesSession mapToGameSession);
   
 }

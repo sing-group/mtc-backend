@@ -48,7 +48,7 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
@@ -215,7 +215,7 @@ public class DefaultTherapistResource implements TherapistResource {
   )
   public Response createGamesSession(
     @PathParam("login") String therapist,
-    GamesSessionCreationData data
+    GamesSessionEditionData data
   ) {
     final GamesSession gamesSession = this.service.createGamesSession(
       therapist, gamesMapper.mapToGameSession(data)

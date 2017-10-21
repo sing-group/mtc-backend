@@ -34,12 +34,16 @@ import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
-import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 
 public interface GamesMapper {
 
-  public GamesSession mapToGameSession(GamesSessionCreationData data);
+  public GamesSession mapToGameSession(GamesSessionEditionData data);
+  
+  public GamesSession mapToGameSession(int id, GamesSessionEditionData data);
+
+  public GamesSessionEditionData mapToGameSessionEditionData(GamesSession modifiedSession);
 
   public SortedSet<GameConfigurationForSession> mapToGameConfigurationForSession(GameConfigurationData[] gameConfigurations);
 

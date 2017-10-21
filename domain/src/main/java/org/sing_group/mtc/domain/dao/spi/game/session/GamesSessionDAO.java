@@ -27,4 +27,6 @@ public interface GamesSessionDAO {
   public GamesSession persist(GamesSession session);
 
   public GamesSession get(int sessionId);
+
+  public GamesSession modify(GamesSession session);
 }

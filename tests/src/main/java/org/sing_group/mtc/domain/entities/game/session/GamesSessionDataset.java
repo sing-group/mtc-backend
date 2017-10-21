@@ -130,6 +130,36 @@ public final class GamesSessionDataset {
 
     return session;
   }
+
+  public static GamesSession modifiedGamesSession() {
+    final Map<String, String> paramValues = new HashMap<>();
+    paramValues.put("maxRepetitions", "2");
+    paramValues.put("numOfStimuli", "6");
+    paramValues.put("diceShowTime", "3");
+
+    final Map<String, String> paramValues2 = new HashMap<>();
+    paramValues2.put("maxRepetitions", "1");
+    paramValues2.put("numOfStimuli", "8");
+    paramValues2.put("diceShowTime", "5");
+
+    final Map<I18NLocale, String> nameMessages = new HashMap<>();
+    final Map<I18NLocale, String> descriptionMessages = new HashMap<>();
+
+    nameMessages.put(I18NLocale.EN_US, "Modified recognition");
+    nameMessages.put(I18NLocale.ES_ES, "Reconocimiento");
+    nameMessages.put(I18NLocale.GL_ES, "Recoñecemento");
+
+    descriptionMessages.put(I18NLocale.EN_US, "Modified recognition game.");
+    descriptionMessages.put(I18NLocale.ES_ES, "Juego de reconocimiento.");
+    descriptionMessages.put(I18NLocale.GL_ES, "Xogo de recoñecemento.");
+
+    final GamesSession session = new GamesSession(1, therapist(), nameMessages, descriptionMessages);
+
+    new GameConfigurationForSession(session, recognitionGame(), 1, paramValues);
+    new GameConfigurationForSession(session, recognitionGame(), 2, paramValues2);
+
+    return session;
+  }
   
   public static AssignedGamesSession assignedGamesSession() {
     return assignedGamesSessions()[0];

@@ -42,7 +42,7 @@ public class DefaultGamesSessionService implements GamesSessionService {
   private SecurityGuard securityManager;
   
   @Override
-  public GamesSession createSession(GamesSession gameSession) {
+  public GamesSession create(GamesSession gameSession) {
     gameSession.setTherapist(this.securityManager.getLoggedUser());
     
     return this.sessionDao.persist(gameSession);
@@ -51,5 +51,10 @@ public class DefaultGamesSessionService implements GamesSessionService {
   @Override
   public GamesSession get(int sessionId) {
     return this.sessionDao.get(sessionId);
+  }
+  
+  @Override
+  public GamesSession modify(GamesSession session) {
+    return this.sessionDao.modify(session);
   }
 }

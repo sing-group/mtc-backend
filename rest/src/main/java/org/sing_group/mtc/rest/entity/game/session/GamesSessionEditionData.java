@@ -35,9 +35,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.MapI18NLocaleDataStringAdapter;
 
-@XmlRootElement(name = "games-session-creation", namespace = "http://entity.resource.rest.mtc.sing-group.org")
+import io.swagger.annotations.ApiModel;
+
+@XmlRootElement(name = "games-session-edition", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GamesSessionCreationData implements Serializable {
+@ApiModel(value = "games-session-edition", description = "Edition data of the games session entity.")
+public class GamesSessionEditionData implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @XmlElementWrapper(name = "games", nillable = false, required = true)
@@ -54,9 +57,9 @@ public class GamesSessionCreationData implements Serializable {
   @XmlElement(name = "description", required = true)
   private Map<I18NLocaleData, String> description;
   
-  GamesSessionCreationData() {}
+  GamesSessionEditionData() {}
 
-  public GamesSessionCreationData(
+  public GamesSessionEditionData(
     GameConfigurationData[] games,
     Map<I18NLocaleData, String> name,
     Map<I18NLocaleData, String> description
@@ -108,7 +111,7 @@ public class GamesSessionCreationData implements Serializable {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    GamesSessionCreationData other = (GamesSessionCreationData) obj;
+    GamesSessionEditionData other = (GamesSessionEditionData) obj;
     if (description == null) {
       if (other.description != null)
         return false;

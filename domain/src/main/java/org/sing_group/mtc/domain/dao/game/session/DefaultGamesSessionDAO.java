@@ -62,4 +62,15 @@ public class DefaultGamesSessionDAO implements GamesSessionDAO {
     return this.dh.get(sessionId)
       .orElseThrow(() -> new IllegalArgumentException("Unknown session: " + sessionId));
   }
+  
+  @Override
+  public GamesSession modify(GamesSession session) {
+    final GamesSession persistent = this.get(session.getId());
+
+    persistent.setGameConfigurations(session.getGameConfigurations());
+    persistent.setDescriptionMessages(session.getDescription().getMessages());
+    persistent.setNameMessages(session.getName().getMessages());
+    
+    return this.dh.update(persistent);
+  }
 }

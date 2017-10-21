@@ -27,12 +27,12 @@ import java.util.Map;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.game.session.GameParamData;
-import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 
 public final class GamesSessionDataDataset {
   private GamesSessionDataDataset() {}
 
-  public static GamesSessionCreationData newGamesSessionData() {
+  public static GamesSessionEditionData newGamesSessionData() {
     final GameConfigurationData[] games = {
       new GameConfigurationData("recognition", 1, new GameParamData[] {
         new GameParamData("maxRepetitions", "2"),
@@ -58,6 +58,6 @@ public final class GamesSessionDataDataset {
     descriptionMessages.put(I18NLocaleData.ES_ES, "Juego de reconocimiento.");
     descriptionMessages.put(I18NLocaleData.GL_ES, "Xogo de recoñecemento.");
     
-    return new GamesSessionCreationData(games, nameMessages, descriptionMessages);
+    return new GamesSessionEditionData(games, nameMessages, descriptionMessages);
   }
 }

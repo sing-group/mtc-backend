@@ -75,22 +75,22 @@ public class IsEqualToGamesSession extends IsEqualToEntity<GamesSession, GamesSe
   }
 
   @Factory
-  public static IsEqualToGamesSession equalToGameSession(GamesSession session) {
+  public static IsEqualToGamesSession equalToGamesSession(GamesSession session) {
     return new IsEqualToGamesSession(session);
   }
   
   @Factory
   public static Matcher<Iterable<? extends GamesSessionData>> containsGamesSessionsInAnyOrder(GamesSession... gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGameSession, gameSessions);
+    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGamesSession, gameSessions);
   }
   
   @Factory
   public static Matcher<Iterable<? extends GamesSessionData>> containsGamesSessionsInAnyOrder(Iterable<GamesSession> gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGameSession, gameSessions);
+    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGamesSession, gameSessions);
   }
   
   @Factory
   public static Matcher<Iterable<? extends GamesSessionData>> containsGamesSessionsInAnyOrder(Stream<GamesSession> gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGameSession, gameSessions);
+    return containsEntityInAnyOrder(IsEqualToGamesSession::equalToGamesSession, gameSessions);
   }
 }

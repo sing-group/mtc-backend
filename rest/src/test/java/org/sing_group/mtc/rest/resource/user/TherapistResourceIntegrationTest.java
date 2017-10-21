@@ -71,7 +71,7 @@ import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.rest.entity.game.session.GamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
@@ -301,7 +301,7 @@ public class TherapistResourceIntegrationTest {
   public void testCreateGamesSession(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final GamesSessionCreationData newSessionData = newGamesSessionData();
+    final GamesSessionEditionData newSessionData = newGamesSessionData();
     final GamesSession expectedSession = newGamesSession();
     
     final Response response = webTarget

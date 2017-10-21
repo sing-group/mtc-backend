@@ -213,6 +213,14 @@ public class GamesSession implements Serializable {
   public Stream<GameConfigurationForSession> getGameConfigurations() {
     return this.gameConfigurations.stream();
   }
+  
+  public void setGameConfigurations(Stream<GameConfigurationForSession> gameConfigurations) {
+    this.gameConfigurations.stream().collect(toSet())
+      .forEach(this::removeGameConfiguration);
+    
+    gameConfigurations.collect(toSet())
+      .forEach(this::addGameConfiguration);
+  }
 
   public boolean hasGameConfiguration(GameConfigurationForSession gameConfiguration) {
     return this.gameConfigurations.contains(gameConfiguration);
@@ -241,7 +249,11 @@ public class GamesSession implements Serializable {
   }
 
   protected boolean directAddGameConfiguration(GameConfigurationForSession config) {
-    return this.gameConfigurations.add(config);
+    final boolean isNew = !this.gameConfigurations.remove(config);
+    
+    this.gameConfigurations.add(config);
+    
+    return isNew;
   }
 
   protected boolean directRemoveGameConfiguration(GameConfigurationForSession config) {
@@ -269,7 +281,11 @@ public class GamesSession implements Serializable {
   }
 
   protected boolean directAddAssigned(AssignedGamesSession assigned) {
-    return this.assigned.add(assigned);
+    final boolean isNew = !this.assigned.remove(assigned);
+    
+    this.assigned.add(assigned);
+    
+    return isNew;
   }
 
   protected boolean directRemoveAssigned(AssignedGamesSession assigned) {
@@ -303,28 +319,22 @@ public class GamesSession implements Serializable {
   }
   
   protected void setMessage(I18NLocale locale, String key, String newMessage) {
-    final I18N newI18n = new I18N(locale, key, newMessage);
-    
-    final Optional<I18N> toRemove = this.messages.stream()
-      .filter(message -> message.getKey().equals(key))
-      .filter(message -> message.getLocale().equals(locale.getValue()))
+    final Optional<I18N> message = this.messages.stream()
+      .filter(m -> m.getKey().equals(key) && m.getLocale() == locale)
     .findAny();
     
-    toRemove.ifPresent(this.messages::remove);
-    
-    this.messages.add(newI18n);
+    if (message.isPresent()) {
+      message.get().setValue(newMessage);
+    } else {
+      messages.add(new I18N(locale, key, newMessage));
+    }
   }
   
   protected void setMessages(String key, Map<I18NLocale, String> messages) {
     requireNonNull(key);
     requireNonEmpty(messages);
     
-    final Set<I18N> toRemove = this.messages.stream()
-      .filter(i18n -> i18n.getKey().equals(key))
-    .collect(toSet());
-    
-    this.messages.removeAll(toRemove);
-    
-    I18N.from(key, messages).forEach(this.messages::add);
+    messages.entrySet().stream()
+      .forEach(entry -> this.setMessage(entry.getKey(), key, entry.getValue()));
   }
 }

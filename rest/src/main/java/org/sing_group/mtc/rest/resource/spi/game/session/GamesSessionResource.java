@@ -24,11 +24,15 @@ package org.sing_group.mtc.rest.resource.spi.game.session;
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
+
 @Local
 public interface GamesSessionResource {
 
   public Response get(int sessionId);
   
   public Response getAssigned(int assignedId);
+
+  public Response modify(int sessionId, GamesSessionEditionData data);
 
 }

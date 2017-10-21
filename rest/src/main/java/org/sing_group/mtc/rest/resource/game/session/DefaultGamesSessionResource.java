@@ -26,6 +26,7 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -38,6 +39,7 @@ import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
@@ -91,6 +93,31 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   @Override
   public Response get(@PathParam("id") int sessionId) {
     final GamesSession session = this.service.get(sessionId);
+    
+    final GamesSessionData sessionData =
+      this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder());
+    
+    return Response.ok(sessionData).build();
+  }
+  
+  @PUT
+  @Path("{id}")
+  @ApiOperation(
+    value = "Finds a game sessions by identifier.",
+    response = GamesSessionData.class,
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown session: {id}")
+  )
+  @Override
+  public Response modify(
+    @PathParam("id") int sessionId,
+    GamesSessionEditionData data
+  ) {
+    final GamesSession session = this.service.modify(
+      this.gamesMapper.mapToGameSession(sessionId, data)
+    );
     
     final GamesSessionData sessionData =
       this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder());

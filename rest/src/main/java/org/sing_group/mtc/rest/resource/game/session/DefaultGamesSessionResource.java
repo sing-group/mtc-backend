@@ -188,4 +188,20 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
     
     return Response.ok(sessionData).build();
   }
+  
+  @DELETE
+  @Path("assigned/{id}")
+  @ApiOperation(
+    value = "Deletes an assigned games sessions.",
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown session: {id}")
+  )
+  @Override
+  public Response deleteAssigned(@PathParam("id") int sessionId) {
+    this.assignedService.delete(sessionId);
+    
+    return Response.ok().build();
+  }
 }

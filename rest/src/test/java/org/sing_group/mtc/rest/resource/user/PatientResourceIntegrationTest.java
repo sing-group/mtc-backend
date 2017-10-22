@@ -34,7 +34,7 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.patient;
 import static org.sing_group.mtc.domain.entities.UsersDataset.patientToDelete;
 import static org.sing_group.mtc.domain.entities.UsersDataset.patients;
-import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessions;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessionsOfPatient;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.newAssignedGamesSession;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderContaining;
@@ -301,7 +301,7 @@ public class PatientResourceIntegrationTest {
       .header("Origin", "localhost")
     .get();
     
-    final AssignedGamesSession[] expected = assignedGamesSessions();
+    final AssignedGamesSession[] expected = assignedGamesSessionsOfPatient(patient.getLogin());
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", expected.length));

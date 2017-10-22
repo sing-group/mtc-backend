@@ -29,4 +29,6 @@ public interface AssignedGamesSessionService {
 
   public AssignedGamesSession modify(AssignedGamesSession mapToAssignedGamesSession);
 
+  public void delete(int sessionId);
+
 }

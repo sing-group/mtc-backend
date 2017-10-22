@@ -62,4 +62,11 @@ public class DefaultAssignedGamesSessionService implements AssignedGamesSessionS
       checkThat.hasLogin(this.get(assigned.getId()).getTherapistLogin())
     ).call(() -> this.sessionDao.modify(assigned));
   }
+
+  @Override
+  public void delete(int sessionId) {
+    this.securityManager.ifAuthorized(
+      checkThat.hasLogin(this.get(sessionId).getTherapistLogin())
+    ).run(() -> this.sessionDao.delete(sessionId));
+  }
 }

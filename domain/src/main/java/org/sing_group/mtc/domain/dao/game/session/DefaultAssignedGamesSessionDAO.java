@@ -83,4 +83,9 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
     
     return persistent;
   }
+  
+  @Override
+  public void delete(int sessionId) {
+    this.dh.removeByKey(sessionId);
+  }
 }

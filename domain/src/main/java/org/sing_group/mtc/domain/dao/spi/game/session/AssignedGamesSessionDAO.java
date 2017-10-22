@@ -37,4 +37,6 @@ public interface AssignedGamesSessionDAO {
   public AssignedGamesSession assignSession(Patient patient, GamesSession gamesSession, Date startDate, Date endDate);
 
   public AssignedGamesSession modify(AssignedGamesSession assigned);
+
+  public void delete(int sessionId);
 }

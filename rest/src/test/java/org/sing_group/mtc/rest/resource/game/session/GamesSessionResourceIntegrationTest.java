@@ -27,6 +27,7 @@ import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSession;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessionToDelete;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.gamesSessionToDelete;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSessionId;
@@ -255,4 +256,29 @@ public class GamesSessionResourceIntegrationTest {
   @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions-modify.xml" })
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterModifyAssigned() {}
+
+  @Test
+  @InSequence(109)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml" })
+  public void beforeDeleteAssigned() {}
+
+  @Test
+  @InSequence(110)
+  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testDeleteAssigned(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final Response response = webTarget.path("assigned").path(Integer.toString(assignedGamesSessionToDelete()))
+      .request()
+    .delete();
+    
+    assertThat(response, hasOkStatus());
+  }
+
+  @Test
+  @InSequence(111)
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions-delete.xml" })
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterDeleteAssigned() {}
 }

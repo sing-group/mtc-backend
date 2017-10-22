@@ -40,4 +40,6 @@ public interface GamesSessionResource {
 
   public Response modifyAssigned(int sessionId, AssignedGamesSessionEditionData data);
 
+  public Response deleteAssigned(int sessionId);
+
 }

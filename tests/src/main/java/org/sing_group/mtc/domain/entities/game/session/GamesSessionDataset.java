@@ -27,11 +27,13 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.singleton;
 import static org.sing_group.mtc.domain.entities.UsersDataset.patient;
 import static org.sing_group.mtc.domain.entities.UsersDataset.therapist;
+import static org.sing_group.mtc.domain.entities.UsersDataset.user;
 import static org.sing_group.mtc.domain.entities.game.GameTaskType.RECOGNITION;
 import static org.sing_group.mtc.domain.entities.game.GameTaskType.VERBAL_FLUENCY;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -203,8 +205,23 @@ public final class GamesSessionDataset {
         session1(),
         patient(),
         emptySet()
+      ),
+      new AssignedGamesSession(
+        2,
+        parseDate("2017-10-13 20:00:00"),
+        parseDate("2017-12-01 00:00:00"),
+        parseDate("2017-12-15 23:59:59"),
+        session1(),
+        user("patient2"),
+        emptySet()
       )
     };
+  }
+  
+  public static AssignedGamesSession[] assignedGamesSessionsOfPatient(String patient) {
+    return Arrays.stream(assignedGamesSessions())
+      .filter(assigned -> assigned.getPatientLogin().equals(patient))
+    .toArray(AssignedGamesSession[]::new);
   }
   
   public static AssignedGamesSession newAssignedGamesSession() {
@@ -217,6 +234,10 @@ public final class GamesSessionDataset {
   }
   
   public static int modifiedAssignedGamesSessionId() {
+    return 1;
+  }
+  
+  public static int assignedGamesSessionToDelete() {
     return 1;
   }
   

@@ -21,13 +21,12 @@
  */
 package org.sing_group.mtc.rest.entity.game.session;
 
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.parseDate;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
-import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
-import org.sing_group.mtc.rest.entity.game.session.GameParamData;
-import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 
 public final class GamesSessionDataDataset {
   private GamesSessionDataDataset() {}
@@ -59,5 +58,12 @@ public final class GamesSessionDataDataset {
     descriptionMessages.put(I18NLocaleData.GL_ES, "Descrición dunha nova sesión.");
     
     return new GamesSessionEditionData(games, nameMessages, descriptionMessages);
+  }
+  
+  public static AssignedGamesSessionEditionData modifiedAssignedGamesSessionData() {
+    return new AssignedGamesSessionEditionData(
+      parseDate("3017-12-01 00:00:00"),
+      parseDate("3017-12-15 23:59:59")
+    );
   }
 }

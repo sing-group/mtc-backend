@@ -111,6 +111,12 @@ public class AssignedGamesSession implements Serializable {
     this.gameResults = new HashSet<>();
     gameResults.forEach(this::addGameResult);
   }
+  
+  public AssignedGamesSession(int id, Date startDate, Date endDate) {
+    this.id = id;
+    this.startDate = startDate;
+    this.endDate = endDate;
+  }
 
   public AssignedGamesSession(Date startDate, Date endDate, GamesSession session, Patient patient) {
     this(null, startDate, endDate, session, patient);
@@ -122,6 +128,16 @@ public class AssignedGamesSession implements Serializable {
 
   public Integer getId() {
     return id;
+  }
+
+  public String getTherapistLogin() {
+    return this.getSession()
+      .map(GamesSession::getTherapistLogin)
+    .orElseThrow(() -> new IllegalStateException("games session is not assigned"));
+  }
+  
+  public String getPatientLogin() {
+    return this.patient.getLogin();
   }
   
   public Optional<GamesSession> getSession() {

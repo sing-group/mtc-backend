@@ -35,4 +35,6 @@ public interface AssignedGamesSessionDAO {
   public Stream<AssignedGamesSession> listByPatient(Patient patient, ListingOptions options);
 
   public AssignedGamesSession assignSession(Patient patient, GamesSession gamesSession, Date startDate, Date endDate);
+
+  public AssignedGamesSession modify(AssignedGamesSession assigned);
 }

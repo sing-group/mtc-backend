@@ -50,6 +50,7 @@ import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.game.session.GameParamData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
@@ -166,7 +167,7 @@ public class DefaultGamesMapper implements GamesMapper {
   }
   
   @Override
-  public AssignedGamesSessionData mapAssignedGamesSesion(AssignedGamesSession assignedSession, UriBuilder uriBuilder) {
+  public AssignedGamesSessionData mapToAssignedGamesSession(AssignedGamesSession assignedSession, UriBuilder uriBuilder) {
     final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
     
     final GamesSession gamesSession = assignedSession.getSession().orElseThrow(IllegalStateException::new);
@@ -185,8 +186,12 @@ public class DefaultGamesMapper implements GamesMapper {
     );
   }
   
+  public AssignedGamesSession mapToAssignedGamesSession(int sessionId, AssignedGamesSessionEditionData data) {
+    return new AssignedGamesSession(sessionId, data.getStartDate(), data.getEndDate());
+  }
+  
   @Override
-  public AssignedGamesSessionCreationData mapAssignedGamesSesionCreation(AssignedGamesSession assignedSession) {
+  public AssignedGamesSessionCreationData mapToAssignedGamesSessionCreation(AssignedGamesSession assignedSession) {
     return new AssignedGamesSessionCreationData(
       assignedSession.getStartDate(),
       assignedSession.getEndDate(),

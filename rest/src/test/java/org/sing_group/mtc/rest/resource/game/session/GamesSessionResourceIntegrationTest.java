@@ -28,10 +28,13 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT_HTTP_BASIC
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.gamesSessionToDelete;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSession;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSessionId;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
-import static org.sing_group.mtc.rest.entity.game.session.IsEqualToAssignedGamesSession.equalToAssignedGameSession;
+import static org.sing_group.mtc.rest.entity.game.session.GamesSessionDataDataset.modifiedAssignedGamesSessionData;
+import static org.sing_group.mtc.rest.entity.game.session.IsEqualToAssignedGamesSession.equalToAssignedGamesSession;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession.equalToGamesSession;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSessionData.equalToGamesSession;
 
@@ -54,6 +57,7 @@ import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.mapper.game.DefaultGamesMapper;
@@ -177,7 +181,7 @@ public class GamesSessionResourceIntegrationTest {
     
     final AssignedGamesSessionData assignedData = response.readEntity(AssignedGamesSessionData.class);
     
-    assertThat(assignedData, is(equalToAssignedGameSession(expected)));
+    assertThat(assignedData, is(equalToAssignedGamesSession(expected)));
   }
 
   @Test
@@ -221,4 +225,34 @@ public class GamesSessionResourceIntegrationTest {
   @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml" })
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterGetAssignedAsPatient() {}
+
+  @Test
+  @InSequence(106)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml" })
+  public void beforeModifyAssigned() {}
+
+  @Test
+  @InSequence(107)
+  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testModifyAssigned(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final AssignedGamesSessionEditionData data = modifiedAssignedGamesSessionData();
+    
+    final Response response = webTarget.path("assigned").path(Integer.toString(modifiedAssignedGamesSessionId()))
+      .request()
+    .put(json(data));
+    
+    final AssignedGamesSessionData actual = response.readEntity(AssignedGamesSessionData.class);
+    
+    assertThat(response, hasOkStatus());
+    assertThat(actual, is(equalToAssignedGamesSession(modifiedAssignedGamesSession())));
+  }
+
+  @Test
+  @InSequence(108)
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions-modify.xml" })
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterModifyAssigned() {}
 }

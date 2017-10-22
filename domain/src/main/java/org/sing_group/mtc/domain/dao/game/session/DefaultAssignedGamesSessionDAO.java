@@ -74,4 +74,13 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
     return this.dh.persist(assigned);
   }
 
+  @Override
+  public AssignedGamesSession modify(AssignedGamesSession assigned) {
+    final AssignedGamesSession persistent = this.get(assigned.getId());
+    
+    persistent.setEndDate(assigned.getEndDate());
+    persistent.setStartDate(assigned.getStartDate());
+    
+    return persistent;
+  }
 }

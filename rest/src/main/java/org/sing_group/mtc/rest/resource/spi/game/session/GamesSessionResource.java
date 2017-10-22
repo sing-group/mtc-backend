@@ -24,6 +24,7 @@ package org.sing_group.mtc.rest.resource.spi.game.session;
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 
 @Local
@@ -36,5 +37,7 @@ public interface GamesSessionResource {
   public Response modify(int sessionId, GamesSessionEditionData data);
 
   public Response delete(int sessionId);
+
+  public Response modifyAssigned(int sessionId, AssignedGamesSessionEditionData data);
 
 }

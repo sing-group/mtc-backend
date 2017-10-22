@@ -62,22 +62,22 @@ public class IsEqualToAssignedGamesSession extends IsEqualToEntity<AssignedGames
   }
 
   @Factory
-  public static IsEqualToAssignedGamesSession equalToAssignedGameSession(AssignedGamesSession session) {
+  public static IsEqualToAssignedGamesSession equalToAssignedGamesSession(AssignedGamesSession session) {
     return new IsEqualToAssignedGamesSession(session);
   }
   
   @Factory
   public static Matcher<Iterable<? extends AssignedGamesSessionData>> containsAssignedGamesSessionsInAnyOrder(AssignedGamesSession... gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToAssignedGamesSession::equalToAssignedGameSession, gameSessions);
+    return containsEntityInAnyOrder(IsEqualToAssignedGamesSession::equalToAssignedGamesSession, gameSessions);
   }
   
   @Factory
   public static Matcher<Iterable<? extends AssignedGamesSessionData>> containsAssignedGamesSessionsInAnyOrder(Iterable<AssignedGamesSession> gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToAssignedGamesSession::equalToAssignedGameSession, gameSessions);
+    return containsEntityInAnyOrder(IsEqualToAssignedGamesSession::equalToAssignedGamesSession, gameSessions);
   }
   
   @Factory
   public static Matcher<Iterable<? extends AssignedGamesSessionData>> containsAssignedGamesSessionsInAnyOrder(Stream<AssignedGamesSession> gameSessions) {
-    return containsEntityInAnyOrder(IsEqualToAssignedGamesSession::equalToAssignedGameSession, gameSessions);
+    return containsEntityInAnyOrder(IsEqualToAssignedGamesSession::equalToAssignedGamesSession, gameSessions);
   }
 }

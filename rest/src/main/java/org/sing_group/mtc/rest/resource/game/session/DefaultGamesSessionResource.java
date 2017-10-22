@@ -39,6 +39,7 @@ import javax.ws.rs.core.UriInfo;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
@@ -84,7 +85,7 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   @GET
   @Path("{id}")
   @ApiOperation(
-    value = "Finds a game sessions by identifier.",
+    value = "Finds a games sessions by identifier.",
     response = GamesSessionData.class,
     code = 200
   )
@@ -104,7 +105,7 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   @PUT
   @Path("{id}")
   @ApiOperation(
-    value = "Finds a game sessions by identifier.",
+    value = "Modifies a games session.",
     response = GamesSessionData.class,
     code = 200
   )
@@ -129,7 +130,7 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   @DELETE
   @Path("{id}")
   @ApiOperation(
-    value = "Deletes a game sessions.",
+    value = "Deletes a games sessions.",
     code = 200
   )
   @ApiResponses(
@@ -145,7 +146,7 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   @GET
   @Path("assigned/{id}")
   @ApiOperation(
-    value = "Finds an assigned game sessions by identifier.",
+    value = "Finds an assigned games sessions by identifier.",
     response = AssignedGamesSessionData.class,
     code = 200
   )
@@ -156,10 +157,35 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   public Response getAssigned(@PathParam("id") int assignedId) {
     final AssignedGamesSession assignedSession = this.assignedService.get(assignedId);
     
-    final AssignedGamesSessionData assignedSessionData = this.gamesMapper.mapAssignedGamesSesion(
+    final AssignedGamesSessionData assignedSessionData = this.gamesMapper.mapToAssignedGamesSession(
       assignedSession, this.uriInfo.getBaseUriBuilder()
     );
     
     return Response.ok(assignedSessionData).build();
+  }
+  
+  @PUT
+  @Path("assigned/{id}")
+  @ApiOperation(
+    value = "Modifies an assigned games sessions.",
+    response = AssignedGamesSessionData.class,
+    code = 200
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown assigned games session: {id}")
+  )
+  @Override
+  public Response modifyAssigned(
+    @PathParam("id") int sessionId,
+    AssignedGamesSessionEditionData data
+  ) {
+    final AssignedGamesSession session = this.assignedService.modify(
+      this.gamesMapper.mapToAssignedGamesSession(sessionId, data)
+    );
+    
+    final AssignedGamesSessionData sessionData =
+      this.gamesMapper.mapToAssignedGamesSession(session, this.uriInfo.getBaseUriBuilder());
+    
+    return Response.ok(sessionData).build();
   }
 }

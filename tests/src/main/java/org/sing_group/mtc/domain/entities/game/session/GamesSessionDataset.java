@@ -45,7 +45,7 @@ import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 public final class GamesSessionDataset {
   private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   
-  private final static Date parseDate(String date) {
+  public final static Date parseDate(String date) {
     try {
       return DATE_FORMAT.parse(date);
     } catch (ParseException e) {
@@ -213,6 +213,22 @@ public final class GamesSessionDataset {
       parseDate("3017-11-10 23:59:59"),
       session1(),
       patient()
+    );
+  }
+  
+  public static int modifiedAssignedGamesSessionId() {
+    return 1;
+  }
+  
+  public static AssignedGamesSession modifiedAssignedGamesSession() {
+    return new AssignedGamesSession(
+      1,
+      parseDate("2017-10-13 17:50:10"),
+      parseDate("3017-12-01 00:00:00"),
+      parseDate("3017-12-15 23:59:59"),
+      session1(),
+      patient(),
+      emptySet()
     );
   }
 }

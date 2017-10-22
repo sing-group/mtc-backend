@@ -368,7 +368,7 @@ public class PatientResourceIntegrationTest {
   ) {
     final Patient patient = patient();
     
-    final AssignedGamesSessionCreationData data = this.gamesMapper.mapAssignedGamesSesionCreation(newAssignedGamesSession());
+    final AssignedGamesSessionCreationData data = this.gamesMapper.mapToAssignedGamesSessionCreation(newAssignedGamesSession());
     
     final Response response = webTarget.path(patient.getLogin()).path("games-session").path("assigned")
       .request()

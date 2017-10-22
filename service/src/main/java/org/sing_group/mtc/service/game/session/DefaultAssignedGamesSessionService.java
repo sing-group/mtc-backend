@@ -28,10 +28,6 @@ import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
-import org.sing_group.mtc.domain.entities.game.session.GamesSession;
-import org.sing_group.mtc.domain.entities.user.Patient;
-import org.sing_group.mtc.domain.entities.user.RoleType;
-import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.service.security.SecurityGuard;
 import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.game.session.AssignedGamesSessionService;
@@ -54,18 +50,16 @@ public class DefaultAssignedGamesSessionService implements AssignedGamesSessionS
   public AssignedGamesSession get(int assignedId) {
     final AssignedGamesSession assignedGamesSession = this.sessionDao.get(assignedId);
     
-    final String patient = assignedGamesSession.getPatient()
-      .map(Patient::getLogin)
-    .orElseThrow(IllegalStateException::new);
-    
-    final String therapist = assignedGamesSession.getSession()
-      .flatMap(GamesSession::getTherapist)
-      .map(Therapist::getLogin)
-    .orElseThrow(IllegalStateException::new);
-    
     return this.securityManager.ifAuthorized(
-      checkThat.hasLoginAndRole(patient, RoleType.PATIENT),
-      checkThat.hasLoginAndRole(therapist, RoleType.THERAPIST)
+      checkThat.hasLogin(assignedGamesSession.getPatientLogin()),
+      checkThat.hasLogin(assignedGamesSession.getTherapistLogin())
     ).call(() -> assignedGamesSession);
+  }
+  
+  @Override
+  public AssignedGamesSession modify(AssignedGamesSession assigned) {
+    return this.securityManager.ifAuthorized(
+      checkThat.hasLogin(this.get(assigned.getId()).getTherapistLogin())
+    ).call(() -> this.sessionDao.modify(assigned));
   }
 }

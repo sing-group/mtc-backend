@@ -225,7 +225,7 @@ public class DefaultPatientResource implements PatientResource {
     
     final Patient patient = this.service.get(login);
     final AssignedGamesSessionData[] assignedSessions = this.service.listAssignedSessions(login, options)
-      .map(assignedSession -> this.gamesMapper.mapAssignedGamesSesion(assignedSession, uriBuilder))
+      .map(assignedSession -> this.gamesMapper.mapToAssignedGamesSession(assignedSession, uriBuilder))
     .toArray(AssignedGamesSessionData[]::new);
     
     return Response.ok(assignedSessions)

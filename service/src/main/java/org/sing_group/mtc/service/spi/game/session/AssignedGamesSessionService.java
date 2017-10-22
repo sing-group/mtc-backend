@@ -27,4 +27,6 @@ public interface AssignedGamesSessionService {
 
   public AssignedGamesSession get(int assignedId);
 
+  public AssignedGamesSession modify(AssignedGamesSession mapToAssignedGamesSession);
+
 }

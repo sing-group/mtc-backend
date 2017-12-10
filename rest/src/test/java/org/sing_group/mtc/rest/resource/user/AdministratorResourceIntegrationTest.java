@@ -139,7 +139,7 @@ public class AdministratorResourceIntegrationTest {
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countAdmins()));
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<AdministratorData> userData = response.readEntity(ADMINISTRATOR_DATA_LIST_TYPE);
     

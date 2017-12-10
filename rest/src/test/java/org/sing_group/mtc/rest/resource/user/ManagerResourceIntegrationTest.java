@@ -145,7 +145,7 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
     
     final List<ManagerData> userData = response.readEntity(MANAGER_DATA_LIST_TYPE);
@@ -191,7 +191,7 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
     
     final List<ManagerData> managerData = response.readEntity(MANAGER_DATA_LIST_TYPE);
@@ -299,7 +299,7 @@ public class ManagerResourceIntegrationTest {
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", manager.getInstitutions().count()));
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<InstitutionData> institutionData = response.readEntity(INSTITUTION_DATA_LIST_TYPE);
     
@@ -378,7 +378,7 @@ public class ManagerResourceIntegrationTest {
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", manager.getInstitutions().count()));
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<InstitutionData> institutionData = response.readEntity(INSTITUTION_DATA_LIST_TYPE);
     

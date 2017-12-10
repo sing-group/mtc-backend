@@ -22,6 +22,7 @@
 package org.sing_group.mtc.rest.filter;
 
 import static java.util.Arrays.stream;
+import static java.util.Objects.requireNonNull;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -53,13 +54,29 @@ public class CrossDomainInterceptor {
       final CrossDomain annotation = getAnnotation(ctx.getMethod(), target.getClass());
       
       final Response response = (Response) ctx.proceed();
-      final ResponseBuilder newResponse = Response.fromResponse(response);
+      final ResponseHeaderBuilder newResponse = new ResponseHeaderBuilder(response);
       
       buildCorsHeaders(annotation, newResponse::header, request::getHeader);
       
       return newResponse.build();
     } else {
       return ctx.proceed();
+    }
+  }
+  
+  private static class ResponseHeaderBuilder {
+    private ResponseBuilder builder;
+
+    public ResponseHeaderBuilder(Response response) {
+      this.builder = requireNonNull(Response.fromResponse(response));
+    }
+    
+    public void header(String name, Object value) {
+      this.builder = this.builder.header(name, value);
+    }
+    
+    public Response build() {
+      return this.builder.build();
     }
   }
 
@@ -86,7 +103,7 @@ public class CrossDomainInterceptor {
     processMaxAge(annotation, responseHeaders);
     processAllowedCredentials(annotation, responseHeaders);
     processAllowedMethods(annotation, responseHeaders);
-    processAllowedHeaders(annotation, responseHeaders, requestHeadersProvider);
+    processAllowedHeaders(annotation, responseHeaders, requestHeadersProvider, true);
   }
   
   protected static void buildCorsHeaders(
@@ -96,13 +113,14 @@ public class CrossDomainInterceptor {
   ) {
     processOrigin(annotation, responseHeaders, requestHeadersProvider);
     processAllowedCredentials(annotation, responseHeaders);
-    processAllowedHeaders(annotation, responseHeaders, requestHeadersProvider);
+    processAllowedHeaders(annotation, responseHeaders, requestHeadersProvider, false);
   }
 
   protected static void processAllowedHeaders(
     final CrossDomain annotation,
     final BiConsumer<String, Object> headerConsumer,
-    final Function<String, String> requestHeadersProvider
+    final Function<String, String> requestHeadersProvider,
+    final boolean preflight
   ) {
     final List<String> allowedHeaders = new ArrayList<>();
     
@@ -114,8 +132,13 @@ public class CrossDomainInterceptor {
     }
     stream(annotation.allowedHeaders()).forEach(allowedHeaders::add);
 
-    if (!allowedHeaders.isEmpty())
-      headerConsumer.accept("Access-Control-Allow-Headers", String.join(", ", allowedHeaders));
+    if (!allowedHeaders.isEmpty()) {
+      final String header = preflight
+        ? "Access-Control-Allow-Headers"
+        : "Access-Control-Expose-Headers";
+      
+      headerConsumer.accept(header, String.join(", ", allowedHeaders));
+    }
   }
 
   private static void processOrigin(

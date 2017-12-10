@@ -175,7 +175,7 @@ public class InstitutionResourceIntegrationTest {
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countInstitutions()));
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<InstitutionData> userData = response.readEntity(INSTITUTION_DATA_LIST_TYPE);
     

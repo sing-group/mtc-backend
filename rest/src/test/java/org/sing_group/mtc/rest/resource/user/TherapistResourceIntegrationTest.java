@@ -150,7 +150,7 @@ public class TherapistResourceIntegrationTest {
     assertThat(response, hasHttpHeader("X-Total-Count", countTherapists()));
     
     final List<TherapistData> userData = response.readEntity(THERAPIST_DATA_LIST_TYPE);
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Allow-Headers", "X-Total-Count"));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     assertThat(userData, containsTherapistsInAnyOrder(therapists));
   }

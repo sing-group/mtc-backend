@@ -44,4 +44,6 @@ public interface InstitutionService {
   public void delete(int id);
 
   public Stream<Therapist> listTherapists(int id, ListingOptions options);
+
+  public Institution changeManager(Institution institution, String manager);
 }

@@ -302,6 +302,10 @@ public class UsersDataset {
     return new Institution("Modified Institution", user("manager"), "Modified Description", "Modified Address", asList(user("therapist")));
   }
   
+  public static Institution modifiedInstitutionWithNewManager() {
+    return new Institution("Modified Institution", user("manager2"), "Modified Description", "Modified Address", asList(user("therapist")));
+  }
+  
   public static Institution institutionToDelete() {
     return institution(1);
   }

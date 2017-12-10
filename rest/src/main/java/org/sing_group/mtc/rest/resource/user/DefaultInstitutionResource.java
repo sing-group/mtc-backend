@@ -178,7 +178,16 @@ public class DefaultInstitutionResource implements InstitutionResource {
     @PathParam("id") int id,
     InstitutionEditionData data
   ) {
-    this.service.update(mapper.toInstitution(id, data));
+    final Institution institution = this.service.update(mapper.toInstitution(id, data));
+    
+    final boolean isManagerChanged = institution.getManager()
+      .map(Manager::getLogin)
+      .map(login -> !login.equals(data.getManager()))
+    .orElse(false);
+    
+    if (isManagerChanged) {
+      this.service.changeManager(institution, data.getManager());
+    }
     
     return Response.ok().build();
   }

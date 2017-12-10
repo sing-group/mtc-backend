@@ -21,6 +21,8 @@
  */
 package org.sing_group.mtc.service.user;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
@@ -30,6 +32,7 @@ import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.InstitutionDAO;
+import org.sing_group.mtc.domain.dao.spi.user.ManagerDAO;
 import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
@@ -48,6 +51,9 @@ public class DefaultInstitutionService implements InstitutionService {
   
   @Inject
   private TherapistDAO therapistDao;
+  
+  @Inject
+  private ManagerDAO managerDao;
 
   @Inject
   private SecurityGuard securityGuard;
@@ -84,6 +90,19 @@ public class DefaultInstitutionService implements InstitutionService {
   @Override
   public Institution update(Institution institution) {
     return this.dao.update(institution);
+  }
+  
+  @Override
+  public Institution changeManager(Institution institution, String managerLogin) {
+    requireNonNull(institution, "institution can't be null");
+    requireNonNull(managerLogin, "managerLogin can't be null");
+    
+    final Manager manager = this.managerDao.get(managerLogin);
+    final Institution persistentInstitution = this.get(institution.getId());
+    
+    persistentInstitution.setManager(manager);
+    
+    return persistentInstitution;
   }
 
   @Override

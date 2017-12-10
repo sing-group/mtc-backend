@@ -32,6 +32,7 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.institutionToDelet
 import static org.sing_group.mtc.domain.entities.UsersDataset.institutionToModify;
 import static org.sing_group.mtc.domain.entities.UsersDataset.institutions;
 import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedInstitution;
+import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedInstitutionWithNewManager;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newInstitution;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newInstitutionId;
 import static org.sing_group.mtc.domain.entities.UsersDataset.therapists;
@@ -287,7 +288,36 @@ public class InstitutionResourceIntegrationTest {
   @ShouldMatchDataSet(value = "users-modify-institution.xml", orderBy = "user.login")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterUpdate() {}
+  
+  @Test
+  @InSequence(33)
+  @UsingDataSet("users.xml")
+  public void beforeUpdateAndChangeManager() {}
 
+  @Test
+  @InSequence(34)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testUpdateAndChangeManager(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final InstitutionEditionData institutionData = userMapper.toEditionData(
+      modifiedInstitutionWithNewManager()
+    );
+    
+    final Response response = webTarget.path(Integer.toString(institutionToModify()))
+      .request()
+    .put(json(institutionData));
+    
+    assertThat(response, hasOkStatus());
+  }
+
+  @Test
+  @InSequence(35)
+  @ShouldMatchDataSet(value = "users-modify-institution-and-manager.xml", orderBy = "user.login")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterUpdateAndChangeManager() {}
+  
   @Test
   @InSequence(40)
   @UsingDataSet("users.xml")

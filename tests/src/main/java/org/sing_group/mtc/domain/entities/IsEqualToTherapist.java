@@ -23,38 +23,38 @@ package org.sing_group.mtc.domain.entities;
 
 import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
-import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 
-public class IsEqualToTherapist extends IsEqualToEntityOfSameType<Patient> {
-  public IsEqualToTherapist(Patient owner) {
+public class IsEqualToTherapist extends IsEqualToEntityOfSameType<Therapist> {
+  public IsEqualToTherapist(Therapist owner) {
     super(owner);
   }
 
   @Override
-  protected boolean matchesSafely(Patient actual) {
+  protected boolean matchesSafely(Therapist actual) {
     this.clearDescribeTo();
 
     if (actual == null) {
       this.addTemplatedValueDescription("actual", expected.toString());
       return false;
     } else {
-      return checkAttribute("login", Patient::getLogin, actual)
+      return checkAttribute("login", Therapist::getLogin, actual)
         && checkAttribute("password", user -> user.getPassword().toUpperCase(), actual);
     }
   }
 
   @Factory
-  public static IsEqualToTherapist equalToPatient(Patient owner) {
+  public static IsEqualToTherapist equalToTherapist(Therapist owner) {
     return new IsEqualToTherapist(owner);
   }
 
   @Factory
-  public static Matcher<Iterable<? extends Patient>> containsPatientsInAnyOrder(Patient... owners) {
-    return containsEntityInAnyOrder(IsEqualToTherapist::equalToPatient, owners);
+  public static Matcher<Iterable<? extends Therapist>> containsTherapistsInAnyOrder(Therapist... owners) {
+    return containsEntityInAnyOrder(IsEqualToTherapist::equalToTherapist, owners);
   }
 
   @Factory
-  public static Matcher<Iterable<? extends Patient>> containsPatientsInAnyOrder(Iterable<Patient> owners) {
-    return containsEntityInAnyOrder(IsEqualToTherapist::equalToPatient, owners);
+  public static Matcher<Iterable<? extends Therapist>> containsTherapistsInAnyOrder(Iterable<Therapist> owners) {
+    return containsEntityInAnyOrder(IsEqualToTherapist::equalToTherapist, owners);
   }
 }

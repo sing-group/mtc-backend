@@ -76,6 +76,7 @@ import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.mapper.user.DefaultUserMapper;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
+import org.sing_group.mtc.rest.entity.user.ManagerCreationData;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
@@ -221,7 +222,7 @@ public class ManagerResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Manager newManager = newManager();
-    final ManagerEditionData userData = userMapper.toEditionData(newManager, passwordOf(newManager));
+    final ManagerCreationData userData = userMapper.toCreationData(newManager, passwordOf(newManager));
     
     final Response response = webTarget
       .request()
@@ -249,10 +250,10 @@ public class ManagerResourceIntegrationTest {
   public void testUpdate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Manager modifiedAdmin = modifiedManager();
-    final ManagerEditionData userData = userMapper.toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
+    final Manager modifiedManager = modifiedManager();
+    final ManagerEditionData userData = userMapper.toEditionData(modifiedManager, newPasswordOf(modifiedManager));
     
-    final Response response = webTarget
+    final Response response = webTarget.path(modifiedManager.getLogin())
       .request()
     .put(json(userData));
     

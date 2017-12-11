@@ -28,6 +28,7 @@ import static org.sing_group.mtc.domain.entities.UsersDataset.MANAGER_HTTP_BASIC
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.countTherapists;
 import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedTherapist;
+import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedTherapistWithNewInstitution;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newPasswordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newTherapist;
 import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
@@ -71,8 +72,8 @@ import org.junit.runner.RunWith;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.mapper.user.DefaultUserMapper;
@@ -218,7 +219,7 @@ public class TherapistResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Therapist newTherapist = newTherapist();
-    final TherapistEditionData userData = userMapper.toEditionData(newTherapist, passwordOf(newTherapist));
+    final TherapistEditionData userData = userMapper.toCreationData(newTherapist, passwordOf(newTherapist));
     
     final Response response = webTarget
       .request()
@@ -246,10 +247,10 @@ public class TherapistResourceIntegrationTest {
   public void testUpdate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Therapist modifiedAdmin = modifiedTherapist();
-    final TherapistEditionData userData = userMapper.toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
+    final Therapist modifiedTherapist = modifiedTherapist();
+    final TherapistEditionData userData = userMapper.toEditionData(modifiedTherapist, newPasswordOf(modifiedTherapist));
     
-    final Response response = webTarget
+    final Response response = webTarget.path(modifiedTherapist.getLogin())
       .request()
     .put(json(userData));
     
@@ -261,6 +262,34 @@ public class TherapistResourceIntegrationTest {
   @ShouldMatchDataSet(value = "users-modify-therapist.xml", orderBy = "user.login")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterUpdate() {}
+  
+  @Test
+  @InSequence(33)
+  @UsingDataSet("users.xml")
+  public void beforeUpdateAndChangeInstitution() {}
+
+  @Test
+  @InSequence(34)
+  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testUpdateAndChangeInstitution(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    final Therapist modifiedTherapist = modifiedTherapistWithNewInstitution();
+    final TherapistEditionData userData = userMapper.toEditionData(modifiedTherapist, newPasswordOf(modifiedTherapist));
+    
+    final Response response = webTarget.path(modifiedTherapist.getLogin())
+      .request()
+    .put(json(userData));
+    
+    assertThat(response, hasOkStatus());
+  }
+
+  @Test
+  @InSequence(35)
+  @ShouldMatchDataSet(value = "users-modify-therapist-and-institution.xml", orderBy = "user.login")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterUpdateAndChangeInstitution() {}
 
   @Test
   @InSequence(40)

@@ -26,47 +26,45 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.sing_group.mtc.domain.entities.user.RoleType;
-
 import io.swagger.annotations.ApiModel;
 
 /**
- * Edition data of the therapist entity.
+ * Creation data of the administrator entity.
  * 
  * @author Miguel Reboiro-Jato
  */
-@XmlRootElement(name = "therapist-edition-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
+@XmlRootElement(name = "admin-creation-data", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.PROPERTY)
-@ApiModel(value = "therapist-edition-data", description = "Edition data of the therapist entity.")
-public class TherapistEditionData extends IdentifiedUserEditionData {
+@ApiModel(value = "admin-creation-data", description = "Creation data of the administrator entity.")
+public class AdministratorCreationData extends AdministratorEditionData {
   private static final long serialVersionUID = 1L;
-  
-  private Integer institution;
 
-  TherapistEditionData() {
-    super();
-  }
+  private String login;
   
-  public TherapistEditionData(String password, String email, String name, String surname, Integer institution) {
-    super(password, email, name, surname, RoleType.THERAPIST);
+  AdministratorCreationData() {}
     
-    this.institution = institution;
+  public AdministratorCreationData(
+    String login, String password, String email, String name, String surname
+  ) {
+    super(password, email, name, surname);
+    
+    this.login = login;
   }
-  
-  @XmlElement(name = "institution", required = true)
-  public Integer getInstitution() {
-    return this.institution;
+
+  @XmlElement(name = "login", required = true)
+  public String getLogin() {
+    return login;
   }
-  
-  public void setInstitution(Integer institution) {
-    this.institution = institution;
+
+  public void setLogin(String login) {
+    this.login = login;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = super.hashCode();
-    result = prime * result + ((institution == null) ? 0 : institution.hashCode());
+    result = prime * result + ((login == null) ? 0 : login.hashCode());
     return result;
   }
 
@@ -78,18 +76,19 @@ public class TherapistEditionData extends IdentifiedUserEditionData {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    TherapistEditionData other = (TherapistEditionData) obj;
-    if (institution == null) {
-      if (other.institution != null)
+    AdministratorCreationData other = (AdministratorCreationData) obj;
+    if (login == null) {
+      if (other.login != null)
         return false;
-    } else if (!institution.equals(other.institution))
+    } else if (!login.equals(other.login))
       return false;
     return true;
   }
 
   @Override
   public String toString() {
-    return "TherapistEditionData [getEmail()=" + getEmail() + ", getName()=" + getName() + ", getSurname()="
-      + getSurname() + ", getPassword()=" + getPassword() + ", getInstitution()=" + getInstitution() + "]";
+    return "AdministratorCreationData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()="
+      + getName() + ", getSurname()=" + getSurname() + ", getPassword()=" + getPassword() + "]";
   }
+
 }

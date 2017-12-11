@@ -52,6 +52,7 @@ import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
+import org.sing_group.mtc.rest.entity.user.ManagerCreationData;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
@@ -102,7 +103,6 @@ public class DefaultManagerResource implements ManagerResource {
     this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
   }
   
-  @Override
   @GET
   @Path("{login}")
   @ApiOperation(
@@ -113,13 +113,13 @@ public class DefaultManagerResource implements ManagerResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login} | 'login' should have a length between 1 and 100")
   )
+  @Override
   public Response get(@PathParam("login") String login) {
     final Manager user = this.service.get(login);
 
     return Response.ok(toManagerData(user)).build();
   }
   
-  @Override
   @GET
   @ApiOperation(
     value = "Returns all the managers in the database.",
@@ -128,6 +128,7 @@ public class DefaultManagerResource implements ManagerResource {
     code = 200,
     responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of managers in the database.")
   )
+  @Override
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
@@ -145,7 +146,6 @@ public class DefaultManagerResource implements ManagerResource {
     .build();
   }
   
-  @Override
   @POST
   @ApiOperation(
     value = "Creates a new manager.",
@@ -155,7 +155,8 @@ public class DefaultManagerResource implements ManagerResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Entity already exists")
   )
-  public Response create(ManagerEditionData data) {
+  @Override
+  public Response create(ManagerCreationData data) {
     final Manager manager = this.service.create(mapper.toManager(data));
     
     final URI userUri = this.pathBuilder.manager(manager).build();
@@ -163,8 +164,8 @@ public class DefaultManagerResource implements ManagerResource {
     return Response.created(userUri).build();
   }
   
-  @Override
   @PUT
+  @Path("{login}")
   @ApiOperation(
     value = "Modifies an existing manager.",
     code = 200
@@ -172,15 +173,16 @@ public class DefaultManagerResource implements ManagerResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
   )
+  @Override
   public Response update(
+    @PathParam("login") String login,
     ManagerEditionData data
   ) {
-    this.service.update(mapper.toManager(data));
+    this.service.update(mapper.toManager(login, data));
     
     return Response.ok().build();
   }
   
-  @Override
   @DELETE
   @Path("{login}")
   @ApiOperation(
@@ -190,6 +192,7 @@ public class DefaultManagerResource implements ManagerResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
   )
+  @Override
   public Response delete(@PathParam("login") String login) {
     this.service.delete(login);
     

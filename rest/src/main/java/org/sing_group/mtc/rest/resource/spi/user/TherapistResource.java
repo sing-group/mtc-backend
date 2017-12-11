@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
+import org.sing_group.mtc.rest.entity.user.TherapistCreationData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 
 @Local
@@ -35,9 +36,9 @@ public interface TherapistResource {
 
   public Response list(int start, int end, String order, SortDirection sort);
 
-  public Response create(TherapistEditionData data);
+  public Response create(TherapistCreationData data);
 
-  public Response update(TherapistEditionData data);
+  public Response update(String login, TherapistEditionData data);
 
   public Response delete(String login);
 

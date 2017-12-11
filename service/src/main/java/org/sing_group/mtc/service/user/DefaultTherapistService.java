@@ -31,12 +31,13 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.game.session.GamesSessionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
+import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.service.security.SecurityGuard;
+import org.sing_group.mtc.service.security.check.SecurityCheck;
 import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.TherapistService;
-import org.sing_group.mtc.service.spi.user.UserService;
 
 @Stateless
 @RolesAllowed("MANAGER")
@@ -48,21 +49,30 @@ public class DefaultTherapistService implements TherapistService {
   private GamesSessionDAO gamesSessionDao;
   
   @Inject
-  private UserService userService;
-
-  @Inject
   private SecurityGuard securityGuard;
   
   @Inject
   private SecurityCheckBuilder checkThat;
   
+  private SecurityCheck checkThatIsManagerOf(Therapist therapist) {
+    final String managerLogin = therapist.getManager()
+      .map(Manager::getLogin)
+    .orElse(null);
+    
+    return checkThat.hasLoginAndRole(managerLogin, RoleType.MANAGER);
+  }
+  
+  private SecurityCheck checkThatIsManagerOf(String therapistLogin) {
+    return this.checkThatIsManagerOf(this.dao.get(therapistLogin));
+  }
+  
   @Override
   @RolesAllowed({ "MANAGER", "THERAPIST" })
   public Therapist get(String login) {
     return this.securityGuard.ifAuthorized(
-        checkThat.hasRole(RoleType.MANAGER),
-        checkThat.hasLogin(login)
-      )
+      checkThat.hasLogin(login),
+      checkThatIsManagerOf(login)
+    )
     .call(() -> dao.get(login));
   }
 
@@ -78,17 +88,23 @@ public class DefaultTherapistService implements TherapistService {
   
   @Override
   public Therapist create(Therapist therapist) {
-    return dao.create(therapist);
+    return this.securityGuard.ifAuthorized(
+      checkThatIsManagerOf(therapist)
+    ).call(() -> dao.create(therapist));
   }
   
   @Override
   public Therapist update(Therapist therapist) {
-    return dao.update(therapist);
+    return this.securityGuard.ifAuthorized(
+      checkThatIsManagerOf(therapist.getLogin())
+    ).call(() -> dao.update(therapist));
   }
 
   @Override
   public void delete(String login) {
-    dao.delete(login);
+    this.securityGuard.ifAuthorized(
+      checkThatIsManagerOf(login)
+    ).run(() -> dao.delete(login));
   }
 
   @RolesAllowed("THERAPIST")
@@ -105,13 +121,13 @@ public class DefaultTherapistService implements TherapistService {
     });
   }
 
-  @RolesAllowed("THERAPIST")
+  @RolesAllowed({ "MANAGER", "THERAPIST" })
   @Override
   public Stream<GamesSession> listGameSessions(String login) {
     return this.securityGuard.ifAuthorized(
         checkThat.hasRole(RoleType.MANAGER),
-        checkThat.hasLogin(login)
+        checkThat.hasLoginAndRole(login, RoleType.THERAPIST)
       )
-    .call(() -> ((Therapist) this.userService.getCurrentUser()).getSessions());
+    .call(() -> this.get(login).getSessions());
   }
 }

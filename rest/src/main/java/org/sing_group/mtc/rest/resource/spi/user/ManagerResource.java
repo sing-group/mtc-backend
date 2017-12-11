@@ -25,6 +25,7 @@ import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
 import org.sing_group.mtc.domain.dao.SortDirection;
+import org.sing_group.mtc.rest.entity.user.ManagerCreationData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
 
 @Local
@@ -34,9 +35,9 @@ public interface ManagerResource {
 
   public Response list(int start, int end, String order, SortDirection sort);
 
-  public Response create(ManagerEditionData data);
+  public Response create(ManagerCreationData data);
 
-  public Response update(ManagerEditionData data);
+  public Response update(String login, ManagerEditionData data);
 
   public Response delete(String login);
   

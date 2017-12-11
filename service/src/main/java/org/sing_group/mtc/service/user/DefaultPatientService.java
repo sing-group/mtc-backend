@@ -40,6 +40,7 @@ import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.service.security.SecurityGuard;
+import org.sing_group.mtc.service.security.check.SecurityCheck;
 import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.PatientService;
 
@@ -60,6 +61,16 @@ public class DefaultPatientService implements PatientService {
   
   @Inject
   private SecurityCheckBuilder checkThat;
+  
+  private SecurityCheck checkThatIsTherapistOf(Patient therapist) {
+    final String therapistLogin = therapist.getTherapist().getLogin();
+    
+    return checkThat.hasLoginAndRole(therapistLogin, RoleType.THERAPIST);
+  }
+  
+  private SecurityCheck checkThatIsTherapistOf(String patientLogin) {
+    return this.checkThatIsTherapistOf(this.dao.get(patientLogin));
+  }
 
   @RolesAllowed({ "THERAPIST", "PATIENT" })
   @Override
@@ -68,7 +79,7 @@ public class DefaultPatientService implements PatientService {
     
     return this.securityGuard.ifAuthorized(
       checkThat.hasLoginAndRole(login, RoleType.PATIENT),
-      checkThat.hasLoginAndRole(() -> this.dao.get(login).getTherapist().getLogin(), RoleType.THERAPIST)
+      checkThatIsTherapistOf(login)
     ).call(() -> dao.get(login));
   }
 
@@ -84,17 +95,23 @@ public class DefaultPatientService implements PatientService {
   
   @Override
   public Patient create(Patient patient) {
-    return dao.create(patient);
+    return this.securityGuard.ifAuthorized(
+      checkThatIsTherapistOf(patient)
+    ).call(() -> dao.create(patient));
   }
   
   @Override
   public Patient update(Patient patient) {
-    return dao.update(patient);
+    return this.securityGuard.ifAuthorized(
+      checkThatIsTherapistOf(patient.getLogin())
+    ).call(() -> dao.update(patient));
   }
 
   @Override
   public void delete(String login) {
-    dao.delete(login);
+    this.securityGuard.ifAuthorized(
+      checkThatIsTherapistOf(login)
+    ).run(() -> dao.delete(login));
   }
 
   @RolesAllowed({ "THERAPIST", "PATIENT" })
@@ -116,7 +133,7 @@ public class DefaultPatientService implements PatientService {
     requireNonNull(endDate, "'startDate' can't be null");
 
     return this.securityGuard.ifFullyAuthorized(
-      checkThat.hasLogin(() -> this.dao.get(login).getTherapist().getLogin()),
+      checkThatIsTherapistOf(login),
       checkThat.hasLogin(() -> this.gamesSessionDao.get(gamesSessionId).getTherapist().map(Therapist::getLogin).orElse(""))
     ).call(() -> this.assignedSessionsDao.assignSession(
       this.dao.get(login),

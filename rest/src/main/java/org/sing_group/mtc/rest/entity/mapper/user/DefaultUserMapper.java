@@ -35,12 +35,16 @@ import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
+import org.sing_group.mtc.rest.entity.user.AdministratorCreationData;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
+import org.sing_group.mtc.rest.entity.user.ManagerCreationData;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
+import org.sing_group.mtc.rest.entity.user.PatientCreationData;
 import org.sing_group.mtc.rest.entity.user.PatientData;
 import org.sing_group.mtc.rest.entity.user.PatientEditionData;
+import org.sing_group.mtc.rest.entity.user.TherapistCreationData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
@@ -58,9 +62,19 @@ public class DefaultUserMapper implements UserMapper {
   }
   
   @Override
+  public AdministratorCreationData toCreationData(Administrator admin, String password) {
+    return new AdministratorCreationData(
+      admin.getLogin(),
+      password,
+      admin.getEmail(),
+      admin.getName().orElse(null),
+      admin.getSurname().orElse(null)
+    );
+  }
+
+  @Override
   public AdministratorEditionData toEditionData(Administrator admin, String password) {
     return new AdministratorEditionData(
-      admin.getLogin(),
       password,
       admin.getEmail(),
       admin.getName().orElse(null),
@@ -84,9 +98,19 @@ public class DefaultUserMapper implements UserMapper {
   }
   
   @Override
+  public ManagerCreationData toCreationData(Manager manager, String password) {
+    return new ManagerCreationData(
+      manager.getLogin(),
+      password,
+      manager.getEmail(),
+      manager.getName().orElse(null),
+      manager.getSurname().orElse(null)
+    );
+  }
+
+  @Override
   public ManagerEditionData toEditionData(Manager manager, String password) {
     return new ManagerEditionData(
-      manager.getLogin(),
       password,
       manager.getEmail(),
       manager.getName().orElse(null),
@@ -117,9 +141,20 @@ public class DefaultUserMapper implements UserMapper {
   }
   
   @Override
+  public TherapistCreationData toCreationData(Therapist therapist, String password) {
+    return new TherapistCreationData(
+      therapist.getLogin(),
+      password,
+      therapist.getEmail(),
+      therapist.getName().orElse(null),
+      therapist.getSurname().orElse(null),
+      therapist.getInstitution().getId()
+    );
+  }
+
+  @Override
   public TherapistEditionData toEditionData(Therapist therapist, String password) {
     return new TherapistEditionData(
-      therapist.getLogin(),
       password,
       therapist.getEmail(),
       therapist.getName().orElse(null),
@@ -147,8 +182,8 @@ public class DefaultUserMapper implements UserMapper {
   }
   
   @Override
-  public PatientEditionData toEditionData(Patient patient, String password) {
-    return new PatientEditionData(
+  public PatientCreationData toCreationData(Patient patient, String password) {
+    return new PatientCreationData(
       patient.getLogin(),
       password,
       patient.getTherapist().getLogin()
@@ -156,22 +191,47 @@ public class DefaultUserMapper implements UserMapper {
   }
 
   @Override
-  public Administrator toAdministrator(AdministratorEditionData data) {
-    return new Administrator(data.getLogin(), data.getEmail(), data.getPassword(), data.getName(), data.getSurname());
+  public PatientEditionData toEditionData(Patient patient, String password) {
+    return new PatientEditionData(password);
   }
 
   @Override
-  public Manager toManager(ManagerEditionData data) {
-    return new Manager(data.getLogin(), data.getEmail(), data.getPassword(), data.getName(), data.getSurname(), null);
+  public Administrator toAdministrator(AdministratorCreationData data) {
+    return this.toAdministrator(data.getLogin(), data);
   }
-  
+
   @Override
-  public Therapist toTherapist(TherapistEditionData data, Institution institution) {
+  public Administrator toAdministrator(String login, AdministratorEditionData data) {
+    return new Administrator(login, data.getEmail(), data.getPassword(), data.getName(), data.getSurname());
+  }
+
+  @Override
+  public Manager toManager(ManagerCreationData data) {
+    return this.toManager(data.getLogin(), data);
+  }
+
+  @Override
+  public Manager toManager(String login, ManagerEditionData data) {
+    return new Manager(login, data.getEmail(), data.getPassword(), data.getName(), data.getSurname(), null);
+  }
+
+  @Override
+  public Therapist toTherapist(TherapistCreationData data, Institution institution) {
     return new Therapist(data.getLogin(), data.getEmail(), data.getPassword(), institution, data.getName(), data.getSurname(), null, null);
   }
-  
+
   @Override
-  public Patient toPatient(PatientEditionData data, Therapist therapist) {
+  public Therapist toTherapist(String login, TherapistEditionData data) {
+    return new Therapist(login, data.getEmail(), data.getPassword(), null, data.getName(), data.getSurname(), null, null);
+  }
+
+  @Override
+  public Patient toPatient(PatientCreationData data, Therapist therapist) {
     return new Patient(data.getLogin(), data.getPassword(), therapist);
+  }
+
+  @Override
+  public Patient toPatient(String login, PatientEditionData data) {
+    return new Patient(login, data.getPassword(), null);
   }
 }

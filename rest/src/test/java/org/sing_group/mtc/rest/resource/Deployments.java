@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.rest.resource;
 
+import org.apache.log4j.BasicConfigurator;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
@@ -30,6 +31,8 @@ public final class Deployments {
   private Deployments() {}
   
   public static WebArchive createDeployment() {
+    BasicConfigurator.configure();
+    
     return ShrinkWrap.create(WebArchive.class, "test.war")
       .addClass(Checks.class)
       .addPackages(true, "org.sing_group.mtc")

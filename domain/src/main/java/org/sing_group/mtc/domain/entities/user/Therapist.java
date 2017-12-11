@@ -126,6 +126,10 @@ public class Therapist extends IdentifiedUser {
   public Institution getInstitution() {
     return institution;
   }
+  
+  public Optional<Manager> getManager() {
+    return this.institution.getManager();
+  }
 
   public Stream<Patient> getPatients() {
     return patients.stream();

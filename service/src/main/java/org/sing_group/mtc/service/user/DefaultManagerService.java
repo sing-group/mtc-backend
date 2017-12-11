@@ -114,4 +114,24 @@ public class DefaultManagerService implements ManagerService {
     )
     .call(() -> therapistDao.listByManager(this.get(login), options));
   }
+  
+  @RolesAllowed({ "ADMIN", "MANAGER" })
+  @Override
+  public Therapist changeInstitution(String therapistLogin, int institutionId) {
+    final Institution institution = this.institutionDao.get(institutionId);
+    final Therapist therapist = this.therapistDao.get(therapistLogin);
+    
+    final String managerLogin = therapist.getManager()
+      .map(Manager::getLogin)
+    .orElse(null);
+    
+    return this.securityGuard.ifAuthorized(
+      checkThat.hasRole(RoleType.ADMIN),
+      checkThat.hasLogin(managerLogin)
+    ).call(() -> {
+      therapist.setInstitution(institution);
+      
+      return therapist;
+    });
+  }
 }

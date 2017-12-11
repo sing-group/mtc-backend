@@ -28,10 +28,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
 /**
- * Profile data of the manager entity.
+ * Edition data of the manager entity.
  * 
  * @author Miguel Reboiro-Jato
  */
@@ -45,25 +44,13 @@ public class ManagerEditionData extends IdentifiedUserEditionData {
     super();
   }
   
-  public ManagerEditionData(String login, String password, String email, String name, String surname) {
-    super(login, password, email, name, surname, RoleType.MANAGER);
-  }
-
-  @ApiModelProperty(allowableValues = "MANAGER", required = true)
-  @Override
-  public RoleType getRole() {
-    return super.getRole();
-  }
-
-  @Override
-  public void setRole(RoleType role) {
-    if (role != RoleType.MANAGER)
-      throw new IllegalArgumentException("Invalid role. Only " + RoleType.MANAGER + " role is admitted");
+  public ManagerEditionData(String password, String email, String name, String surname) {
+    super(password, email, name, surname, RoleType.MANAGER);
   }
 
   @Override
   public String toString() {
-    return "ManagerEditionData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()="
-      + getName() + ", getSurname()=" + getSurname() + ", getPassword()=" + getPassword() + "]";
+    return "ManagerEditionData [getEmail()=" + getEmail() + ", getName()=" + getName() + ", getSurname()="
+      + getSurname() + ", getPassword()=" + getPassword() + "]";
   }
 }

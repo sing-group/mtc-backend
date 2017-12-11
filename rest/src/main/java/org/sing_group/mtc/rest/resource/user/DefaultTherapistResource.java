@@ -48,10 +48,11 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Therapist;
-import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
+import org.sing_group.mtc.rest.entity.user.TherapistCreationData;
 import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.entity.user.TherapistEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
@@ -59,6 +60,7 @@ import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.rest.resource.spi.user.TherapistResource;
 import org.sing_group.mtc.service.spi.user.InstitutionService;
+import org.sing_group.mtc.service.spi.user.ManagerService;
 import org.sing_group.mtc.service.spi.user.TherapistService;
 
 import io.swagger.annotations.Api;
@@ -85,6 +87,9 @@ import io.swagger.annotations.ResponseHeader;
 public class DefaultTherapistResource implements TherapistResource {
   @Inject
   private TherapistService service;
+  
+  @Inject
+  private ManagerService managerService;
   
   @Inject
   private InstitutionService institutionService;
@@ -158,8 +163,10 @@ public class DefaultTherapistResource implements TherapistResource {
     @ApiResponse(code = 400, message = "Entity already exists")
   )
   @Override
-  public Response create(TherapistEditionData data) {
-    final Therapist therapist = this.service.create(userMapper.toTherapist(data, this.institutionService.get(data.getInstitution())));
+  public Response create(TherapistCreationData data) {
+    final Therapist therapist = this.service.create(
+      userMapper.toTherapist(data, this.institutionService.get(data.getInstitution()))
+    );
     
     final URI userUri = this.pathBuilder.therapist(therapist).build();
     
@@ -167,6 +174,7 @@ public class DefaultTherapistResource implements TherapistResource {
   }
   
   @PUT
+  @Path("{login}")
   @ApiOperation(
     value = "Modifies an existing therapist.",
     code = 200
@@ -176,11 +184,18 @@ public class DefaultTherapistResource implements TherapistResource {
   )
   @Override
   public Response update(
+    @PathParam("login") String login,
     TherapistEditionData data
   ) {
-    this.service.update(userMapper.toTherapist(data, this.institutionService.get(data.getInstitution())));
+    Therapist therapist = this.service.update(userMapper.toTherapist(login, data));
     
-    return Response.ok().build();
+    final boolean isInstitutionChanged = therapist.getInstitution().getId() != data.getInstitution();
+    
+    if (isInstitutionChanged) {
+      therapist = this.managerService.changeInstitution(therapist.getLogin(), data.getInstitution());
+    }
+    
+    return Response.ok(this.toTherapistData(therapist)).build();
   }
   
   @DELETE

@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Edition data of the administrator entity.
@@ -45,25 +44,13 @@ public class AdministratorEditionData extends IdentifiedUserEditionData {
     super();
   }
   
-  public AdministratorEditionData(String login, String password, String email, String name, String surname) {
-    super(login, password, email, name, surname, RoleType.ADMIN);
-  }
-
-  @ApiModelProperty(allowableValues = "ADMIN", required = true)
-  @Override
-  public RoleType getRole() {
-    return super.getRole();
-  }
-
-  @Override
-  public void setRole(RoleType role) {
-    if (role != RoleType.ADMIN)
-      throw new IllegalArgumentException("Invalid role. Only " + RoleType.ADMIN + " role is admitted");
+  public AdministratorEditionData(String password, String email, String name, String surname) {
+    super(password, email, name, surname, RoleType.ADMIN);
   }
 
   @Override
   public String toString() {
-    return "AdministratorEditionData [getLogin()=" + getLogin() + ", getEmail()=" + getEmail() + ", getName()="
-      + getName() + ", getSurname()=" + getSurname() + ", getPassword()=" + getPassword() + "]";
+    return "AdministratorEditionData [getEmail()=" + getEmail() + ", getName()=" + getName() + ", getSurname()="
+      + getSurname() + ", getPassword()=" + getPassword() + "]";
   }
 }

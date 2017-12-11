@@ -48,6 +48,7 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Administrator;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
+import org.sing_group.mtc.rest.entity.user.AdministratorCreationData;
 import org.sing_group.mtc.rest.entity.user.AdministratorData;
 import org.sing_group.mtc.rest.entity.user.AdministratorEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
@@ -94,7 +95,6 @@ public class DefaultAdministratorResource implements AdministratorResource {
     this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
   }
   
-  @Override
   @GET
   @Path("{login}")
   @ApiOperation(
@@ -105,13 +105,13 @@ public class DefaultAdministratorResource implements AdministratorResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login} | 'login' should have a length between 1 and 100")
   )
+  @Override
   public Response get(@PathParam("login") String login) {
     final Administrator user = this.service.get(login);
 
     return Response.ok(mapper.toData(user)).build();
   }
   
-  @Override
   @GET
   @ApiOperation(
     value = "Returns all the administrators in the database.",
@@ -120,6 +120,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
     code = 200,
     responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of administrators in the database.")
   )
+  @Override
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
@@ -137,7 +138,6 @@ public class DefaultAdministratorResource implements AdministratorResource {
     .build();
   }
   
-  @Override
   @POST
   @ApiOperation(
     value = "Creates a new administrator.",
@@ -147,7 +147,8 @@ public class DefaultAdministratorResource implements AdministratorResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Entity already exists")
   )
-  public Response create(AdministratorEditionData data) {
+  @Override
+  public Response create(AdministratorCreationData data) {
     final Administrator admin = this.service.create(mapper.toAdministrator(data));
     
     final URI userUri = pathBuilder.admin(admin).build();
@@ -155,8 +156,8 @@ public class DefaultAdministratorResource implements AdministratorResource {
     return Response.created(userUri).build();
   }
   
-  @Override
   @PUT
+  @Path("{login}")
   @ApiOperation(
     value = "Modifies an existing administrator.",
     code = 200
@@ -164,15 +165,16 @@ public class DefaultAdministratorResource implements AdministratorResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
   )
+  @Override
   public Response update(
+    @PathParam("login") String login,
     AdministratorEditionData data
   ) {
-    this.service.update(mapper.toAdministrator(data));
+    this.service.update(mapper.toAdministrator(login, data));
     
     return Response.ok().build();
   }
   
-  @Override
   @DELETE
   @Path("{login}")
   @ApiOperation(
@@ -182,6 +184,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
   )
+  @Override
   public Response delete(@PathParam("login") String login) {
     this.service.delete(login);
     

@@ -36,8 +36,8 @@ public abstract class IdentifiedUserEditionData extends UserEditionData {
   
   IdentifiedUserEditionData() {}
 
-  public IdentifiedUserEditionData(String login, String password, String email, String name, String surname, RoleType role) {
-    super(login, password, role);
+  public IdentifiedUserEditionData(String password, String email, String name, String surname, RoleType role) {
+    super(password);
     
     this.email = email;
     this.name = name;

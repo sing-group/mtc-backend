@@ -53,6 +53,7 @@ import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationD
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
+import org.sing_group.mtc.rest.entity.user.PatientCreationData;
 import org.sing_group.mtc.rest.entity.user.PatientData;
 import org.sing_group.mtc.rest.entity.user.PatientEditionData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
@@ -106,7 +107,6 @@ public class DefaultPatientResource implements PatientResource {
     this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
   }
   
-  @Override
   @GET
   @Path("{login}")
   @ApiOperation(
@@ -117,13 +117,13 @@ public class DefaultPatientResource implements PatientResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login} | 'login' should have a length between 1 and 100")
   )
+  @Override
   public Response get(@PathParam("login") String login) {
     final Patient user = this.service.get(login);
 
     return Response.ok(toPatientData(user)).build();
   }
   
-  @Override
   @GET
   @ApiOperation(
     value = "Returns all the patients in the database.",
@@ -132,6 +132,7 @@ public class DefaultPatientResource implements PatientResource {
     code = 200,
     responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of patients in the database.")
   )
+  @Override
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
@@ -149,7 +150,6 @@ public class DefaultPatientResource implements PatientResource {
     .build();
   }
   
-  @Override
   @POST
   @ApiOperation(
     value = "Creates a new patient.",
@@ -159,7 +159,8 @@ public class DefaultPatientResource implements PatientResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Entity already exists")
   )
-  public Response create(PatientEditionData data) {
+  @Override
+  public Response create(PatientCreationData data) {
     final Patient patient = this.service.create(mapper.toPatient(data, therapistService.get(data.getTherapist())));
     
     final URI userUri = this.pathBuilder.patient(patient).build();
@@ -167,8 +168,8 @@ public class DefaultPatientResource implements PatientResource {
     return Response.created(userUri).build();
   }
   
-  @Override
   @PUT
+  @Path("{login}")
   @ApiOperation(
     value = "Modifies an existing patient.",
     code = 200
@@ -176,15 +177,23 @@ public class DefaultPatientResource implements PatientResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
   )
+  @Override
   public Response update(
+    @PathParam("login") String login,
     PatientEditionData data
   ) {
-    this.service.update(mapper.toPatient(data, therapistService.get(data.getTherapist())));
-    
-    return Response.ok().build();
+    try {
+      final Patient patient = this.service.update(mapper.toPatient(login, data));
+      
+      return Response
+        .ok(this.mapper.toData(patient, this.uriInfo.getAbsolutePathBuilder()))
+      .build();
+    } catch (RuntimeException e) {
+      e.printStackTrace();
+      throw e;
+    }
   }
   
-  @Override
   @DELETE
   @Path("{login}")
   @ApiOperation(
@@ -194,6 +203,7 @@ public class DefaultPatientResource implements PatientResource {
   @ApiResponses(
     @ApiResponse(code = 400, message = "Unknown user: {login}")
   )
+  @Override
   public Response delete(@PathParam("login") String login) {
     this.service.delete(login);
     

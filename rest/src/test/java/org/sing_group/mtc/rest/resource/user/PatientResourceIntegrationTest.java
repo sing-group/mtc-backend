@@ -222,7 +222,7 @@ public class PatientResourceIntegrationTest {
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final Patient newPatient = newPatient();
-    final PatientEditionData userData = userMapper.toEditionData(newPatient, passwordOf(newPatient));
+    final PatientEditionData userData = userMapper.toCreationData(newPatient, passwordOf(newPatient));
     
     final Response response = webTarget
       .request()
@@ -250,10 +250,10 @@ public class PatientResourceIntegrationTest {
   public void testUpdate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Patient modifiedAdmin = modifiedPatient();
-    final PatientEditionData userData = userMapper.toEditionData(modifiedAdmin, newPasswordOf(modifiedAdmin));
+    final Patient modifiedPatient = modifiedPatient();
+    final PatientEditionData userData = userMapper.toEditionData(modifiedPatient, newPasswordOf(modifiedPatient));
     
-    final Response response = webTarget
+    final Response response = webTarget.path(modifiedPatient.getLogin())
       .request()
     .put(json(userData));
     

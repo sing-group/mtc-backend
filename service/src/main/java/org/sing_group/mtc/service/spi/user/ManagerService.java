@@ -47,4 +47,6 @@ public interface ManagerService {
   public Stream<Institution> listInstitutions(String login, ListingOptions listingOptions);
 
   public Stream<Therapist> listTherapists(String login, ListingOptions options);
+
+  public Therapist changeInstitution(String therapistLogin, int institutionId);
 }

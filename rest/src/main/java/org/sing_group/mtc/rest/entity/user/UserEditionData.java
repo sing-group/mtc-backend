@@ -21,20 +21,18 @@
  */
 package org.sing_group.mtc.rest.entity.user;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlElement;
 
-import org.sing_group.mtc.domain.entities.user.RoleType;
-
-public abstract class UserEditionData extends UserData {
+public abstract class UserEditionData implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private String password;
   
   UserEditionData() {}
 
-  public UserEditionData(String login, String password, RoleType role) {
-    super(login, role);
-    
+  public UserEditionData(String password) {
     this.password = password;
   }
 

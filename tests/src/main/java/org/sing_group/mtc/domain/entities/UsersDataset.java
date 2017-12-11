@@ -219,6 +219,10 @@ public class UsersDataset {
     return new Manager("manager", "managerModified@email.com", newPasswordOf("manager"), "ManModified", "Manager", null);
   }
 
+  public static Manager modifiedManagerWithNewInstitution() {
+    return new Manager("manager", "managerModified@email.com", newPasswordOf("manager"), "ManModified", "Manager", null);
+  }
+
   public static Manager managerToDelete() {
     return user("manager");
   }
@@ -245,6 +249,10 @@ public class UsersDataset {
 
   public static Therapist modifiedTherapist() {
     return new Therapist("therapist", "therapistModified@email.com", newPasswordOf("therapist"), institution(1), "TheraModified", "Therapist", null, null);
+  }
+
+  public static Therapist modifiedTherapistWithNewInstitution() {
+    return new Therapist("therapist", "therapistModified@email.com", newPasswordOf("therapist"), institution(3), "TheraModified", "Therapist", null, null);
   }
 
   public static Therapist therapistToDelete() {

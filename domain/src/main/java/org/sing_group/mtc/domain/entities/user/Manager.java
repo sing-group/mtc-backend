@@ -117,4 +117,10 @@ public class Manager extends IdentifiedUser {
   protected boolean directAddInstitution(Institution institution) {
     return this.institutions.add(institution);
   }
+  
+  public Stream<Therapist> getManagedTherapists() {
+    return this.getInstitutions()
+      .flatMap(Institution::getTherapists)
+      .distinct();
+  }
 }

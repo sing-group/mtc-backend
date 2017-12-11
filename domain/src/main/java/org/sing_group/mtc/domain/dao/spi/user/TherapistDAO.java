@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
 public interface TherapistDAO {
@@ -42,5 +43,7 @@ public interface TherapistDAO {
   public Therapist update(Therapist therapist);
 
   public void delete(String login);
+
+  public Stream<Therapist> listByManager(Manager manager, ListingOptions listingOptions);
 
 }

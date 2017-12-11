@@ -25,13 +25,16 @@ import java.util.stream.Stream;
 
 import javax.enterprise.inject.Default;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
 import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Default
@@ -63,4 +66,10 @@ implements TherapistDAO {
     }).stream();
   }
 
+  @Override
+  public Stream<Therapist> listByManager(Manager manager, ListingOptions options) {
+    return this.dh.list(options, (CriteriaBuilder cb, Root<Therapist> root) -> new Predicate[] {
+      cb.equal(root.join("institution").get("manager"), manager)
+    }).stream();
+  }
 }

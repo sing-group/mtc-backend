@@ -28,6 +28,7 @@ import javax.ejb.Local;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Local
 public interface ManagerService {
@@ -44,4 +45,6 @@ public interface ManagerService {
   public void delete(String login);
   
   public Stream<Institution> listInstitutions(String login, ListingOptions listingOptions);
+
+  public Stream<Therapist> listTherapists(String login, ListingOptions options);
 }

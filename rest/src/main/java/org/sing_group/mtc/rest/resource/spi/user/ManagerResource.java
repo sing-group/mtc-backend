@@ -44,4 +44,6 @@ public interface ManagerResource {
 
   public Response getInstitution(String login, int id);
 
+  public Response getTherapists(String login, int start, int end, String order, SortDirection sort);
+
 }

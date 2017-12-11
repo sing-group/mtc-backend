@@ -48,11 +48,13 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.InstitutionMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
+import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
 import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
@@ -242,6 +244,42 @@ public class DefaultManagerResource implements ManagerResource {
     .orElseThrow(() -> new IllegalArgumentException("Unknown institution with id: " + id));
     
     return Response.ok(this.toInstitutionData(institution)).build();
+  }
+
+  @GET
+  @Path("{login}/therapist")
+  @ApiOperation(
+    value = "Returns all the institutions of a manager.",
+    response = InstitutionData.class,
+    responseContainer = "List",
+    code = 200,
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of institutions of the manager.")
+  )
+  @Override
+  public Response getTherapists(
+    @PathParam("login") String login,
+    @QueryParam("start") @DefaultValue("-1") int start,
+    @QueryParam("end") @DefaultValue("-1") int end,
+    @QueryParam("order") String order,
+    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+  ) {
+    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    
+    final TherapistData[] therapists = this.service.listTherapists(login, options)
+      .map(this::toTherapistData)
+    .toArray(TherapistData[]::new);
+    
+    final Manager manager = this.service.get(login);
+    
+    final long institutionCount = manager.getManagedTherapists().count();
+    
+    return Response.ok(therapists)
+      .header("X-Total-Count", institutionCount)
+    .build();
+  }
+  
+  private TherapistData toTherapistData(Therapist therapist) {
+    return mapper.toData(therapist, this.uriInfo.getBaseUriBuilder());
   }
   
   private ManagerData toManagerData(Manager manager) {

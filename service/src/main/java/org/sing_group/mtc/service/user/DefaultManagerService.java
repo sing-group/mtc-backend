@@ -32,9 +32,11 @@ import javax.inject.Inject;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.InstitutionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.ManagerDAO;
+import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
 import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 import org.sing_group.mtc.domain.entities.user.RoleType;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.service.security.SecurityGuard;
 import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.user.ManagerService;
@@ -44,6 +46,9 @@ import org.sing_group.mtc.service.spi.user.ManagerService;
 public class DefaultManagerService implements ManagerService {
   @Inject
   private ManagerDAO dao;
+  
+  @Inject
+  private TherapistDAO therapistDao;
   
   @Inject
   private InstitutionDAO institutionDao;
@@ -98,5 +103,15 @@ public class DefaultManagerService implements ManagerService {
         checkThat.hasLoginAndRole(login, RoleType.MANAGER)
       )
     .call(() -> this.institutionDao.list(this.get(login), listingOptions));
+  }
+
+  @RolesAllowed({ "ADMIN", "MANAGER" })
+  @Override
+  public Stream<Therapist> listTherapists(String login, ListingOptions options) {
+    return this.securityGuard.ifAuthorized(
+      checkThat.hasRole(RoleType.ADMIN),
+      checkThat.hasLoginAndRole(login, RoleType.MANAGER)
+    )
+    .call(() -> therapistDao.listByManager(this.get(login), options));
   }
 }

@@ -35,4 +35,8 @@ public class ManagerWithResourcesRestPathBuilder extends ManagerRestPathBuilder 
   public InstitutionRestPathBuilder institution(int id) {
     return new InstitutionRestPathBuilder(this.builder, id);
   }
+  
+  public TherapistRestPathBuilder therapist() {
+    return new TherapistRestPathBuilder(this.builder);
+  }
 }

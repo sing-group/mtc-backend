@@ -42,11 +42,13 @@ import static org.sing_group.mtc.http.util.HasHttpStatus.hasCreatedStatus;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.InstitutionDataListType.INSTITUTION_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.GenericTypes.ManagerDataListType.MANAGER_DATA_LIST_TYPE;
+import static org.sing_group.mtc.rest.entity.GenericTypes.TherapistDataListType.THERAPIST_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.containsInstitutionsInAnyOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToInstitution.equalToInstitution;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.containsManagersInAnyOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.containsManagersInOrder;
 import static org.sing_group.mtc.rest.entity.user.IsEqualToManager.equalToManager;
+import static org.sing_group.mtc.rest.entity.user.IsEqualToTherapist.containsTherapistsInAnyOrder;
 
 import java.util.List;
 import java.util.function.Function;
@@ -76,6 +78,7 @@ import org.sing_group.mtc.rest.entity.mapper.user.DefaultUserMapper;
 import org.sing_group.mtc.rest.entity.user.InstitutionData;
 import org.sing_group.mtc.rest.entity.user.ManagerData;
 import org.sing_group.mtc.rest.entity.user.ManagerEditionData;
+import org.sing_group.mtc.rest.entity.user.TherapistData;
 import org.sing_group.mtc.rest.resource.Deployments;
 
 @RunWith(Arquillian.class)
@@ -447,5 +450,64 @@ public class ManagerResourceIntegrationTest {
   @ShouldMatchDataSet("users.xml")
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterGetInstitutionAsManager() {}
+
+  private void testListTherapists(ResteasyWebTarget webTarget) {
+    final Manager manager = manager();
+    
+    final Response response = webTarget.path(manager.getLogin()).path("therapist")
+      .request()
+      .header("Origin", "localhost")
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", manager.getManagedTherapists().count()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
+    
+    final List<TherapistData> institutionData = response.readEntity(THERAPIST_DATA_LIST_TYPE);
+    
+    assertThat(institutionData, containsTherapistsInAnyOrder(manager.getManagedTherapists()));
+  }
+  
+  @Test
+  @InSequence(200)
+  @UsingDataSet("users.xml")
+  public void beforeListTherapistsAsAdmin() {}
+
+  @Test
+  @InSequence(201)
+  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListTherapistsAsAdmin(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testListTherapists(webTarget);
+  }
+
+  @Test
+  @InSequence(202)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListTherapistsAsAdmin() {}
+  
+  @Test
+  @InSequence(203)
+  @UsingDataSet("users.xml")
+  public void beforeListTherapistsAsManager() {}
+
+  @Test
+  @InSequence(204)
+  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListTherapistsAsManager(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testListTherapists(webTarget);
+  }
+
+  @Test
+  @InSequence(205)
+  @ShouldMatchDataSet("users.xml")
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListTherapistsAsManager() {}
 
 }

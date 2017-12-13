@@ -29,7 +29,7 @@ public class AssignedGamesSessionRestPathBuilder implements RestPathBuilder {
   private final UriBuilder builder;
   
   public AssignedGamesSessionRestPathBuilder(UriBuilder builder) {
-    this.builder = builder.clone().path("session").path("assigned");
+    this.builder = builder.clone().path("games-session").path("assigned");
   }
 
   @Override

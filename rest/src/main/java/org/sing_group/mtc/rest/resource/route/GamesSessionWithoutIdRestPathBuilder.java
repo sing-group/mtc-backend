@@ -29,7 +29,7 @@ public class GamesSessionWithoutIdRestPathBuilder implements RestPathBuilder {
   protected UriBuilder builder;
 
   public GamesSessionWithoutIdRestPathBuilder(UriBuilder builder) {
-    this.builder = builder.clone().path("game").path("session");
+    this.builder = builder.clone().path("games-session");
   }
 
   @Override

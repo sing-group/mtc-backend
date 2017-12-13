@@ -215,7 +215,7 @@ public class DefaultTherapistResource implements TherapistResource {
   }
   
   @POST
-  @Path("{login}/gamesession")
+  @Path("{login}/games-session")
   @Override
   @ApiOperation(
     value = "Creates a new games session associated to the therapist.",
@@ -244,7 +244,7 @@ public class DefaultTherapistResource implements TherapistResource {
   }
 
   @GET
-  @Path("{login}/gamesession")
+  @Path("{login}/games-session")
   @Override
   @ApiOperation(
     value = "List the games sessions of the therapist.",
@@ -257,7 +257,9 @@ public class DefaultTherapistResource implements TherapistResource {
       .map(session -> gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder()))
     .toArray(GamesSessionData[]::new);
     
-    return Response.ok(sessions).build();
+    return Response.ok(sessions)
+      .header("X-Total-Count", sessions.length)
+    .build();
   }
   
   private TherapistData toTherapistData(Therapist therapist) {

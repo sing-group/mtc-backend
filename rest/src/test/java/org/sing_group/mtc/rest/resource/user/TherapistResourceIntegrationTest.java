@@ -335,7 +335,7 @@ public class TherapistResourceIntegrationTest {
     
     final Response response = webTarget
       .path(expectedSession.getTherapist().map(Therapist::getLogin).orElseThrow(IllegalStateException::new))
-      .path("gamesession")
+      .path("games-session")
       .request()
     .post(json(newSessionData));
     
@@ -363,7 +363,7 @@ public class TherapistResourceIntegrationTest {
   ) {
     final Response response = webTarget
       .path(therapist().getLogin())
-      .path("gamesession")
+      .path("games-session")
       .request()
     .get();
     

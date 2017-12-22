@@ -33,7 +33,7 @@ public interface AdministratorResource {
 
   public Response get(String login);
 
-  public Response list(int start, int end, String order, SortDirection sort);
+  public Response list(int start, int end, String sortField, SortDirection order);
 
   public Response create(AdministratorCreationData data);
 

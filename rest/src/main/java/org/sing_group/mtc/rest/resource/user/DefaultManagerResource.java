@@ -132,10 +132,10 @@ public class DefaultManagerResource implements ManagerResource {
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     
     final ManagerData[] managers = this.service.list(options)
       .map(this::toManagerData)
@@ -213,10 +213,10 @@ public class DefaultManagerResource implements ManagerResource {
     @PathParam("login") String login,
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     
     final Manager manager = this.service.get(login);
     final InstitutionData[] institutions = this.service.listInstitutions(login, options)
@@ -263,10 +263,10 @@ public class DefaultManagerResource implements ManagerResource {
     @PathParam("login") String login,
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     
     final TherapistData[] therapists = this.service.listTherapists(login, options)
       .map(this::toTherapistData)

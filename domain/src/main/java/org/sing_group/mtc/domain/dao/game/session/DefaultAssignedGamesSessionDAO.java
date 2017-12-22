@@ -35,6 +35,7 @@ import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 
 public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
   @PersistenceContext
@@ -64,6 +65,13 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
   public Stream<AssignedGamesSession> listByPatient(Patient patient, ListingOptions options) {
     return this.dh.list(options, (cb, root) -> new Predicate[] {
       cb.equal(root.get("patient"), patient)
+    }).stream();
+  }
+  
+  @Override
+  public Stream<AssignedGamesSession> listByTherapist(Therapist therapist, ListingOptions options) {
+    return this.dh.list(options, (cb, root) -> new Predicate[] {
+      cb.equal(root.join("session").get("therapist"), therapist)
     }).stream();
   }
 

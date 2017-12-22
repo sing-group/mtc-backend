@@ -24,6 +24,7 @@ package org.sing_group.mtc.rest.resource.spi.game.session;
 import javax.ejb.Local;
 import javax.ws.rs.core.Response;
 
+import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 
@@ -41,5 +42,7 @@ public interface GamesSessionResource {
   public Response modifyAssigned(int sessionId, AssignedGamesSessionEditionData data);
 
   public Response deleteAssigned(int sessionId);
+
+  public Response listAssigned(int start, int end, String sortField, SortDirection order);
 
 }

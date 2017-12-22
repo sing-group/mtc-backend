@@ -167,7 +167,7 @@ public class AdministratorResourceIntegrationTest {
     final int start = 0;
     final int end = 2;
     final Function<Administrator, String> getter = Administrator::getLogin;
-    final String order = "login";
+    final String sortField = "login";
     final SortDirection sortDirection = SortDirection.DESC;
     
     final Stream<Administrator> admins = admins(
@@ -177,8 +177,8 @@ public class AdministratorResourceIntegrationTest {
     final Response response = webTarget
       .queryParam("start", start)
       .queryParam("end", end)
-      .queryParam("order", order)
-      .queryParam("sort", sortDirection)
+      .queryParam("sort", sortField)
+      .queryParam("order", sortDirection)
       .request()
     .get();
     

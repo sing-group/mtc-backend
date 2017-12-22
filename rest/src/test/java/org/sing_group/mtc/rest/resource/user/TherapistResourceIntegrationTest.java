@@ -177,7 +177,7 @@ public class TherapistResourceIntegrationTest {
     final int start = 1;
     final int end = 3;
     final Function<Therapist, String> getter = Therapist::getLogin;
-    final String order = "login";
+    final String sortField = "login";
     final SortDirection sortDirection = SortDirection.DESC;
     
     final Stream<Therapist> therapists = therapists(
@@ -187,8 +187,8 @@ public class TherapistResourceIntegrationTest {
     final Response response = webTarget
       .queryParam("start", start)
       .queryParam("end", end)
-      .queryParam("order", order)
-      .queryParam("sort", sortDirection)
+      .queryParam("sort", sortField)
+      .queryParam("order", sortDirection)
       .request()
     .get();
     

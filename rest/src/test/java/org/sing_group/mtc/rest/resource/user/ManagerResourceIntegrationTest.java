@@ -178,7 +178,7 @@ public class ManagerResourceIntegrationTest {
     final int start = 1;
     final int end = 3;
     final Function<Manager, String> getter = Manager::getLogin;
-    final String order = "login";
+    final String sortField = "login";
     final SortDirection sortDirection = SortDirection.ASC;
     
     final Stream<Manager> managers = managers(
@@ -188,8 +188,8 @@ public class ManagerResourceIntegrationTest {
     final Response response = webTarget
       .queryParam("start", start)
       .queryParam("end", end)
-      .queryParam("order", order)
-      .queryParam("sort", sortDirection)
+      .queryParam("sort", sortField)
+      .queryParam("order", sortDirection)
       .request()
       .header("Origin", "localhost")
     .get();
@@ -368,14 +368,14 @@ public class ManagerResourceIntegrationTest {
     
     final int start = 1;
     final int end = 2;
-    final String order = "name";
+    final String sortField = "name";
     final SortDirection sortDirection = SortDirection.DESC;
     
     final Response response = webTarget.path(manager.getLogin()).path("institution")
       .queryParam("start", start)
       .queryParam("end", end)
-      .queryParam("order", order)
-      .queryParam("sort", sortDirection)
+      .queryParam("sort", sortField)
+      .queryParam("order", sortDirection)
       .request()
       .header("Origin", "localhost")
     .get();

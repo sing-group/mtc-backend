@@ -34,7 +34,7 @@ public interface PatientResource {
 
   public Response get(String login);
 
-  public Response list(int start, int end, String order, SortDirection sort);
+  public Response list(int start, int end, String sortField, SortDirection order);
   
   public Response create(PatientCreationData data);
 
@@ -42,7 +42,7 @@ public interface PatientResource {
 
   public Response delete(String login);
 
-  public Response listAssignedSessions(String login, int start, int end, String order, SortDirection sort);
+  public Response listAssignedSessions(String login, int start, int end, String sortField, SortDirection order);
 
   public Response assignSession(String login, AssignedGamesSessionCreationData creationData);
 

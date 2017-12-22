@@ -26,18 +26,26 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
+import static org.sing_group.mtc.domain.entities.UsersDataset.patient;
+import static org.sing_group.mtc.domain.entities.UsersDataset.therapist;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessionToDelete;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessionsOfPatient;
+import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessionsOfTherapist;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.gamesSessionToDelete;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSessionId;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
+import static org.sing_group.mtc.rest.entity.GenericTypes.AssignedGamesSessionDataListType.ASSIGNED_GAMES_SESSION_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.game.session.GamesSessionDataDataset.modifiedAssignedGamesSessionData;
+import static org.sing_group.mtc.rest.entity.game.session.IsEqualToAssignedGamesSession.containsAssignedGamesSessionsInAnyOrder;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToAssignedGamesSession.equalToAssignedGamesSession;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession.equalToGamesSession;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSessionData.equalToGamesSession;
+
+import java.util.List;
 
 import javax.ws.rs.core.Response;
 
@@ -281,4 +289,58 @@ public class GamesSessionResourceIntegrationTest {
   @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions-delete.xml" })
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterDeleteAssigned() {}
+  
+  private void testListAssigned(ResteasyWebTarget webTarget, AssignedGamesSession[] assignedGamesSessions) {
+    final Response response = webTarget.path("assigned")
+      .request()
+    .get();
+    
+    assertThat(response, hasOkStatus());
+    
+    final List<AssignedGamesSessionData> assignedData = response.readEntity(ASSIGNED_GAMES_SESSION_DATA_LIST_TYPE);
+    
+    assertThat(assignedData, containsAssignedGamesSessionsInAnyOrder(assignedGamesSessions));
+  }
+
+  @Test
+  @InSequence(120)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml" })
+  public void beforeListAssignedAsTherapist() {}
+
+  @Test
+  @InSequence(121)
+  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListAssignedAsTherapist(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testListAssigned(webTarget, assignedGamesSessionsOfTherapist(therapist().getLogin()));
+  }
+
+  @Test
+  @InSequence(122)
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml" })
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListAssignedAsTherapist() {}
+
+  @Test
+  @InSequence(123)
+  @UsingDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml" })
+  public void beforeListAssignedAsPatient() {}
+
+  @Test
+  @InSequence(124)
+  @Header(name = "Authorization", value = PATIENT_HTTP_BASIC_AUTH)
+  @RunAsClient
+  public void testListAssignedAsPatient(
+    @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
+  ) {
+    this.testListAssigned(webTarget, assignedGamesSessionsOfPatient(patient().getLogin()));
+  }
+
+  @Test
+  @InSequence(125)
+  @ShouldMatchDataSet({ "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml" })
+  @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
+  public void afterListAssignedAsPatient() {}
 }

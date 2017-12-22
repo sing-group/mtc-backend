@@ -30,7 +30,7 @@ public class ListingOptions {
   private final String order;
   private final SortDirection sort;
   
-  public ListingOptions(int start, int end, String order, SortDirection sort) {
+  public ListingOptions(int start, int end, String sort, SortDirection order) {
     if (min(start, end) < 0) {
       if (max(start, end) >= 0) {
         throw new IllegalArgumentException("start and end parameters should be positive or negative at the same time");
@@ -43,12 +43,12 @@ public class ListingOptions {
     this.start = start;
     this.end = end;
     
-    if (order != null && (sort == null || sort == SortDirection.NONE)) {
+    if (sort != null && (order == null || order == SortDirection.NONE)) {
       throw new IllegalArgumentException("An sort direction should be provided when using an order field");
     }
     
-    this.order = order;
-    this.sort = sort;
+    this.order = sort;
+    this.sort = order;
   }
 
   public int getStart() {

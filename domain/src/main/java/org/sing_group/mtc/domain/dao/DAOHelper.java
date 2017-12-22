@@ -103,15 +103,11 @@ public class DAOHelper<K, T> {
     if (predicates.length > 0)
       select = select.where(predicates);
     
-//    final Predicate[] predicates = filters.entrySet().stream()
-//      .map(entry -> cb().equal(root.get(entry.getKey()), entry.getValue()))
-//    .toArray(Predicate[]::new);
-    
-    select = select.where(predicates);
-    
     final TypedQuery<T> query = optionsBuilder.addLimits(em.createQuery(select));
     
-    return query.getResultList();
+    final List<T> resultList = query.getResultList();
+    
+    return resultList;
   }
   
   public void removeByKey(K key) {

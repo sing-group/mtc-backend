@@ -25,6 +25,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
@@ -131,14 +132,16 @@ public class DefaultInstitutionResource implements InstitutionResource {
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     
     final InstitutionData[] institutions = this.service.list(options)
       .map(institution -> this.mapper.toData(institution, this.uriInfo.getBaseUriBuilder()))
     .toArray(InstitutionData[]::new);
+    
+    System.out.println(Arrays.toString(institutions));
     
     return Response.ok(institutions)
       .header("X-Total-Count", this.service.count())
@@ -240,10 +243,10 @@ public class DefaultInstitutionResource implements InstitutionResource {
     @PathParam("id") int id,
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     
     final Institution institution = this.service.get(id);
     final TherapistData[] therapists = this.service.listTherapists(id, options)

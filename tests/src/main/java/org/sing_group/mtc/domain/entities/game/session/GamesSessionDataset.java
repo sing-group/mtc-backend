@@ -218,6 +218,12 @@ public final class GamesSessionDataset {
     };
   }
   
+  public static AssignedGamesSession[] assignedGamesSessionsOfTherapist(String therapistLogin) {
+    return Arrays.stream(assignedGamesSessions())
+      .filter(session -> session.getTherapistLogin().equals(therapistLogin))
+    .toArray(AssignedGamesSession[]::new);
+  }
+  
   public static AssignedGamesSession[] assignedGamesSessionsOfPatient(String patient) {
     return Arrays.stream(assignedGamesSessions())
       .filter(assigned -> assigned.getPatientLogin().equals(patient))

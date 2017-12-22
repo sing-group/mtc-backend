@@ -33,7 +33,7 @@ public interface ManagerResource {
 
   public Response get(String login);
 
-  public Response list(int start, int end, String order, SortDirection sort);
+  public Response list(int start, int end, String sortField, SortDirection order);
 
   public Response create(ManagerCreationData data);
 
@@ -41,10 +41,10 @@ public interface ManagerResource {
 
   public Response delete(String login);
   
-  public Response getInstitutions(String login, int start, int end, String order, SortDirection sort);
+  public Response getInstitutions(String login, int start, int end, String sortField, SortDirection order);
 
   public Response getInstitution(String login, int id);
 
-  public Response getTherapists(String login, int start, int end, String order, SortDirection sort);
+  public Response getTherapists(String login, int start, int end, String sortField, SortDirection order);
 
 }

@@ -28,6 +28,7 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 
 public interface AssignedGamesSessionDAO {
   public AssignedGamesSession get(int assignedId);
@@ -39,4 +40,6 @@ public interface AssignedGamesSessionDAO {
   public AssignedGamesSession modify(AssignedGamesSession assigned);
 
   public void delete(int sessionId);
+
+  public Stream<AssignedGamesSession> listByTherapist(Therapist therapist, ListingOptions options);
 }

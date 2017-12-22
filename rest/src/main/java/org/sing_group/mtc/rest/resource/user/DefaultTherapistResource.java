@@ -139,10 +139,10 @@ public class DefaultTherapistResource implements TherapistResource {
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     
     final TherapistData[] therapists = this.service.list(options)
       .map(this::toTherapistData)

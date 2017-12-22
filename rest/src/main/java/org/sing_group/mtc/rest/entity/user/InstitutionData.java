@@ -178,5 +178,12 @@ public class InstitutionData implements Serializable {
       return false;
     return true;
   }
+
+  @Override
+  public String toString() {
+    return "InstitutionData [getId()=" + getId() + ", getName()=" + getName() + ", getDescription()=" + getDescription()
+      + ", getAddress()=" + getAddress() + ", getManager()=" + getManager() + ", getTherapists()="
+      + Arrays.toString(getTherapists()) + "]";
+  }
   
 }

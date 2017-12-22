@@ -29,7 +29,7 @@ import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
 public interface InstitutionResource {
   public Response get(int id);
 
-  public Response list(int start, int end, String order, SortDirection sort);
+  public Response list(int start, int end, String sortField, SortDirection order);
 
   public Response create(InstitutionEditionData data);
 
@@ -39,7 +39,7 @@ public interface InstitutionResource {
 
   public Response getManager(int id);
 
-  public Response listTherapists(int id, int start, int end, String order, SortDirection sort);
+  public Response listTherapists(int id, int start, int end, String sortField, SortDirection order);
 
   public Response getTherapists(int id, String login);
 }

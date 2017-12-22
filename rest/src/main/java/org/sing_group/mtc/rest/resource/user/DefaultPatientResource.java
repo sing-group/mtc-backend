@@ -136,10 +136,10 @@ public class DefaultPatientResource implements PatientResource {
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     
     final PatientData[] patients = this.service.list(options)
       .map(this::toPatientData)
@@ -227,10 +227,10 @@ public class DefaultPatientResource implements PatientResource {
     @PathParam("login") String login,
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     final UriBuilder uriBuilder = this.uriInfo.getBaseUriBuilder();
     
     final Patient patient = this.service.get(login);

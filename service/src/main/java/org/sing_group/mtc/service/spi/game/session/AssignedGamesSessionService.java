@@ -21,6 +21,9 @@
  */
 package org.sing_group.mtc.service.spi.game.session;
 
+import java.util.stream.Stream;
+
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 
 public interface AssignedGamesSessionService {
@@ -30,5 +33,7 @@ public interface AssignedGamesSessionService {
   public AssignedGamesSession modify(AssignedGamesSession mapToAssignedGamesSession);
 
   public void delete(int sessionId);
+
+  public Stream<AssignedGamesSession> list(ListingOptions listingOptions);
 
 }

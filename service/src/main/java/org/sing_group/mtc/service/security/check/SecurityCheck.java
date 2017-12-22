@@ -24,4 +24,8 @@ package org.sing_group.mtc.service.security.check;
 @FunctionalInterface
 public interface SecurityCheck {
   public SecurityCheckResult check();
+
+  public static boolean eval(SecurityCheck check) {
+    return check.check().isValid();
+  }
 }

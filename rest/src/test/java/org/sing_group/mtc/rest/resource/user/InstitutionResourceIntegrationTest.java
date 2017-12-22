@@ -204,7 +204,7 @@ public class InstitutionResourceIntegrationTest {
     final int start = 0;
     final int end = 2;
     final Function<Institution, String> getter = Institution::getName;
-    final String order = "name";
+    final String sortField = "name";
     final SortDirection sortDirection = SortDirection.DESC;
     
     final Stream<Institution> institutions = institutions(
@@ -214,8 +214,8 @@ public class InstitutionResourceIntegrationTest {
     final Response response = webTarget
       .queryParam("start", start)
       .queryParam("end", end)
-      .queryParam("order", order)
-      .queryParam("sort", sortDirection)
+      .queryParam("sort", sortField)
+      .queryParam("order", sortDirection)
       .request()
     .get();
     
@@ -466,7 +466,7 @@ public class InstitutionResourceIntegrationTest {
     final int start = 1;
     final int end = 2;
     final Function<Therapist, String> getter = Therapist::getEmail;
-    final String order = "email";
+    final String sortField = "email";
     final SortDirection sortDirection = SortDirection.DESC;
     
     final Institution institution = institution(2);
@@ -478,8 +478,8 @@ public class InstitutionResourceIntegrationTest {
     final Response response = webTarget.path(institution.getId().toString()).path("therapist")
       .queryParam("start", start)
       .queryParam("end", end)
-      .queryParam("order", order)
-      .queryParam("sort", sortDirection)
+      .queryParam("sort", sortField)
+      .queryParam("order", sortDirection)
       .request()
     .get();
     

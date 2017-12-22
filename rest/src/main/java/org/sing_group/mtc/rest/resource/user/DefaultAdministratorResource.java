@@ -124,10 +124,10 @@ public class DefaultAdministratorResource implements AdministratorResource {
   public Response list(
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
-    @QueryParam("order") String order,
-    @QueryParam("sort") @DefaultValue("NONE") SortDirection sort
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
   ) {
-    final ListingOptions options = new ListingOptions(start, end, order, sort);
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
     
     final AdministratorData[] admins = this.service.list(options)
       .map(mapper::toData)

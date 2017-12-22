@@ -21,21 +21,27 @@
  */
 package org.sing_group.mtc.rest.resource.game.session;
 
+import java.util.stream.Stream;
+
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
@@ -83,7 +89,7 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   private UriInfo uriInfo;
   
   @GET
-  @Path("{id}")
+  @Path("{id: \\d+}")
   @ApiOperation(
     value = "Finds a games sessions by identifier.",
     response = GamesSessionData.class,
@@ -97,13 +103,13 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
     final GamesSession session = this.service.get(sessionId);
     
     final GamesSessionData sessionData =
-      this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder());
+      this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getAbsolutePathBuilder());
     
     return Response.ok(sessionData).build();
   }
   
   @PUT
-  @Path("{id}")
+  @Path("{id: \\d+}")
   @ApiOperation(
     value = "Modifies a games session.",
     response = GamesSessionData.class,
@@ -122,13 +128,13 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
     );
     
     final GamesSessionData sessionData =
-      this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder());
+      this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getAbsolutePathBuilder());
     
     return Response.ok(sessionData).build();
   }
   
   @DELETE
-  @Path("{id}")
+  @Path("{id: \\d+}")
   @ApiOperation(
     value = "Deletes a games sessions.",
     code = 200
@@ -144,7 +150,35 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   }
 
   @GET
-  @Path("assigned/{id}")
+  @Path("assigned")
+  @ApiOperation(
+    value = "Returns a list of assigned sessions. Depending on the user that makes the request this "
+      + "method can return the list of sessions assigned to patients (therapist) or the list of "
+      + "sessions assigned to a patient (patient).",
+    response = AssignedGamesSessionData.class,
+    responseContainer = "List",
+    code = 200
+  )
+  @Override
+  public Response listAssigned(
+    @QueryParam("start") @DefaultValue("-1") int start,
+    @QueryParam("end") @DefaultValue("-1") int end,
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
+  ) {
+    final Stream<AssignedGamesSession> assignedSessions = this.assignedService.list(
+      new ListingOptions(start, end, sortField, order)
+    );
+    
+    final AssignedGamesSessionData[] assignedSessionDatas = assignedSessions
+      .map(session -> gamesMapper.mapToAssignedGamesSession(session, this.uriInfo.getAbsolutePathBuilder()))
+    .toArray(AssignedGamesSessionData[]::new);
+    
+    return Response.ok(assignedSessionDatas).build();
+  }
+
+  @GET
+  @Path("assigned/{id: \\d+}")
   @ApiOperation(
     value = "Finds an assigned games sessions by identifier.",
     response = AssignedGamesSessionData.class,
@@ -158,14 +192,14 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
     final AssignedGamesSession assignedSession = this.assignedService.get(assignedId);
     
     final AssignedGamesSessionData assignedSessionData = this.gamesMapper.mapToAssignedGamesSession(
-      assignedSession, this.uriInfo.getBaseUriBuilder()
+      assignedSession, this.uriInfo.getAbsolutePathBuilder()
     );
     
     return Response.ok(assignedSessionData).build();
   }
   
   @PUT
-  @Path("assigned/{id}")
+  @Path("assigned/{id: \\d+}")
   @ApiOperation(
     value = "Modifies an assigned games sessions.",
     response = AssignedGamesSessionData.class,
@@ -184,13 +218,13 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
     );
     
     final AssignedGamesSessionData sessionData =
-      this.gamesMapper.mapToAssignedGamesSession(session, this.uriInfo.getBaseUriBuilder());
+      this.gamesMapper.mapToAssignedGamesSession(session, this.uriInfo.getAbsolutePathBuilder());
     
     return Response.ok(sessionData).build();
   }
   
   @DELETE
-  @Path("assigned/{id}")
+  @Path("assigned/{id: \\d+}")
   @ApiOperation(
     value = "Deletes an assigned games sessions.",
     code = 200

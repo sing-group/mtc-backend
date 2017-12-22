@@ -21,8 +21,10 @@
  */
 package org.sing_group.mtc.rest.resource.game.session;
 
+import java.net.URI;
 import java.util.stream.Stream;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
@@ -51,6 +53,7 @@ import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.filter.CrossDomain;
 import org.sing_group.mtc.rest.mapper.SecurityExceptionMapper;
+import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.rest.resource.spi.game.session.GamesSessionResource;
 import org.sing_group.mtc.service.spi.game.session.AssignedGamesSessionService;
 import org.sing_group.mtc.service.spi.game.session.GamesSessionService;
@@ -60,6 +63,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
+import io.swagger.annotations.ResponseHeader;
 
 @Path("games-session")
 @Api(
@@ -74,7 +78,7 @@ import io.swagger.annotations.Authorization;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Stateless
 @Default
-@CrossDomain
+@CrossDomain(allowedHeaders = { "X-Total-Count", "Location" }, allowRequestHeaders = true)
 public class DefaultGamesSessionResource implements GamesSessionResource {
   @Inject
   private GamesSessionService service;
@@ -87,6 +91,13 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   
   @Context
   private UriInfo uriInfo;
+  
+  private BaseRestPathBuilder pathBuilder;
+  
+  @PostConstruct
+  private void createPathBuilder() {
+    this.pathBuilder = new BaseRestPathBuilder(this.uriInfo.getBaseUriBuilder());
+  }
   
   @GET
   @Path("{id: \\d+}")
@@ -112,7 +123,7 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   @Path("{id: \\d+}")
   @ApiOperation(
     value = "Modifies a games session.",
-    response = GamesSessionData.class,
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the games session modified."),
     code = 200
   )
   @ApiResponses(
@@ -127,10 +138,11 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
       this.gamesMapper.mapToGameSession(sessionId, data)
     );
     
-    final GamesSessionData sessionData =
-      this.gamesMapper.mapToGameSessionData(session, this.uriInfo.getAbsolutePathBuilder());
+    final URI sessionUri = this.pathBuilder.gamesSession(session).build();
     
-    return Response.ok(sessionData).build();
+    return Response.ok()
+      .header("Location", sessionUri)
+    .build();
   }
   
   @DELETE
@@ -202,7 +214,7 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
   @Path("assigned/{id: \\d+}")
   @ApiOperation(
     value = "Modifies an assigned games sessions.",
-    response = AssignedGamesSessionData.class,
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the assigned games session modified."),
     code = 200
   )
   @ApiResponses(
@@ -217,10 +229,11 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
       this.gamesMapper.mapToAssignedGamesSession(sessionId, data)
     );
     
-    final AssignedGamesSessionData sessionData =
-      this.gamesMapper.mapToAssignedGamesSession(session, this.uriInfo.getAbsolutePathBuilder());
+    final URI sessionUri = this.pathBuilder.gamesSessionAssigned(session).build();
     
-    return Response.ok(sessionData).build();
+    return Response.ok()
+      .header("Location", sessionUri)
+    .build();
   }
   
   @DELETE

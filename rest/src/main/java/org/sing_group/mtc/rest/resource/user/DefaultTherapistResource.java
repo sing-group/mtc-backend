@@ -177,6 +177,7 @@ public class DefaultTherapistResource implements TherapistResource {
   @Path("{login}")
   @ApiOperation(
     value = "Modifies an existing therapist.",
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the therapist modified."),
     code = 200
   )
   @ApiResponses(
@@ -195,7 +196,11 @@ public class DefaultTherapistResource implements TherapistResource {
       therapist = this.managerService.changeInstitution(therapist.getLogin(), data.getInstitution());
     }
     
-    return Response.ok(this.toTherapistData(therapist)).build();
+    final URI userUri = this.pathBuilder.therapist(therapist).build();
+    
+    return Response.ok(this.toTherapistData(therapist))
+      .header("Location", userUri)
+    .build();
   }
   
   @DELETE

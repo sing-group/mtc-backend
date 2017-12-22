@@ -172,6 +172,7 @@ public class DefaultPatientResource implements PatientResource {
   @Path("{login}")
   @ApiOperation(
     value = "Modifies an existing patient.",
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the patient modified."),
     code = 200
   )
   @ApiResponses(
@@ -182,16 +183,13 @@ public class DefaultPatientResource implements PatientResource {
     @PathParam("login") String login,
     PatientEditionData data
   ) {
-    try {
-      final Patient patient = this.service.update(mapper.toPatient(login, data));
-      
-      return Response
-        .ok(this.mapper.toData(patient, this.uriInfo.getAbsolutePathBuilder()))
-      .build();
-    } catch (RuntimeException e) {
-      e.printStackTrace();
-      throw e;
-    }
+    final Patient patient = this.service.update(mapper.toPatient(login, data));
+    
+    final URI userUri = this.pathBuilder.patient(patient).build();
+    
+    return Response.ok()
+      .header("Location", userUri)
+    .build();
   }
   
   @DELETE

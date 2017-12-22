@@ -168,6 +168,7 @@ public class DefaultManagerResource implements ManagerResource {
   @Path("{login}")
   @ApiOperation(
     value = "Modifies an existing manager.",
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the manager modified."),
     code = 200
   )
   @ApiResponses(
@@ -178,9 +179,13 @@ public class DefaultManagerResource implements ManagerResource {
     @PathParam("login") String login,
     ManagerEditionData data
   ) {
-    this.service.update(mapper.toManager(login, data));
+    final Manager manager = this.service.update(mapper.toManager(login, data));
     
-    return Response.ok().build();
+    final URI userUri = this.pathBuilder.manager(manager).build();
+    
+    return Response.ok()
+      .header("Location", userUri)
+    .build();
   }
   
   @DELETE

@@ -171,6 +171,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
   @Path("{id}")
   @ApiOperation(
     value = "Modifies an existing institution.",
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the institution modified."),
     code = 200
   )
   @ApiResponses(
@@ -181,7 +182,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
     @PathParam("id") int id,
     InstitutionEditionData data
   ) {
-    final Institution institution = this.service.update(mapper.toInstitution(id, data));
+    Institution institution = this.service.update(mapper.toInstitution(id, data));
     
     final boolean isManagerChanged = institution.getManager()
       .map(Manager::getLogin)
@@ -189,10 +190,12 @@ public class DefaultInstitutionResource implements InstitutionResource {
     .orElse(false);
     
     if (isManagerChanged) {
-      this.service.changeManager(institution, data.getManager());
+      institution = this.service.changeManager(institution, data.getManager());
     }
     
-    return Response.ok().build();
+    return Response.ok()
+      .header("Location", this.buildUriForInstitution(institution))
+    .build();
   }
   
   @DELETE

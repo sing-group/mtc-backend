@@ -33,16 +33,16 @@ import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDatase
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessionsOfPatient;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessionsOfTherapist;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.gamesSessionToDelete;
-import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSessionId;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderContaining;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderEndingWith;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
 import static org.sing_group.mtc.rest.entity.GenericTypes.AssignedGamesSessionDataListType.ASSIGNED_GAMES_SESSION_DATA_LIST_TYPE;
 import static org.sing_group.mtc.rest.entity.game.session.GamesSessionDataDataset.modifiedAssignedGamesSessionData;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToAssignedGamesSession.containsAssignedGamesSessionsInAnyOrder;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToAssignedGamesSession.equalToAssignedGamesSession;
-import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSession.equalToGamesSession;
 import static org.sing_group.mtc.rest.entity.game.session.IsEqualToGamesSessionData.equalToGamesSession;
 
 import java.util.List;
@@ -53,6 +53,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.extension.rest.client.Header;
+import org.jboss.arquillian.extension.rest.client.Headers;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
@@ -129,7 +130,10 @@ public class GamesSessionResourceIntegrationTest {
 
   @Test
   @InSequence(5)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testModify(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -142,10 +146,9 @@ public class GamesSessionResourceIntegrationTest {
       .request()
     .put(json(expected));
     
-    final GamesSessionData actual = response.readEntity(GamesSessionData.class);
-    
     assertThat(response, hasOkStatus());
-    assertThat(actual, is(equalToGamesSession(modifiedSession)));
+    assertThat(response, hasHttpHeaderEndingWith("Location", Integer.toString(modifiedSession.getId())));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 
   @Test
@@ -242,21 +245,24 @@ public class GamesSessionResourceIntegrationTest {
 
   @Test
   @InSequence(107)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testModifyAssigned(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
     final AssignedGamesSessionEditionData data = modifiedAssignedGamesSessionData();
+    final String sessionId = Integer.toString(modifiedAssignedGamesSessionId());
     
-    final Response response = webTarget.path("assigned").path(Integer.toString(modifiedAssignedGamesSessionId()))
+    final Response response = webTarget.path("assigned").path(sessionId)
       .request()
     .put(json(data));
     
-    final AssignedGamesSessionData actual = response.readEntity(AssignedGamesSessionData.class);
-    
     assertThat(response, hasOkStatus());
-    assertThat(actual, is(equalToAssignedGamesSession(modifiedAssignedGamesSession())));
+    assertThat(response, hasHttpHeaderEndingWith("Location", sessionId));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 
   @Test

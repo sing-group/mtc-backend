@@ -160,6 +160,7 @@ public class DefaultAdministratorResource implements AdministratorResource {
   @Path("{login}")
   @ApiOperation(
     value = "Modifies an existing administrator.",
+    responseHeaders = @ResponseHeader(name = "Location", description = "Location of the administrator modified."),
     code = 200
   )
   @ApiResponses(
@@ -170,9 +171,12 @@ public class DefaultAdministratorResource implements AdministratorResource {
     @PathParam("login") String login,
     AdministratorEditionData data
   ) {
-    this.service.update(mapper.toAdministrator(login, data));
+    final Administrator administrator = this.service.update(mapper.toAdministrator(login, data));
+    final URI userUri = pathBuilder.admin(administrator).build();
     
-    return Response.ok().build();
+    return Response.ok()
+      .header("Location", userUri)
+    .build();
   }
   
   @DELETE

@@ -53,6 +53,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.extension.rest.client.Header;
+import org.jboss.arquillian.extension.rest.client.Headers;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
@@ -125,7 +126,10 @@ public class AdministratorResourceIntegrationTest {
 
   @Test
   @InSequence(11)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testList(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -159,7 +163,10 @@ public class AdministratorResourceIntegrationTest {
 
   @Test
   @InSequence(14)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListFiltered(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -184,6 +191,7 @@ public class AdministratorResourceIntegrationTest {
     
     assertThat(response, hasOkStatus());
     assertThat(response, hasHttpHeader("X-Total-Count", countAdmins()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<AdministratorData> adminData = response.readEntity(ADMINISTRATOR_DATA_LIST_TYPE);
     
@@ -203,7 +211,10 @@ public class AdministratorResourceIntegrationTest {
 
   @Test
   @InSequence(21)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testCreate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -217,6 +228,7 @@ public class AdministratorResourceIntegrationTest {
     
     assertThat(response, hasCreatedStatus());
     assertThat(response, hasHttpHeaderEndingWith("Location", newAdmin.getLogin()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 
   @Test
@@ -232,7 +244,10 @@ public class AdministratorResourceIntegrationTest {
 
   @Test
   @InSequence(31)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testUpdate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -245,6 +260,8 @@ public class AdministratorResourceIntegrationTest {
     .put(json(userData));
     
     assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeaderEndingWith("Location", modifiedAdmin.getLogin()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 
   @Test

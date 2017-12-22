@@ -58,6 +58,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.extension.rest.client.Header;
+import org.jboss.arquillian.extension.rest.client.Headers;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
@@ -138,7 +139,10 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(11)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testList(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -172,7 +176,10 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(14)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListFiltered(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -216,7 +223,10 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(21)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testCreate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -230,6 +240,7 @@ public class PatientResourceIntegrationTest {
     
     assertThat(response, hasCreatedStatus());
     assertThat(response, hasHttpHeaderEndingWith("Location", newPatient.getLogin()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 
   @Test
@@ -245,7 +256,10 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(31)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testUpdate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -258,6 +272,8 @@ public class PatientResourceIntegrationTest {
     .put(json(userData));
     
     assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeaderEndingWith("Location", modifiedPatient.getLogin()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 
   @Test
@@ -319,7 +335,10 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(101)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testGetAssignedSessionsAsTherapist(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -340,7 +359,10 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(104)
-  @Header(name = "Authorization", value = PATIENT_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = PATIENT_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testGetAssignedSessionsAsPatient(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -361,7 +383,10 @@ public class PatientResourceIntegrationTest {
 
   @Test
   @InSequence(107)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testAssignSession(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -376,6 +401,7 @@ public class PatientResourceIntegrationTest {
     
     assertThat(response, hasCreatedStatus());
     assertThat(response, hasHttpHeader("Location"));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 
   @Test

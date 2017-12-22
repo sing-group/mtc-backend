@@ -60,6 +60,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.container.test.api.RunAsClient;
 import org.jboss.arquillian.extension.rest.client.ArquillianResteasyResource;
 import org.jboss.arquillian.extension.rest.client.Header;
+import org.jboss.arquillian.extension.rest.client.Headers;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.junit.InSequence;
 import org.jboss.arquillian.persistence.CleanupUsingScript;
@@ -136,7 +137,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(11)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testList(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -149,8 +153,8 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<ManagerData> userData = response.readEntity(MANAGER_DATA_LIST_TYPE);
     
@@ -170,7 +174,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(14)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListFiltered(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -195,8 +202,8 @@ public class ManagerResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     assertThat(response, hasHttpHeader("X-Total-Count", countManagers()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<ManagerData> managerData = response.readEntity(MANAGER_DATA_LIST_TYPE);
     
@@ -216,7 +223,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(21)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testCreate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -245,7 +255,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(31)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testUpdate(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -258,6 +271,8 @@ public class ManagerResourceIntegrationTest {
     .put(json(userData));
     
     assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeaderEndingWith("Location", modifiedManager.getLogin()));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 
   @Test
@@ -317,7 +332,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(101)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListInstitutionAsAdmin(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -338,7 +356,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(104)
-  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListInstitutionAsManager(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -359,7 +380,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(107)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListFilteredInstitution(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -476,7 +500,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(201)
-  @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = ADMIN_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListTherapistsAsAdmin(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -497,7 +524,10 @@ public class ManagerResourceIntegrationTest {
 
   @Test
   @InSequence(204)
-  @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = MANAGER_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListTherapistsAsManager(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget

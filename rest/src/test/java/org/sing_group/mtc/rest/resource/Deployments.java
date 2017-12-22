@@ -28,11 +28,13 @@ import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.sing_group.fluent.checker.Checks;
 
 public final class Deployments {
+  static {
+    BasicConfigurator.configure();
+  }
+  
   private Deployments() {}
   
   public static WebArchive createDeployment() {
-    BasicConfigurator.configure();
-    
     return ShrinkWrap.create(WebArchive.class, "test.war")
       .addClass(Checks.class)
       .addPackages(true, "org.sing_group.mtc")

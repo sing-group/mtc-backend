@@ -24,8 +24,8 @@ package org.sing_group.mtc.domain.entities.game.session;
 import static java.util.Collections.emptySet;
 import static java.util.Objects.requireNonNull;
 import static javax.persistence.GenerationType.IDENTITY;
-import static org.sing_group.fluent.checker.Checks.requireAfter;
-import static org.sing_group.fluent.checker.Checks.requireBefore;
+import static org.sing_group.fluent.checker.Checks.requireSameTimeOrAfter;
+import static org.sing_group.fluent.checker.Checks.requireSameTimeOrBefore;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -181,10 +181,10 @@ public class AssignedGamesSession implements Serializable {
   }
   
   public void setStartDate(Date startDate) {
-    requireAfter(startDate, this.assignmentDate, "startDate should be after assignmentDate");
+    requireSameTimeOrAfter(startDate, this.assignmentDate, "startDate should be after assignmentDate");
     
     if (this.endDate != null)
-      requireBefore(startDate, this.endDate, "startDate should be before endDate");
+      requireSameTimeOrBefore(startDate, this.endDate, "startDate should be before endDate");
     
     this.startDate = startDate;
   }
@@ -194,7 +194,7 @@ public class AssignedGamesSession implements Serializable {
   }
   
   public void setEndDate(Date endDate) {
-    requireAfter(endDate, this.startDate, "endDate should be after startDate");
+    requireSameTimeOrAfter(endDate, this.startDate, "endDate should be after startDate");
     
     this.endDate = endDate;
   }

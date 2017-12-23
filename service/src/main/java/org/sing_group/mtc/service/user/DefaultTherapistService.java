@@ -78,12 +78,16 @@ public class DefaultTherapistService implements TherapistService {
 
   @Override
   public Stream<Therapist> list(ListingOptions listingOptions) {
-    return dao.list(listingOptions);
+    final Manager manager = this.securityGuard.getLoggedUser();
+    
+    return dao.listByManager(manager, listingOptions);
   }
 
   @Override
   public long count() {
-    return this.dao.count();
+    final Manager manager = this.securityGuard.getLoggedUser();
+    
+    return manager.getManagedTherapists().count();
   }
   
   @Override

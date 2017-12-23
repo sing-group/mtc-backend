@@ -129,11 +129,11 @@ public class DefaultTherapistResource implements TherapistResource {
   
   @GET
   @ApiOperation(
-    value = "Returns all the therapists in the database.",
+    value = "Returns the therapist managed by a manager. Only managers are allowed to use this resource.",
     response = TherapistData.class,
     responseContainer = "List",
     code = 200,
-    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of therapists in the database.")
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of therapists managed by the manager.")
   )
   @Override
   public Response list(
@@ -190,7 +190,7 @@ public class DefaultTherapistResource implements TherapistResource {
   ) {
     Therapist therapist = this.service.update(userMapper.toTherapist(login, data));
     
-    final boolean isInstitutionChanged = therapist.getInstitution().getId() != data.getInstitution();
+    final boolean isInstitutionChanged = !therapist.getInstitution().getId().equals(data.getInstitution());
     
     if (isInstitutionChanged) {
       therapist = this.managerService.changeInstitution(therapist.getLogin(), data.getInstitution());

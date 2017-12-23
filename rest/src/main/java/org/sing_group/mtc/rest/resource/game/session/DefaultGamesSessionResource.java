@@ -169,7 +169,8 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
       + "sessions assigned to a patient (patient).",
     response = AssignedGamesSessionData.class,
     responseContainer = "List",
-    code = 200
+    code = 200,
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of assigned sessions.")
   )
   @Override
   public Response listAssigned(
@@ -186,7 +187,11 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
       .map(session -> gamesMapper.mapToAssignedGamesSession(session, this.uriInfo.getAbsolutePathBuilder()))
     .toArray(AssignedGamesSessionData[]::new);
     
-    return Response.ok(assignedSessionDatas).build();
+    final long total = this.assignedService.count();
+    
+    return Response.ok(assignedSessionDatas)
+      .header("X-Total-Count", total)
+    .build();
   }
 
   @GET

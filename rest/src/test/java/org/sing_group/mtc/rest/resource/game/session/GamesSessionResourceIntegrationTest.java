@@ -36,6 +36,7 @@ import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDatase
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedAssignedGamesSessionId;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.modifiedGamesSession;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.sessions;
+import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderContaining;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeaderEndingWith;
 import static org.sing_group.mtc.http.util.HasHttpStatus.hasOkStatus;
@@ -302,6 +303,8 @@ public class GamesSessionResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
+    assertThat(response, hasHttpHeader("X-Total-Count", assignedGamesSessions.length));
+    assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<AssignedGamesSessionData> assignedData = response.readEntity(ASSIGNED_GAMES_SESSION_DATA_LIST_TYPE);
     
@@ -315,7 +318,10 @@ public class GamesSessionResourceIntegrationTest {
 
   @Test
   @InSequence(121)
-  @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = THERAPIST_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListAssignedAsTherapist(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
@@ -336,7 +342,10 @@ public class GamesSessionResourceIntegrationTest {
 
   @Test
   @InSequence(124)
-  @Header(name = "Authorization", value = PATIENT_HTTP_BASIC_AUTH)
+  @Headers({
+    @Header(name = "Authorization", value = PATIENT_HTTP_BASIC_AUTH),
+    @Header(name = "Origin", value = "remote-host")
+  })
   @RunAsClient
   public void testListAssignedAsPatient(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget

@@ -36,4 +36,6 @@ public interface AssignedGamesSessionService {
 
   public Stream<AssignedGamesSession> list(ListingOptions listingOptions);
 
+  public long count();
+
 }

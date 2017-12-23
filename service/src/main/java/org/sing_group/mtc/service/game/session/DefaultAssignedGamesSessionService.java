@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.Therapist;
@@ -75,6 +76,22 @@ public class DefaultAssignedGamesSessionService implements AssignedGamesSessionS
       final Patient patient = this.securityManager.getLoggedUser();
       
       return this.sessionDao.listByPatient(patient, options);
+    } else {
+      throw new SecurityException("Illegal access. Cause: user is not in THERAPIST or PATIENT role");
+    }
+  }
+
+  @RolesAllowed({ "THERAPIST", "PATIENT" })
+  @Override
+  public long count() {
+    if (eval(checkThat.hasRole(RoleType.THERAPIST))) {
+      final Therapist therapist = this.securityManager.getLoggedUser();
+      
+      return therapist.getSessions().flatMap(GamesSession::getAssigned).count();
+    } else if (eval(checkThat.hasRole(RoleType.PATIENT))) {
+      final Patient patient = this.securityManager.getLoggedUser();
+      
+      return patient.getAssignedGameSessions().count();
     } else {
       throw new SecurityException("Illegal access. Cause: user is not in THERAPIST or PATIENT role");
     }

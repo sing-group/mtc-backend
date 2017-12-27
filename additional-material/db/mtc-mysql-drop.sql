@@ -8,6 +8,9 @@ DROP TABLE `integer_parameter`;
 DROP TABLE `seconds_parameter`;
 DROP TABLE `game_type`;
 DROP TABLE `game`;
+DROP TABLE `game_result_value`;
+DROP TABLE `game_result`;
+DROP TABLE `assigned_session`;
 
 DROP TABLE `patient`;
 DROP TABLE `therapist`;

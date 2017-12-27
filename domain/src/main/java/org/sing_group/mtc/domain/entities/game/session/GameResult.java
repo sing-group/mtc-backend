@@ -72,11 +72,11 @@ public class GameResult implements Serializable {
   @Column(name = "gameOrder")
   private Integer gameOrder;
 
-  @Temporal(TemporalType.TIMESTAMP)
+  @Temporal(TemporalType.DATE)
   @Column(name = "assignmentDate")
   private Date assignmentDate;
 
-  @Column(name = "patient", length = 100, nullable = false, unique = true)
+  @Column(name = "patient", length = 100, nullable = false)
   private String patient;
   
   @ManyToOne(fetch = FetchType.LAZY, optional = false)

@@ -28,6 +28,7 @@ import static org.sing_group.fluent.checker.Checks.requireSameTimeOrAfter;
 import static org.sing_group.fluent.checker.Checks.requireSameTimeOrBefore;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
@@ -64,15 +65,15 @@ public class AssignedGamesSession implements Serializable {
   private Integer id;
   
   @Column(name = "assignmentDate", nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
+  @Temporal(TemporalType.DATE)
   private Date assignmentDate;
   
   @Column(name = "startDate", nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
+  @Temporal(TemporalType.DATE)
   private Date startDate;
   
   @Column(name = "endDate", nullable = false)
-  @Temporal(TemporalType.TIMESTAMP)
+  @Temporal(TemporalType.DATE)
   private Date endDate;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -103,9 +104,9 @@ public class AssignedGamesSession implements Serializable {
     Set<GameResult> gameResults
   ) {
     this.id = id;
-    this.assignmentDate = assignmentDate;
-    this.startDate = startDate;
-    this.endDate = endDate;
+    this.assignmentDate = removeTime(assignmentDate);
+    this.startDate = removeTime(startDate);
+    this.endDate = removeTime(endDate);
     this.setSession(session);
     this.setPatient(patient);
     this.gameResults = new HashSet<>();
@@ -114,8 +115,8 @@ public class AssignedGamesSession implements Serializable {
   
   public AssignedGamesSession(int id, Date startDate, Date endDate) {
     this.id = id;
-    this.startDate = startDate;
-    this.endDate = endDate;
+    this.startDate = removeTime(startDate);
+    this.endDate = removeTime(endDate);
   }
 
   public AssignedGamesSession(Date startDate, Date endDate, GamesSession session, Patient patient) {
@@ -181,10 +182,12 @@ public class AssignedGamesSession implements Serializable {
   }
   
   public void setStartDate(Date startDate) {
-    requireSameTimeOrAfter(startDate, this.assignmentDate, "startDate should be after assignmentDate");
+    startDate = removeTime(startDate);
+    
+    requireSameTimeOrAfter(startDate, this.assignmentDate, "startDate should be at the same time or after assignmentDate");
     
     if (this.endDate != null)
-      requireSameTimeOrBefore(startDate, this.endDate, "startDate should be before endDate");
+      requireSameTimeOrBefore(startDate, this.endDate, "startDate should be at the same time or before endDate");
     
     this.startDate = startDate;
   }
@@ -194,7 +197,9 @@ public class AssignedGamesSession implements Serializable {
   }
   
   public void setEndDate(Date endDate) {
-    requireSameTimeOrAfter(endDate, this.startDate, "endDate should be after startDate");
+    endDate = removeTime(endDate);
+    
+    requireSameTimeOrAfter(endDate, this.startDate, "endDate should be at the same time or after startDate");
     
     this.endDate = endDate;
   }
@@ -235,6 +240,19 @@ public class AssignedGamesSession implements Serializable {
 
   protected boolean directAddGameResult(GameResult gameResult) {
     return this.gameResults.remove(gameResult);
+  }
+  
+  private Date removeTime(Date date) {
+    final Calendar calendar = Calendar.getInstance();
+    calendar.setTime(date);
+    
+    calendar.set(Calendar.HOUR_OF_DAY, 0);
+    calendar.set(Calendar.MINUTE, 0);
+    calendar.set(Calendar.SECOND, 0);
+    calendar.set(Calendar.MILLISECOND, 0);
+    
+    
+    return calendar.getTime();
   }
   
   @Override

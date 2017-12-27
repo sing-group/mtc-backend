@@ -8,6 +8,9 @@ DELETE FROM `integer_parameter`;
 DELETE FROM `seconds_parameter`;
 DELETE FROM `game_type`;
 DELETE FROM `game`;
+DELETE FROM `game_result_value`;
+DELETE FROM `game_result`;
+DELETE FROM `assigned_session`;
 
 DELETE FROM `patient`;
 DELETE FROM `therapist`;

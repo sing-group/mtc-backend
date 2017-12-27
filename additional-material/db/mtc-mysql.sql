@@ -42,9 +42,9 @@ DROP TABLE IF EXISTS `assigned_session`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `assigned_session` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `assignmentDate` datetime DEFAULT NULL,
-  `endDate` datetime NOT NULL,
-  `startDate` datetime NOT NULL,
+  `assignmentDate` date DEFAULT NULL,
+  `endDate` date NOT NULL,
+  `startDate` date NOT NULL,
   `patient` varchar(100) NOT NULL,
   `session` int(11) NOT NULL,
   PRIMARY KEY (`id`),
@@ -76,14 +76,14 @@ DROP TABLE IF EXISTS `game_result`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_result` (
-  `assignmentDate` datetime NOT NULL,
+  `assignmentDate` date NOT NULL,
   `game` varchar(255) NOT NULL,
   `gameOrder` int(11) NOT NULL,
   `patient` varchar(255) NOT NULL,
   `session` int(11) NOT NULL,
   `attempt` int(11) NOT NULL,
-  `end` datetime DEFAULT NULL,
-  `start` datetime DEFAULT NULL,
+  `end` date DEFAULT NULL,
+  `start` date DEFAULT NULL,
   PRIMARY KEY (`assignmentDate`,`game`,`gameOrder`,`patient`,`session`),
   KEY `FK_p9hwanlaxhipca4evq90qbi24` (`game`,`gameOrder`,`session`),
   KEY `FK_89r219c5j4tp0um00vwykglua` (`session`,`patient`,`assignmentDate`),

@@ -96,8 +96,8 @@ public final class GamesSessionDataset {
 
     final GamesSession session = new GamesSession(1, therapist(), nameMessages, descriptionMessages);
 
-    new GameConfigurationForSession(session, recognitionGame(), 1, paramValues);
-    new GameConfigurationForSession(session, verbalFluencyGame(), 2, emptyMap());
+    new GameInGamesSession(session, recognitionGame(), 1, paramValues);
+    new GameInGamesSession(session, verbalFluencyGame(), 2, emptyMap());
 
     return session;
   }
@@ -121,7 +121,7 @@ public final class GamesSessionDataset {
 
     final GamesSession session = new GamesSession(2, therapist(), nameMessages, descriptionMessages);
 
-    new GameConfigurationForSession(session, recognitionGame(), 1, paramValues);
+    new GameInGamesSession(session, recognitionGame(), 1, paramValues);
 
     return session;
   }
@@ -150,9 +150,9 @@ public final class GamesSessionDataset {
 
     final GamesSession session = new GamesSession(3, therapist(), nameMessages, descriptionMessages);
 
-    new GameConfigurationForSession(session, recognitionGame(), 1, paramValues1);
-    new GameConfigurationForSession(session, verbalFluencyGame(), 2, emptyMap());
-    new GameConfigurationForSession(session, recognitionGame(), 3, paramValues2);
+    new GameInGamesSession(session, recognitionGame(), 1, paramValues1);
+    new GameInGamesSession(session, verbalFluencyGame(), 2, emptyMap());
+    new GameInGamesSession(session, recognitionGame(), 3, paramValues2);
 
     return session;
   }
@@ -181,8 +181,8 @@ public final class GamesSessionDataset {
 
     final GamesSession session = new GamesSession(1, therapist(), nameMessages, descriptionMessages);
 
-    new GameConfigurationForSession(session, recognitionGame(), 1, paramValues);
-    new GameConfigurationForSession(session, recognitionGame(), 2, paramValues2);
+    new GameInGamesSession(session, recognitionGame(), 1, paramValues);
+    new GameInGamesSession(session, recognitionGame(), 2, paramValues2);
 
     return session;
   }

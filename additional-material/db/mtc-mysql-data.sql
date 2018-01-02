@@ -1,5 +1,24 @@
--- MTC Game v0.1.0
-
+--
+-- #%L
+-- MTC
+-- %%
+-- Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
+-- %%
+-- This program is free software: you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as
+-- published by the Free Software Foundation, either version 3 of the
+-- License, or (at your option) any later version.
+-- 
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+-- 
+-- You should have received a copy of the GNU General Public
+-- License along with this program.  If not, see
+-- <http://www.gnu.org/licenses/gpl-3.0.html>.
+-- #L%
+--
 INSERT INTO `user` (`role`, `login`, `password`) VALUES ('ADMIN', 'admin', '25E4EE4E9229397B6B17776BFCEAF8E7');
 INSERT INTO `user` (`role`, `login`, `password`) VALUES ('MANAGER', 'manager', '3FD7488B6FD40F33C5A8E857B6A944AA');
 INSERT INTO `user` (`role`, `login`, `password`) VALUES ('THERAPIST', 'therapist', 'F15A0A52502E22F1E9D85DF282AACBCA');
@@ -32,15 +51,15 @@ VALUES ('recognition','maxRepetitions',1,1,5),
 INSERT INTO `seconds_parameter` (`game`, `id`, `defaultValue`)
 VALUES ('recognition','diceShowTime',5);
 
-INSERT INTO `session` (`id`, `therapist`)
+INSERT INTO `games_session` (`id`, `therapist`)
 VALUES (1,'therapist');
 
-INSERT INTO `session_game_configuration` (`game`, `gameOrder`, `session`)
+INSERT INTO `game_in_games_session` (`game`, `gameOrder`, `gamesSession`)
 VALUES ('recognition',1,1),
        ('verbalFluency',2,1),
        ('recognition',3,1);
 
-INSERT INTO `session_game_param_value` (`gameOrder`, `session`, `value`, `param`)
+INSERT INTO `game_in_games_session_param_value` (`gameOrder`, `gamesSession`, `value`, `param`)
 VALUES (1,1,3,'diceShowTime'),
        (1,1,2,'maxRepetitions'),
        (1,1,6,'numOfStimuli'),
@@ -56,7 +75,7 @@ VALUES ('session.1.description','EN_US','Recognition game.'),
        ('session.1.name','ES_ES','Reconocimiento'),
        ('session.1.name','GL_ES','Recoñecemento');
 
-INSERT INTO `session_i18n` (`session`, `i18nKey`, `i18nLocale`)
+INSERT INTO `games_session_i18n` (`gamesSession`, `i18nKey`, `i18nLocale`)
 VALUES (1,'session.1.description','EN_US'),
        (1,'session.1.description','ES_ES'),
        (1,'session.1.description','GL_ES'),

@@ -52,7 +52,7 @@ import javax.persistence.TemporalType;
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 @Entity
-@Table(name = "assigned_session")
+@Table(name = "assigned_games_session")
 public class AssignedGamesSession implements Serializable {
   private static final long serialVersionUID = 1L;
   
@@ -74,12 +74,12 @@ public class AssignedGamesSession implements Serializable {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(
-    name = "session",
+    name = "gamesSession",
     referencedColumnName = "id",
     nullable = false,
     foreignKey = @ForeignKey(name = "FK_assignedsession_gamesession")
   )
-  private GamesSession session;
+  private GamesSession gamesSession;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(
@@ -90,7 +90,7 @@ public class AssignedGamesSession implements Serializable {
   )
   private Patient patient;
   
-  @OneToMany(mappedBy = "assignedSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "assignedGamesSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   private Set<GameResult> gameResults;
   
   AssignedGamesSession() {}
@@ -103,7 +103,7 @@ public class AssignedGamesSession implements Serializable {
     this.assignmentDate = removeTime(assignmentDate);
     this.startDate = removeTime(startDate);
     this.endDate = removeTime(endDate);
-    this.setSession(session);
+    this.setGamesSession(session);
     this.setPatient(patient);
     this.gameResults = new HashSet<>();
     gameResults.forEach(this::addGameResult);
@@ -128,7 +128,7 @@ public class AssignedGamesSession implements Serializable {
   }
 
   public String getTherapistLogin() {
-    return this.getSession()
+    return this.getGamesSession()
       .map(GamesSession::getTherapistLogin)
     .orElseThrow(() -> new IllegalStateException("games session is not assigned"));
   }
@@ -137,19 +137,19 @@ public class AssignedGamesSession implements Serializable {
     return this.patient.getLogin();
   }
   
-  public Optional<GamesSession> getSession() {
-    return Optional.ofNullable(session);
+  public Optional<GamesSession> getGamesSession() {
+    return Optional.ofNullable(gamesSession);
   }
 
-  public void setSession(GamesSession session) {
-    if (this.session != null) {
-      this.session.directRemoveAssigned(this);
-      this.session = null;
+  public void setGamesSession(GamesSession session) {
+    if (this.gamesSession != null) {
+      this.gamesSession.directRemoveAssignedGamesSession(this);
+      this.gamesSession = null;
     }
     
     if (session != null) {
-      this.session = session;
-      this.session.directAddAssigned(this);
+      this.gamesSession = session;
+      this.gamesSession.directAddAssignedGamesSession(this);
     }
   }
 
@@ -214,7 +214,7 @@ public class AssignedGamesSession implements Serializable {
     if (this.hasGameResult(gameResult)) {
       return false;
     } else {
-      gameResult.setAssignedSession(this);
+      gameResult.setAssignedGamesSession(this);
       return true;
     }
   }
@@ -223,7 +223,7 @@ public class AssignedGamesSession implements Serializable {
     requireNonNull(gameResult, "gameResult can't be null");
     
     if (this.hasGameResult(gameResult)) {
-      gameResult.setAssignedSession(null);
+      gameResult.setAssignedGamesSession(null);
       return true;
     } else {
       return true;

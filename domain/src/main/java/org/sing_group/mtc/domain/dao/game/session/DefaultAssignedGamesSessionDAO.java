@@ -71,7 +71,7 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
   @Override
   public Stream<AssignedGamesSession> listByTherapist(Therapist therapist, ListingOptions options) {
     return this.dh.list(options, (cb, root) -> new Predicate[] {
-      cb.equal(root.join("session").get("therapist"), therapist)
+      cb.equal(root.join("gamesSession").get("therapist"), therapist)
     }).stream();
   }
 

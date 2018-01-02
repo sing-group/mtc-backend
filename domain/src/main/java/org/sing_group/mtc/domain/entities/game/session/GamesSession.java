@@ -60,7 +60,7 @@ import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Entity
-@Table(name = "session")
+@Table(name = "games_session")
 @Access(AccessType.FIELD)
 public class GamesSession implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -80,18 +80,19 @@ public class GamesSession implements Serializable {
   private Therapist therapist;
 
   @OneToMany(
-    mappedBy = "session",
+    mappedBy = "gamesSession",
     fetch = FetchType.LAZY,
     cascade = CascadeType.ALL,
     orphanRemoval = true
   )
   @OrderBy("gameOrder ASC")
-  private SortedSet<GameConfigurationForSession> gameConfigurations;
+  private SortedSet<GameInGamesSession> gameConfigurations;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinTable(
-    name = "session_i18n", joinColumns = {
-      @JoinColumn(name = "session", referencedColumnName = "id", insertable = false, updatable = false)
+    name = "games_session_i18n",
+    joinColumns = {
+      @JoinColumn(name = "gamesSession", referencedColumnName = "id")
     },
     inverseJoinColumns = {
       @JoinColumn(name = "i18nLocale", referencedColumnName = "locale"),
@@ -101,15 +102,15 @@ public class GamesSession implements Serializable {
   )
   private Set<I18N> messages;
 
-  @OneToMany(mappedBy = "session", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<AssignedGamesSession> assigned;
+  @OneToMany(mappedBy = "gamesSession", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<AssignedGamesSession> assignedGamesSessions;
 
   public GamesSession() {
     this.id = null;
     this.therapist = null;
     
     this.gameConfigurations = new TreeSet<>();
-    this.assigned = new HashSet<>();
+    this.assignedGamesSessions = new HashSet<>();
     this.messages = new HashSet<>();
   }
 
@@ -122,7 +123,7 @@ public class GamesSession implements Serializable {
     this.id = id;
     
     this.gameConfigurations = new TreeSet<>();
-    this.assigned = new HashSet<>();
+    this.assignedGamesSessions = new HashSet<>();
     this.messages = new HashSet<>();
 
     this.setTherapist(therapist);
@@ -136,13 +137,13 @@ public class GamesSession implements Serializable {
     Therapist therapist,
     Map<I18NLocale, String> nameMessages,
     Map<I18NLocale, String> descriptionMessages,
-    Set<GameConfigurationForSession> gameConfigs,
+    Set<GameInGamesSession> gameConfigs,
     Set<AssignedGamesSession> assignations
   ) {
     this(id, therapist, nameMessages, descriptionMessages);
 
     gameConfigs.forEach(this::addGameConfiguration);
-    assignations.forEach(this::addAssigned);
+    assignations.forEach(this::addAssignedGamesSession);
   }
 
   @Id
@@ -216,11 +217,11 @@ public class GamesSession implements Serializable {
     this.setMessages(this.getDescriptionKey(), messages);
   }
 
-  public Stream<GameConfigurationForSession> getGameConfigurations() {
+  public Stream<GameInGamesSession> getGameConfigurations() {
     return this.gameConfigurations.stream();
   }
   
-  public void setGameConfigurations(Stream<GameConfigurationForSession> gameConfigurations) {
+  public void setGameConfigurations(Stream<GameInGamesSession> gameConfigurations) {
     this.gameConfigurations.stream().collect(toSet())
       .forEach(this::removeGameConfiguration);
     
@@ -228,33 +229,33 @@ public class GamesSession implements Serializable {
       .forEach(this::addGameConfiguration);
   }
 
-  public boolean hasGameConfiguration(GameConfigurationForSession gameConfiguration) {
+  public boolean hasGameConfiguration(GameInGamesSession gameConfiguration) {
     return this.gameConfigurations.contains(gameConfiguration);
   }
   
-  public boolean addGameConfiguration(GameConfigurationForSession config) {
+  public boolean addGameConfiguration(GameInGamesSession config) {
     requireNonNull(config, "config can't be null");
 
     if (this.hasGameConfiguration(config)) {
       return false;
     } else {
-      config.setSession(this);
+      config.setGamesSession(this);
       return true;
     }
   }
 
-  public boolean removeGameConfiguration(GameConfigurationForSession config) {
+  public boolean removeGameConfiguration(GameInGamesSession config) {
     requireNonNull(config, "config can't be null");
 
     if (this.hasGameConfiguration(config)) {
-      config.setSession(null);
+      config.setGamesSession(null);
       return true;
     } else {
       return false;
     }
   }
 
-  protected boolean directAddGameConfiguration(GameConfigurationForSession config) {
+  protected boolean directAddGameConfiguration(GameInGamesSession config) {
     final boolean isNew = !this.gameConfigurations.remove(config);
     
     this.gameConfigurations.add(config);
@@ -262,40 +263,40 @@ public class GamesSession implements Serializable {
     return isNew;
   }
 
-  protected boolean directRemoveGameConfiguration(GameConfigurationForSession config) {
+  protected boolean directRemoveGameConfiguration(GameInGamesSession config) {
     return this.gameConfigurations.remove(config);
   }
 
-  public Stream<AssignedGamesSession> getAssigned() {
-    return this.assigned.stream();
+  public Stream<AssignedGamesSession> getAssignedGamesSessions() {
+    return this.assignedGamesSessions.stream();
   }
 
   public boolean hasAssigned(AssignedGamesSession assigned) {
-    return this.assigned.contains(assigned);
+    return this.assignedGamesSessions.contains(assigned);
   }
 
-  public void addAssigned(AssignedGamesSession assigned) {
+  public void addAssignedGamesSession(AssignedGamesSession assigned) {
     requireNonNull(assigned, "assigned can't be null");
 
-    assigned.setSession(this);
+    assigned.setGamesSession(this);
   }
 
-  public void removeAssigned(AssignedGamesSession assigned) {
+  public void removeAssignedGamesSession(AssignedGamesSession assigned) {
     requireNonNull(assigned, "assigned can't be null");
 
-    assigned.setSession(null);
+    assigned.setGamesSession(null);
   }
 
-  protected boolean directAddAssigned(AssignedGamesSession assigned) {
-    final boolean isNew = !this.assigned.remove(assigned);
+  protected boolean directAddAssignedGamesSession(AssignedGamesSession assigned) {
+    final boolean isNew = !this.assignedGamesSessions.remove(assigned);
     
-    this.assigned.add(assigned);
+    this.assignedGamesSessions.add(assigned);
     
     return isNew;
   }
 
-  protected boolean directRemoveAssigned(AssignedGamesSession assigned) {
-    return this.assigned.remove(assigned);
+  protected boolean directRemoveAssignedGamesSession(AssignedGamesSession assigned) {
+    return this.assignedGamesSessions.remove(assigned);
   }
 
   protected void updateMessagesKey() {
@@ -319,9 +320,9 @@ public class GamesSession implements Serializable {
   }
   
   protected void updateConfigurations() {
-    final List<GameConfigurationForSession> configs = this.getGameConfigurations().collect(toList());
+    final List<GameInGamesSession> configs = this.getGameConfigurations().collect(toList());
     
-    configs.forEach(config -> config.setSession(this));
+    configs.forEach(config -> config.setGamesSession(this));
   }
   
   protected void setMessage(I18NLocale locale, String key, String newMessage) {

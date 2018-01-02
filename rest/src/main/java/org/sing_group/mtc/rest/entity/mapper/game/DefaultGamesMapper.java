@@ -41,7 +41,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
-import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession;
+import org.sing_group.mtc.domain.entities.game.session.GameInGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
@@ -113,11 +113,11 @@ public class DefaultGamesMapper implements GamesMapper {
   }
   
   @Override
-  public SortedSet<GameConfigurationForSession> mapToGameConfigurationForSession(GameConfigurationData[] gameConfigurations) {
+  public SortedSet<GameInGamesSession> mapToGameConfigurationForSession(GameConfigurationData[] gameConfigurations) {
     final AtomicInteger gameOrder = new AtomicInteger(1);
     
     return stream(gameConfigurations)
-      .map(game -> new GameConfigurationForSession(
+      .map(game -> new GameInGamesSession(
         null,
         gamesService.getGame(game.getGameId()),
         gameOrder.getAndIncrement(),
@@ -145,7 +145,7 @@ public class DefaultGamesMapper implements GamesMapper {
   }
   
   @Override
-  public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration) {
+  public GameConfigurationData mapToGameConfigurationData(GameInGamesSession gameConfiguration) {
     return new GameConfigurationData(
       gameConfiguration.getGame().map(Game::getId).orElseThrow(IllegalStateException::new),
       gameConfiguration.getGameOrder(),
@@ -170,7 +170,7 @@ public class DefaultGamesMapper implements GamesMapper {
   public AssignedGamesSessionData mapToAssignedGamesSession(AssignedGamesSession assignedSession, UriBuilder uriBuilder) {
     final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
     
-    final GamesSession gamesSession = assignedSession.getSession().orElseThrow(IllegalStateException::new);
+    final GamesSession gamesSession = assignedSession.getGamesSession().orElseThrow(IllegalStateException::new);
     final Patient patient = assignedSession.getPatient().orElseThrow(IllegalStateException::new);
     
     return new AssignedGamesSessionData(
@@ -195,7 +195,7 @@ public class DefaultGamesMapper implements GamesMapper {
     return new AssignedGamesSessionCreationData(
       assignedSession.getStartDate(),
       assignedSession.getEndDate(),
-      assignedSession.getSession()
+      assignedSession.getGamesSession()
         .map(GamesSession::getId)
       .orElseThrow(IllegalStateException::new)
     );

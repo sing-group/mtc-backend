@@ -51,7 +51,7 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(
   name = "game_result",
-  uniqueConstraints = @UniqueConstraint(columnNames = { "assignedSession", "gameOrder", "session" })
+  uniqueConstraints = @UniqueConstraint(columnNames = { "assignedGamesSession", "gameOrder", "gamesSession" })
 )
 public class GameResult implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -63,21 +63,21 @@ public class GameResult implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumns(
     value = @JoinColumn(
-      name = "assignedSession", referencedColumnName = "id", nullable = false
+      name = "assignedGamesSession", referencedColumnName = "id", nullable = false
     ),
-    foreignKey = @ForeignKey(name = "FK_gameresult_assignedsession")
+    foreignKey = @ForeignKey(name = "FK_gameresult_assignedgamessession")
   )
-  private AssignedGamesSession assignedSession;
+  private AssignedGamesSession assignedGamesSession;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumns(
     value = {
-      @JoinColumn(name = "session", referencedColumnName = "session", nullable = false),
+      @JoinColumn(name = "gamesSession", referencedColumnName = "gamesSession", nullable = false),
       @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", nullable = false)
     },
     foreignKey = @ForeignKey(name = "FK_gameresult_sessiongame")
   )
-  private GameConfigurationForSession gameConfiguration;
+  private GameInGamesSession gameConfiguration;
 
   @Column(name = "attempt", nullable = false, length = 2)
   private int attempt;
@@ -110,13 +110,13 @@ public class GameResult implements Serializable {
     this(attempt, null, null);
   }
   
-  public GameResult(int attempt, AssignedGamesSession assignedSession, GameConfigurationForSession gameConfiguration) {
+  public GameResult(int attempt, AssignedGamesSession assignedSession, GameInGamesSession gameConfiguration) {
     this.attempt = requirePositive(attempt, "attempt should be a positive number");
     this.start = new Date();
     this.end = null;
     this.resultValues = new HashMap<>();
     
-    this.setAssignedSession(assignedSession);
+    this.setAssignedGamesSession(assignedSession);
     this.setGameConfiguration(gameConfiguration);
   }
   
@@ -140,43 +140,43 @@ public class GameResult implements Serializable {
     this.end = requireAfter(end, this.start, "end should be after start");
   }
   
-  public Optional<AssignedGamesSession> getAssignedSession() {
-    return Optional.ofNullable(assignedSession);
+  public Optional<AssignedGamesSession> getAssignedGamesSession() {
+    return Optional.ofNullable(assignedGamesSession);
   }
   
-  public void setAssignedSession(AssignedGamesSession assignedSession) {
+  public void setAssignedGamesSession(AssignedGamesSession assignedSession) {
     if (assignedSession != null) {
       checkSameGameSession(assignedSession, this.gameConfiguration);
     }
     
-    if (this.assignedSession != null) {
-      this.assignedSession.directRemoveGameResult(this);
-      this.assignedSession = null;
+    if (this.assignedGamesSession != null) {
+      this.assignedGamesSession.directRemoveGameResult(this);
+      this.assignedGamesSession = null;
     }
     
     if (assignedSession != null) {
-      this.assignedSession = assignedSession;
-      this.assignedSession.directAddGameResult(this);
+      this.assignedGamesSession = assignedSession;
+      this.assignedGamesSession.directAddGameResult(this);
     }
   }
   
-  public Optional<GameConfigurationForSession> getGameConfiguration() {
+  public Optional<GameInGamesSession> getGameConfiguration() {
     return Optional.ofNullable(gameConfiguration);
   }
   
   public Optional<GamesSession> getGamesSession() {
     if (this.gameConfiguration != null) {
-      return this.getGameConfiguration().map(GameConfigurationForSession::getSession);
-    } else if (this.assignedSession != null) {
-      return this.getAssignedSession().map(AssignedGamesSession::getSession).get();
+      return this.getGameConfiguration().map(GameInGamesSession::getGamesSession);
+    } else if (this.assignedGamesSession != null) {
+      return this.getAssignedGamesSession().map(AssignedGamesSession::getGamesSession).get();
     } else {
       return Optional.empty();
     }
   }
   
-  public void setGameConfiguration(GameConfigurationForSession gameConfiguration) {
+  public void setGameConfiguration(GameInGamesSession gameConfiguration) {
     if (gameConfiguration != null) {
-      checkSameGameSession(this.assignedSession, gameConfiguration);
+      checkSameGameSession(this.assignedGamesSession, gameConfiguration);
     }
     
     this.gameConfiguration = gameConfiguration;
@@ -184,17 +184,17 @@ public class GameResult implements Serializable {
   
   private static void checkSameGameSession(
     AssignedGamesSession assignedSession,
-    GameConfigurationForSession gameConfiguration
+    GameInGamesSession gameConfiguration
   ) {
     if (assignedSession != null && gameConfiguration != null) {
-      if (gameConfiguration.getSession() == null) 
+      if (gameConfiguration.getGamesSession() == null) 
         throw new IllegalArgumentException("gameConfiguration should have an assigned session");
       
-      if (assignedSession.getSession() == null)
+      if (assignedSession.getGamesSession() == null)
         throw new IllegalArgumentException("assignedSession should have an assigned session");
       
-      final long gsIdConfig = gameConfiguration.getSession().getId();
-      final long gsIdAssigned = assignedSession.getSession().map(GamesSession::getId).get();
+      final long gsIdConfig = gameConfiguration.getGamesSession().getId();
+      final long gsIdAssigned = assignedSession.getGamesSession().map(GamesSession::getId).get();
       
       if (gsIdConfig != gsIdAssigned) {
         throw new IllegalArgumentException("gameConfiguration should have the same session as the assignedSession");

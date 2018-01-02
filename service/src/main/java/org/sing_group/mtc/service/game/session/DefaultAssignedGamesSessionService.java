@@ -87,7 +87,7 @@ public class DefaultAssignedGamesSessionService implements AssignedGamesSessionS
     if (eval(checkThat.hasRole(RoleType.THERAPIST))) {
       final Therapist therapist = this.securityManager.getLoggedUser();
       
-      return therapist.getSessions().flatMap(GamesSession::getAssigned).count();
+      return therapist.getSessions().flatMap(GamesSession::getAssignedGamesSessions).count();
     } else if (eval(checkThat.hasRole(RoleType.PATIENT))) {
       final Patient patient = this.securityManager.getLoggedUser();
       

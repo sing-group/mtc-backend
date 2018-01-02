@@ -47,7 +47,7 @@ public class IsEqualToAssignedGamesSession extends IsEqualToEntity<AssignedGames
         && checkAttribute("startDate", AssignedGamesSession::getStartDate, AssignedGamesSessionData::getStartDate, actual)
         && checkAttribute("endDate", AssignedGamesSession::getEndDate, AssignedGamesSessionData::getEndDate, actual)
         && matchAttribute("gamesSession", 
-          unwrapOptionalFuncion(AssignedGamesSession::getSession),
+          unwrapOptionalFuncion(AssignedGamesSession::getGamesSession),
           AssignedGamesSessionData::getGamesSession,
           actual,
           IsEqualToIdAndUri::equalToGamesSessionIdAndUri

@@ -27,7 +27,7 @@ import java.util.SortedSet;
 import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
-import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession;
+import org.sing_group.mtc.domain.entities.game.session.GameInGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
@@ -46,11 +46,11 @@ public interface GamesMapper {
 
   public GamesSessionEditionData mapToGameSessionEditionData(GamesSession modifiedSession);
 
-  public SortedSet<GameConfigurationForSession> mapToGameConfigurationForSession(GameConfigurationData[] gameConfigurations);
+  public SortedSet<GameInGamesSession> mapToGameConfigurationForSession(GameConfigurationData[] gameConfigurations);
 
   public GamesSessionData mapToGameSessionData(GamesSession session, UriBuilder uriBuilder);
 
-  public GameConfigurationData mapToGameConfigurationData(GameConfigurationForSession gameConfiguration);
+  public GameConfigurationData mapToGameConfigurationData(GameInGamesSession gameConfiguration);
 
   public Map<I18NLocaleData, String> mapToLocaleMessages(LocalizedMessage message);
 

@@ -27,12 +27,12 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.game.Game;
-import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession;
+import org.sing_group.mtc.domain.entities.game.session.GameInGamesSession;
 import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 
-public class IsEqualToGameConfiguration extends IsEqualToEntity<GameConfigurationForSession, GameConfigurationData> {
+public class IsEqualToGameConfiguration extends IsEqualToEntity<GameInGamesSession, GameConfigurationData> {
 
-  public IsEqualToGameConfiguration(GameConfigurationForSession expected) {
+  public IsEqualToGameConfiguration(GameInGamesSession expected) {
     super(expected);
   }
 
@@ -45,28 +45,28 @@ public class IsEqualToGameConfiguration extends IsEqualToEntity<GameConfiguratio
       return false;
     } else {
       return checkAttribute("gameId", config -> config.getGame().map(Game::getId).orElse(null), GameConfigurationData::getGameId, actualEntity)
-          && checkAttribute("gameOrder", GameConfigurationForSession::getGameOrder, GameConfigurationData::getGameOrder, actualEntity)
-          && checkAttribute("parameters", GameConfigurationForSession::getParamValues, GameConfigurationData::getParameterValues, actualEntity);
+          && checkAttribute("gameOrder", GameInGamesSession::getGameOrder, GameConfigurationData::getGameOrder, actualEntity)
+          && checkAttribute("parameters", GameInGamesSession::getParamValues, GameConfigurationData::getParameterValues, actualEntity);
     }
   }
 
   @Factory
-  public static IsEqualToGameConfiguration equalToGameConfiguration(GameConfigurationForSession data) {
+  public static IsEqualToGameConfiguration equalToGameConfiguration(GameInGamesSession data) {
     return new IsEqualToGameConfiguration(data);
   }
   
   @Factory
-  public static Matcher<Iterable<? extends GameConfigurationData>> containsGameConfigurationInAnyOrder(GameConfigurationForSession... gameConfigs) {
+  public static Matcher<Iterable<? extends GameConfigurationData>> containsGameConfigurationInAnyOrder(GameInGamesSession... gameConfigs) {
     return containsEntityInAnyOrder(IsEqualToGameConfiguration::equalToGameConfiguration, gameConfigs);
   }
 
   @Factory
-  public static Matcher<Iterable<? extends GameConfigurationData>> containsGameConfigurationInAnyOrder(Iterable<GameConfigurationForSession> gameConfigs) {
+  public static Matcher<Iterable<? extends GameConfigurationData>> containsGameConfigurationInAnyOrder(Iterable<GameInGamesSession> gameConfigs) {
     return containsEntityInAnyOrder(IsEqualToGameConfiguration::equalToGameConfiguration, gameConfigs);
   }
 
   @Factory
-  public static Matcher<Iterable<? extends GameConfigurationData>> containsGameConfigurationInAnyOrder(Stream<GameConfigurationForSession> gameConfigs) {
+  public static Matcher<Iterable<? extends GameConfigurationData>> containsGameConfigurationInAnyOrder(Stream<GameInGamesSession> gameConfigs) {
     return containsEntityInAnyOrder(IsEqualToGameConfiguration::equalToGameConfiguration, gameConfigs);
   }
 }

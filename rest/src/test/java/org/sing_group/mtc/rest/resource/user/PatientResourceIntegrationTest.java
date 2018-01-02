@@ -408,7 +408,7 @@ public class PatientResourceIntegrationTest {
   @InSequence(108)
   @ShouldMatchDataSet(
     value = { "users.xml", "games.xml", "games-sessions.xml", "assigned-games-sessions.xml", "assigned-games-sessions-create.xml" },
-    excludeColumns = "assigned_session.assignmentDate"
+    excludeColumns = "assigned_games_session.assignmentDate"
   )
   @CleanupUsingScript({ "cleanup.sql", "cleanup-autoincrement.sql" })
   public void afterAssignSession() {}

@@ -22,13 +22,13 @@
   -->
 
 <dataset>
-  <session id="2" therapist="therapist" />
+  <games_session id="2" therapist="therapist" />
 
-  <session_game_configuration game="recognition" gameOrder="1" session="2" />
+  <game_in_games_session game="recognition" gameOrder="1" gamesSession="2" />
 
-  <session_game_param_value param="diceShowTime" value="3" gameOrder="1" session="2" />
-  <session_game_param_value param="maxRepetitions" value="2" gameOrder="1" session="2" />
-  <session_game_param_value param="numOfStimuli" value="6" gameOrder="1" session="2" />
+  <game_in_games_session_param_value param="diceShowTime" value="3" gameOrder="1" gamesSession="2" />
+  <game_in_games_session_param_value param="maxRepetitions" value="2" gameOrder="1" gamesSession="2" />
+  <game_in_games_session_param_value param="numOfStimuli" value="6" gameOrder="1" gamesSession="2" />
 
   <i18n messageKey="session.2.name" locale="EN_US" value="Second session" />
   <i18n messageKey="session.2.name" locale="ES_ES" value="Segunda sesión" />
@@ -38,13 +38,13 @@
     value="Sesión con un juego de reconocimiento." />
   <i18n messageKey="session.2.description" locale="GL_ES" value="Sesión con un xogo de recoñecemento." />
 
-  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="EN_US" />
-  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="ES_ES" />
-  <session_i18n session="2" i18nKey="session.2.name" i18nLocale="GL_ES" />
-  <session_i18n session="2" i18nKey="session.2.description"
+  <games_session_i18n gamesSession="2" i18nKey="session.2.name" i18nLocale="EN_US" />
+  <games_session_i18n gamesSession="2" i18nKey="session.2.name" i18nLocale="ES_ES" />
+  <games_session_i18n gamesSession="2" i18nKey="session.2.name" i18nLocale="GL_ES" />
+  <games_session_i18n gamesSession="2" i18nKey="session.2.description"
     i18nLocale="EN_US" />
-  <session_i18n session="2" i18nKey="session.2.description"
+  <games_session_i18n gamesSession="2" i18nKey="session.2.description"
     i18nLocale="ES_ES" />
-  <session_i18n session="2" i18nKey="session.2.description"
+  <games_session_i18n gamesSession="2" i18nKey="session.2.description"
     i18nLocale="GL_ES" />
 </dataset>

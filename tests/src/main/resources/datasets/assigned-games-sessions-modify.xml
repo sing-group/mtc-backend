@@ -22,15 +22,15 @@
   -->
 
 <dataset>
-  <assigned_session id="1"
+  <assigned_games_session id="1"
     assignmentDate="2017-10-13"
     startDate="3017-12-01"
     endDate="3017-12-15"
-    patient="patient1" session="1"/>
+    patient="patient1" gamesSession="1"/>
     
-  <assigned_session id="2"
+  <assigned_games_session id="2"
     assignmentDate="2017-10-13"
     startDate="2017-12-01"
     endDate="2017-12-15"
-    patient="patient2" session="1"/>
+    patient="patient2" gamesSession="1"/>
 </dataset>

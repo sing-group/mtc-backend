@@ -19,7 +19,7 @@
 -- <http://www.gnu.org/licenses/gpl-3.0.html>.
 -- #L%
 ---
-ALTER TABLE `assigned_session` ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE `assigned_games_session` ALTER COLUMN id RESTART WITH 1;
 ALTER TABLE `game_result` ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE `games_session` ALTER COLUMN id RESTART WITH 1;
 ALTER TABLE `institution` ALTER COLUMN id RESTART WITH 1;
-ALTER TABLE `session` ALTER COLUMN id RESTART WITH 1;

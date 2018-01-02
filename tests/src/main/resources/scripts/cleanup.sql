@@ -19,14 +19,14 @@
 -- <http://www.gnu.org/licenses/gpl-3.0.html>.
 -- #L%
 ---
-DELETE FROM `session_i18n`;
+DELETE FROM `games_session_i18n`;
 DELETE FROM `i18n`;
-DELETE FROM `assigned_session`;
 DELETE FROM `game_result_value`;
 DELETE FROM `game_result`;
-DELETE FROM `session_game_param_value`;
-DELETE FROM `session_game_configuration`;
-DELETE FROM `session`;
+DELETE FROM `assigned_games_session`;
+DELETE FROM `game_in_games_session_param_value`;
+DELETE FROM `game_in_games_session`;
+DELETE FROM `games_session`;
 DELETE FROM `integer_parameter`;
 DELETE FROM `seconds_parameter`;
 DELETE FROM `game_parameter`;

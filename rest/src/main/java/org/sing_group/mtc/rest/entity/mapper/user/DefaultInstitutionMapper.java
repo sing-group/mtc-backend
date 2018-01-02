@@ -81,7 +81,7 @@ public class DefaultInstitutionMapper implements InstitutionMapper {
   }
 
   @Override
-  public Institution toInstitution(int id, InstitutionEditionData data) {
+  public Institution toInstitution(long id, InstitutionEditionData data) {
     return new Institution(
       id,
       data.getName(),

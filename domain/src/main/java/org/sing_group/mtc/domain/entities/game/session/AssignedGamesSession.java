@@ -48,21 +48,17 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.UniqueConstraint;
 
 import org.sing_group.mtc.domain.entities.user.Patient;
 
 @Entity
-@Table(
-  name = "assigned_session",
-  uniqueConstraints = @UniqueConstraint(columnNames = { "session", "patient", "assignmentDate" })
-)
+@Table(name = "assigned_session")
 public class AssignedGamesSession implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @Id
   @GeneratedValue(strategy = IDENTITY)
-  private Integer id;
+  private Long id;
   
   @Column(name = "assignmentDate", nullable = false)
   @Temporal(TemporalType.DATE)
@@ -100,7 +96,7 @@ public class AssignedGamesSession implements Serializable {
   AssignedGamesSession() {}
   
   AssignedGamesSession(
-    Integer id, Date assignmentDate, Date startDate, Date endDate, GamesSession session, Patient patient,
+    Long id, Date assignmentDate, Date startDate, Date endDate, GamesSession session, Patient patient,
     Set<GameResult> gameResults
   ) {
     this.id = id;
@@ -113,7 +109,7 @@ public class AssignedGamesSession implements Serializable {
     gameResults.forEach(this::addGameResult);
   }
   
-  public AssignedGamesSession(int id, Date startDate, Date endDate) {
+  public AssignedGamesSession(long id, Date startDate, Date endDate) {
     this.id = id;
     this.startDate = removeTime(startDate);
     this.endDate = removeTime(endDate);
@@ -123,11 +119,11 @@ public class AssignedGamesSession implements Serializable {
     this(null, startDate, endDate, session, patient);
   }
 
-  public AssignedGamesSession(Integer id, Date startDate, Date endDate, GamesSession session, Patient patient) {
+  public AssignedGamesSession(Long id, Date startDate, Date endDate, GamesSession session, Patient patient) {
     this(id, new Date(), startDate, endDate, session, patient, emptySet());
   }
 
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
 

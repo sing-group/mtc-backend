@@ -198,7 +198,7 @@ public final class GamesSessionDataset {
   public static AssignedGamesSession[] assignedGamesSessions() {
     return new AssignedGamesSession[] {
       new AssignedGamesSession(
-        1,
+        1L,
         parseDate("2017-10-13 17:50:10"),
         parseDate("2017-11-01 00:00:00"),
         parseDate("2017-11-10 23:59:59"),
@@ -207,7 +207,7 @@ public final class GamesSessionDataset {
         emptySet()
       ),
       new AssignedGamesSession(
-        2,
+        2L,
         parseDate("2017-10-13 20:00:00"),
         parseDate("2017-12-01 00:00:00"),
         parseDate("2017-12-15 23:59:59"),
@@ -249,7 +249,7 @@ public final class GamesSessionDataset {
   
   public static AssignedGamesSession modifiedAssignedGamesSession() {
     return new AssignedGamesSession(
-      1,
+      1L,
       parseDate("2017-10-13 17:50:10"),
       parseDate("3017-12-01 00:00:00"),
       parseDate("3017-12-15 23:59:59"),

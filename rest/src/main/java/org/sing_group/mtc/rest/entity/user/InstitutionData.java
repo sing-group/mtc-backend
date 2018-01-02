@@ -40,7 +40,7 @@ public class InstitutionData implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @XmlElement(name = "id", required = true)
-  private int id;
+  private long id;
   
   @XmlElement(name = "name", required = true)
   private String name;
@@ -61,7 +61,7 @@ public class InstitutionData implements Serializable {
   InstitutionData() {}
   
   public InstitutionData(
-    int id,
+    long id,
     String name,
     String description,
     String address,
@@ -82,11 +82,11 @@ public class InstitutionData implements Serializable {
     }
   }
   
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -136,7 +136,7 @@ public class InstitutionData implements Serializable {
     int result = 1;
     result = prime * result + ((address == null) ? 0 : address.hashCode());
     result = prime * result + ((description == null) ? 0 : description.hashCode());
-    result = prime * result + id;
+    result = prime * result + (int) (id ^ (id >>> 32));
     result = prime * result + ((manager == null) ? 0 : manager.hashCode());
     result = prime * result + ((name == null) ? 0 : name.hashCode());
     result = prime * result + Arrays.hashCode(therapists);

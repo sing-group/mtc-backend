@@ -31,7 +31,7 @@ import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Local
 public interface InstitutionService {
-  public Institution get(int id);
+  public Institution get(long id);
 
   public Stream<Institution> list(ListingOptions listingOptions);
 
@@ -41,9 +41,9 @@ public interface InstitutionService {
 
   public Institution update(Institution institution);
 
-  public void delete(int id);
+  public void delete(long id);
 
-  public Stream<Therapist> listTherapists(int id, ListingOptions options);
+  public Stream<Therapist> listTherapists(long id, ListingOptions options);
 
   public Institution changeManager(Institution institution, String manager);
 }

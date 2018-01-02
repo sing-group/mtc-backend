@@ -148,7 +148,7 @@ public class GamesSessionResourceIntegrationTest {
     .put(json(expected));
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeaderEndingWith("Location", Integer.toString(modifiedSession.getId())));
+    assertThat(response, hasHttpHeaderEndingWith("Location", Long.toString(modifiedSession.getId())));
     assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "Location"));
   }
 

@@ -23,8 +23,8 @@
 
 <dataset>
   <assigned_session id="3"
-    assignmentDate="2017-10-13 17:50:10"
-    startDate="3017-11-01 00:00:00"
-    endDate="3017-11-10 23:59:59"
+    assignmentDate="2017-10-13"
+    startDate="3017-11-01"
+    endDate="3017-11-10"
     patient="patient1" session="1"/>
 </dataset>

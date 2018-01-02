@@ -41,7 +41,7 @@ public final class BaseRestPathBuilder implements RestPathBuilder {
     this.builder = builder;
   }
   
-  public GamesSessionWithIdRestPathBuilder gamesSession(int id) {
+  public GamesSessionWithIdRestPathBuilder gamesSession(long id) {
     return new GamesSessionWithIdRestPathBuilder(this.builder, id);
   }
   
@@ -49,7 +49,7 @@ public final class BaseRestPathBuilder implements RestPathBuilder {
     return gamesSession(session.getId());
   }
   
-  public GamesSessionAssignedWithIdRestPathBuilder gamesSessionAssigned(int id) {
+  public GamesSessionAssignedWithIdRestPathBuilder gamesSessionAssigned(long id) {
     return new GamesSessionAssignedWithIdRestPathBuilder(this.builder, id);
   }
   
@@ -109,7 +109,7 @@ public final class BaseRestPathBuilder implements RestPathBuilder {
     return new InstitutionRestPathBuilder(this.builder);
   }
   
-  public InstitutionWithResourcesRestPathBuilder institution(int id) {
+  public InstitutionWithResourcesRestPathBuilder institution(long id) {
     return new InstitutionWithResourcesRestPathBuilder(this.builder, id);
   }
 
@@ -125,7 +125,7 @@ public final class BaseRestPathBuilder implements RestPathBuilder {
     return new GameResultRestPathBuilder(this.builder);
   }
   
-  public GameResultRestPathBuilder gameResult(int id) {
+  public GameResultRestPathBuilder gameResult(long id) {
     return new GameResultRestPathBuilder(this.builder, id);
   }
   

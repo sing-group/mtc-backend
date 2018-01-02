@@ -38,7 +38,7 @@ public class DefaultGamesSessionDAO implements GamesSessionDAO {
   @PersistenceContext
   private EntityManager em;
 
-  private DAOHelper<Integer, GamesSession> dh;
+  private DAOHelper<Long, GamesSession> dh;
 
   DefaultGamesSessionDAO() {}
 
@@ -49,7 +49,7 @@ public class DefaultGamesSessionDAO implements GamesSessionDAO {
 
   @PostConstruct
   private void createDAOHelper() {
-    this.dh = DAOHelper.of(Integer.class, GamesSession.class, this.em);
+    this.dh = DAOHelper.of(Long.class, GamesSession.class, this.em);
   }
 
   @Override
@@ -58,7 +58,7 @@ public class DefaultGamesSessionDAO implements GamesSessionDAO {
   }
   
   @Override
-  public GamesSession get(int sessionId) {
+  public GamesSession get(long sessionId) {
     return this.dh.get(sessionId)
       .orElseThrow(() -> new IllegalArgumentException("Unknown session: " + sessionId));
   }
@@ -66,7 +66,7 @@ public class DefaultGamesSessionDAO implements GamesSessionDAO {
   @Override
   public GamesSession modify(GamesSession session) {
     final GamesSession persistent = this.get(session.getId());
-
+    
     persistent.setGameConfigurations(session.getGameConfigurations());
     persistent.setDescriptionMessages(session.getDescription().getMessages());
     persistent.setNameMessages(session.getName().getMessages());
@@ -75,7 +75,7 @@ public class DefaultGamesSessionDAO implements GamesSessionDAO {
   }
 
   @Override
-  public void delete(int sessionId) {
+  public void delete(long sessionId) {
     this.dh.removeByKey(sessionId);
   }
 }

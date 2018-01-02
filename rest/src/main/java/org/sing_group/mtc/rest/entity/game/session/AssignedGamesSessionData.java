@@ -46,7 +46,7 @@ public class AssignedGamesSessionData implements Serializable {
   private static final long serialVersionUID = 1L;
   
   @XmlAttribute(name = "id", required = true)
-  private int id;
+  private long id;
   
   @XmlElement(name = "assignmentDate", required = true)
   @XmlJavaTypeAdapter(DateToTimestampAdapter.class)
@@ -73,7 +73,7 @@ public class AssignedGamesSessionData implements Serializable {
   AssignedGamesSessionData() {}
     
   public AssignedGamesSessionData(
-    int id,
+    long id,
     Date assignmentDate, Date startDate, Date endDate,
     IdAndUri gamesSession,
     UserUri patient,
@@ -88,11 +88,11 @@ public class AssignedGamesSessionData implements Serializable {
     this.gameResults = gameResults;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -152,7 +152,7 @@ public class AssignedGamesSessionData implements Serializable {
     result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
     result = prime * result + Arrays.hashCode(gameResults);
     result = prime * result + ((gamesSession == null) ? 0 : gamesSession.hashCode());
-    result = prime * result + id;
+    result = prime * result + (int) (id ^ (id >>> 32));
     result = prime * result + ((patient == null) ? 0 : patient.hashCode());
     result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
     return result;

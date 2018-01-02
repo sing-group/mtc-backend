@@ -29,8 +29,8 @@ CREATE TABLE `administrator` (
   `login` varchar(100) NOT NULL,
   PRIMARY KEY (`login`),
   UNIQUE KEY `UK_jj3mmcc0vjobqibj67dvuwihk` (`email`),
-  CONSTRAINT `FK_bsqrnuim3r3tdugqfkqlmn4qg` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  CONSTRAINT `FK7mdlakg18ui7hqe8de30yni45` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,18 +41,18 @@ DROP TABLE IF EXISTS `assigned_session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `assigned_session` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `assignmentDate` date DEFAULT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `assignmentDate` date NOT NULL,
   `endDate` date NOT NULL,
   `startDate` date NOT NULL,
   `patient` varchar(100) NOT NULL,
-  `session` int(11) NOT NULL,
+  `session` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_bfwxj07j5mrevtt4sa71sx4y1` (`session`,`patient`,`assignmentDate`),
   KEY `FK_assignedsession_patient` (`patient`),
+  KEY `FK_assignedsession_gamesession` (`session`),
   CONSTRAINT `FK_assignedsession_gamesession` FOREIGN KEY (`session`) REFERENCES `session` (`id`),
   CONSTRAINT `FK_assignedsession_patient` FOREIGN KEY (`patient`) REFERENCES `patient` (`login`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +65,22 @@ DROP TABLE IF EXISTS `game`;
 CREATE TABLE `game` (
   `id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `game_parameter`
+--
+
+DROP TABLE IF EXISTS `game_parameter`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `game_parameter` (
+  `game` varchar(255) NOT NULL,
+  `id` varchar(255) NOT NULL,
+  PRIMARY KEY (`game`,`id`),
+  CONSTRAINT `FK_gameparameter_game` FOREIGN KEY (`game`) REFERENCES `game` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -76,20 +91,19 @@ DROP TABLE IF EXISTS `game_result`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_result` (
-  `assignmentDate` date NOT NULL,
-  `game` varchar(255) NOT NULL,
-  `gameOrder` int(11) NOT NULL,
-  `patient` varchar(255) NOT NULL,
-  `session` int(11) NOT NULL,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `attempt` int(11) NOT NULL,
-  `end` date DEFAULT NULL,
-  `start` date DEFAULT NULL,
-  PRIMARY KEY (`assignmentDate`,`game`,`gameOrder`,`patient`,`session`),
-  KEY `FK_p9hwanlaxhipca4evq90qbi24` (`game`,`gameOrder`,`session`),
-  KEY `FK_89r219c5j4tp0um00vwykglua` (`session`,`patient`,`assignmentDate`),
-  CONSTRAINT `FK_89r219c5j4tp0um00vwykglua` FOREIGN KEY (`session`, `patient`, `assignmentDate`) REFERENCES `assigned_session` (`session`, `patient`, `assignmentDate`),
-  CONSTRAINT `FK_p9hwanlaxhipca4evq90qbi24` FOREIGN KEY (`game`, `gameOrder`, `session`) REFERENCES `session_game` (`game`, `gameOrder`, `session`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  `end` datetime DEFAULT NULL,
+  `start` datetime NOT NULL,
+  `assignedSession` bigint(20) NOT NULL,
+  `gameOrder` int(11) NOT NULL,
+  `session` bigint(20) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UKtf8lalxy7gm0t9bi4yaf9qddi` (`assignedSession`,`gameOrder`,`session`),
+  KEY `FK5ppfudjhg2ln59y7toy7fdgb9` (`gameOrder`,`session`),
+  CONSTRAINT `FK5ppfudjhg2ln59y7toy7fdgb9` FOREIGN KEY (`gameOrder`, `session`) REFERENCES `session_game_configuration` (`gameOrder`, `session`),
+  CONSTRAINT `FKrjyus8o21f8grtn3l1jng48f0` FOREIGN KEY (`assignedSession`) REFERENCES `assigned_session` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,16 +114,12 @@ DROP TABLE IF EXISTS `game_result_value`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `game_result_value` (
-  `assignmentDate` datetime NOT NULL,
-  `game` varchar(255) NOT NULL,
-  `gameOrder` int(11) NOT NULL,
-  `patient` varchar(255) NOT NULL,
-  `session` int(11) NOT NULL,
+  `gameResult` bigint(20) NOT NULL,
   `value` varchar(255) NOT NULL,
   `result` varchar(255) NOT NULL,
-  PRIMARY KEY (`assignmentDate`,`game`,`gameOrder`,`patient`,`session`,`result`),
-  CONSTRAINT `FK_9k4u5wreiljo464is0d1a5iua` FOREIGN KEY (`assignmentDate`, `game`, `gameOrder`, `patient`, `session`) REFERENCES `game_result` (`assignmentDate`, `game`, `gameOrder`, `patient`, `session`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  PRIMARY KEY (`gameResult`,`result`),
+  CONSTRAINT `FK_gameresult_resultvalues` FOREIGN KEY (`gameResult`) REFERENCES `game_result` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -123,8 +133,8 @@ CREATE TABLE `game_type` (
   `game` varchar(255) NOT NULL,
   `name` varchar(18) NOT NULL,
   PRIMARY KEY (`game`,`name`),
-  CONSTRAINT `FK_tm8c4qiv7a1quf45bdb23p45m` FOREIGN KEY (`game`) REFERENCES `game` (`id`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  CONSTRAINT `FK_game_type` FOREIGN KEY (`game`) REFERENCES `game` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -137,9 +147,9 @@ DROP TABLE IF EXISTS `i18n`;
 CREATE TABLE `i18n` (
   `messageKey` varchar(64) NOT NULL,
   `locale` char(5) NOT NULL,
-  `value` varchar(32768) NOT NULL,
+  `value` longtext NOT NULL,
   PRIMARY KEY (`messageKey`,`locale`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +160,7 @@ DROP TABLE IF EXISTS `institution`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `institution` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `address` varchar(1023) DEFAULT NULL,
   `description` varchar(1023) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
@@ -159,7 +169,7 @@ CREATE TABLE `institution` (
   UNIQUE KEY `UK_qhw15h5f7nc4g3ndva8sory1u` (`name`),
   KEY `FK_institution_manager` (`manager`),
   CONSTRAINT `FK_institution_manager` FOREIGN KEY (`manager`) REFERENCES `manager` (`login`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,14 +180,14 @@ DROP TABLE IF EXISTS `integer_parameter`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `integer_parameter` (
-  `game` varchar(255) NOT NULL,
-  `id` varchar(255) NOT NULL,
   `defaultValue` int(11) DEFAULT NULL,
   `max` int(11) DEFAULT NULL,
   `min` int(11) DEFAULT NULL,
+  `game` varchar(255) NOT NULL,
+  `id` varchar(255) NOT NULL,
   PRIMARY KEY (`game`,`id`),
-  CONSTRAINT `FK_n23ko0mdpep32jmb72qecp1v0` FOREIGN KEY (`game`) REFERENCES `game` (`id`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  CONSTRAINT `FKpdmon9xik697yh6paty3omabw` FOREIGN KEY (`game`, `id`) REFERENCES `game_parameter` (`game`, `id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -194,8 +204,8 @@ CREATE TABLE `manager` (
   `login` varchar(100) NOT NULL,
   PRIMARY KEY (`login`),
   UNIQUE KEY `UK_ch4c0h9mgdd2c5lategqkpsyi` (`email`),
-  CONSTRAINT `FK_dnl8wgno8u90x4ypa1xn2fugg` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  CONSTRAINT `FK4ulkn06biim9gyxqh3tr2ls8j` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -210,9 +220,9 @@ CREATE TABLE `patient` (
   `therapist` varchar(100) NOT NULL,
   PRIMARY KEY (`login`),
   KEY `FK_patient_therapist` (`therapist`),
-  CONSTRAINT `FK_hikyjcrcmqrlv001kcfmk21om` FOREIGN KEY (`login`) REFERENCES `user` (`login`),
-  CONSTRAINT `FK_patient_therapist` FOREIGN KEY (`therapist`) REFERENCES `therapist` (`login`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  CONSTRAINT `FK_patient_therapist` FOREIGN KEY (`therapist`) REFERENCES `therapist` (`login`),
+  CONSTRAINT `FKkqd1x5dogixnklrkprr52sj2` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -223,12 +233,12 @@ DROP TABLE IF EXISTS `seconds_parameter`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `seconds_parameter` (
+  `defaultValue` int(11) DEFAULT NULL,
   `game` varchar(255) NOT NULL,
   `id` varchar(255) NOT NULL,
-  `defaultValue` int(11) DEFAULT NULL,
   PRIMARY KEY (`game`,`id`),
-  CONSTRAINT `FK_j5xpyey3hpd2wjn9qwh8h1cbl` FOREIGN KEY (`game`) REFERENCES `game` (`id`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  CONSTRAINT `FKmhfwhcawq5phv2im9uh5smh3u` FOREIGN KEY (`game`, `id`) REFERENCES `game_parameter` (`game`, `id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -239,30 +249,31 @@ DROP TABLE IF EXISTS `session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `session` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `therapist` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_session_therapist` (`therapist`),
   CONSTRAINT `FK_session_therapist` FOREIGN KEY (`therapist`) REFERENCES `therapist` (`login`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `session_game`
+-- Table structure for table `session_game_configuration`
 --
 
-DROP TABLE IF EXISTS `session_game`;
+DROP TABLE IF EXISTS `session_game_configuration`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `session_game` (
-  `game` varchar(255) NOT NULL,
+CREATE TABLE `session_game_configuration` (
   `gameOrder` int(11) NOT NULL,
-  `session` int(11) NOT NULL,
-  PRIMARY KEY (`game`,`gameOrder`,`session`),
+  `session` bigint(20) NOT NULL,
+  `game` varchar(255) NOT NULL,
+  PRIMARY KEY (`gameOrder`,`session`),
   KEY `FK_sessiongame_gamesession` (`session`),
+  KEY `FK_sessiongame_game` (`game`),
   CONSTRAINT `FK_sessiongame_game` FOREIGN KEY (`game`) REFERENCES `game` (`id`),
   CONSTRAINT `FK_sessiongame_gamesession` FOREIGN KEY (`session`) REFERENCES `session` (`id`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -273,14 +284,13 @@ DROP TABLE IF EXISTS `session_game_param_value`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `session_game_param_value` (
-  `game` varchar(255) NOT NULL,
   `gameOrder` int(11) NOT NULL,
-  `session` int(11) NOT NULL,
+  `session` bigint(20) NOT NULL,
   `value` varchar(255) NOT NULL,
   `param` varchar(255) NOT NULL,
-  PRIMARY KEY (`game`,`gameOrder`,`session`,`param`),
-  CONSTRAINT `FK_1wgjcesurqe48iu9wsin1rfni` FOREIGN KEY (`game`, `gameOrder`, `session`) REFERENCES `session_game` (`game`, `gameOrder`, `session`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  PRIMARY KEY (`gameOrder`,`session`,`param`),
+  CONSTRAINT `FK_sessiongame_paramvalues` FOREIGN KEY (`gameOrder`, `session`) REFERENCES `session_game_configuration` (`gameOrder`, `session`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -291,14 +301,14 @@ DROP TABLE IF EXISTS `session_i18n`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `session_i18n` (
-  `session` int(11) NOT NULL,
+  `session` bigint(20) NOT NULL,
   `i18nKey` varchar(64) NOT NULL,
   `i18nLocale` char(5) NOT NULL,
   PRIMARY KEY (`session`,`i18nKey`,`i18nLocale`),
   UNIQUE KEY `UK_2b1ev5fxk8otkgyqsvf25y5o3` (`i18nKey`,`i18nLocale`),
-  CONSTRAINT `FK_2b1ev5fxk8otkgyqsvf25y5o3` FOREIGN KEY (`i18nKey`, `i18nLocale`) REFERENCES `i18n` (`messageKey`, `locale`),
-  CONSTRAINT `FK_sdlbpxrwlxq5nfcbqrr0l4564` FOREIGN KEY (`session`) REFERENCES `session` (`id`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  CONSTRAINT `FK_gamesession_i18n` FOREIGN KEY (`session`) REFERENCES `session` (`id`),
+  CONSTRAINT `FKjawaks1tveq8mm4y7pxx6r96t` FOREIGN KEY (`i18nKey`, `i18nLocale`) REFERENCES `i18n` (`messageKey`, `locale`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -313,13 +323,13 @@ CREATE TABLE `therapist` (
   `name` varchar(100) DEFAULT NULL,
   `surname` varchar(100) DEFAULT NULL,
   `login` varchar(100) NOT NULL,
-  `institution` int(11) NOT NULL,
+  `institution` bigint(20) NOT NULL,
   PRIMARY KEY (`login`),
   UNIQUE KEY `UK_faaj30mspthno6k9c85j09788` (`email`),
   KEY `FK_institution_therapist` (`institution`),
-  CONSTRAINT `FK_e9vswvimeif8t3luvqfirkuwi` FOREIGN KEY (`login`) REFERENCES `user` (`login`),
-  CONSTRAINT `FK_institution_therapist` FOREIGN KEY (`institution`) REFERENCES `institution` (`id`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+  CONSTRAINT `FK_institution_therapist` FOREIGN KEY (`institution`) REFERENCES `institution` (`id`),
+  CONSTRAINT `FKda0woh35t1e0tbrtj4ajgvrh4` FOREIGN KEY (`login`) REFERENCES `user` (`login`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -334,7 +344,7 @@ CREATE TABLE `user` (
   `login` varchar(100) NOT NULL,
   `password` varchar(32) NOT NULL,
   PRIMARY KEY (`login`)
-) ENGINE=InnoDB DEFAULT CHARACTER SET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -346,4 +356,4 @@ CREATE TABLE `user` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-02 18:32:00
+-- Dump completed on 2018-01-02 20:40:31

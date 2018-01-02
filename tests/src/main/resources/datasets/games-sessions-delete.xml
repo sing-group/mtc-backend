@@ -24,14 +24,11 @@
 <dataset>
   <session id="2" therapist="therapist" />
 
-  <session_game game="recognition" gameOrder="1" session="2" />
+  <session_game_configuration game="recognition" gameOrder="1" session="2" />
 
-  <session_game_param_value param="diceShowTime" value="3"
-    game="recognition" gameOrder="1" session="2" />
-  <session_game_param_value param="maxRepetitions"
-    value="2" game="recognition" gameOrder="1" session="2" />
-  <session_game_param_value param="numOfStimuli" value="6"
-    game="recognition" gameOrder="1" session="2" />
+  <session_game_param_value param="diceShowTime" value="3" gameOrder="1" session="2" />
+  <session_game_param_value param="maxRepetitions" value="2" gameOrder="1" session="2" />
+  <session_game_param_value param="numOfStimuli" value="6" gameOrder="1" session="2" />
 
   <i18n messageKey="session.2.name" locale="EN_US" value="Second session" />
   <i18n messageKey="session.2.name" locale="ES_ES" value="Segunda sesión" />

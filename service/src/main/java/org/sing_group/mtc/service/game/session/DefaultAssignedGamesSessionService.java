@@ -56,7 +56,7 @@ public class DefaultAssignedGamesSessionService implements AssignedGamesSessionS
   
   @RolesAllowed({ "THERAPIST", "PATIENT" })
   @Override
-  public AssignedGamesSession get(int assignedId) {
+  public AssignedGamesSession get(long assignedId) {
     final AssignedGamesSession assignedGamesSession = this.sessionDao.get(assignedId);
     
     return this.securityManager.ifAuthorized(

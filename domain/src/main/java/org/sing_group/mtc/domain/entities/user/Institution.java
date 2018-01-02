@@ -51,7 +51,7 @@ public class Institution implements Serializable {
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
-  private Integer id;
+  private Long id;
   
   @Column(name = "name", length = 255, columnDefinition = "VARCHAR(255)", unique = true, nullable = false)
   private String name;
@@ -77,7 +77,7 @@ public class Institution implements Serializable {
   // For JPA
   Institution() {}
   
-  public Institution(Integer id, String name, Manager manager) {
+  public Institution(Long id, String name, Manager manager) {
     this(id, name, manager, null, null, null);
   }
   
@@ -89,7 +89,7 @@ public class Institution implements Serializable {
     this(null, name, manager, description, address, therapists);
   }
 
-  public Institution(Integer id, String name, Manager manager, String description, String address, Collection<Therapist> therapists) {
+  public Institution(Long id, String name, Manager manager, String description, String address, Collection<Therapist> therapists) {
     this.id = id;
     this.name = name;
     this.setDescription(description);
@@ -99,7 +99,7 @@ public class Institution implements Serializable {
     this.therapists = therapists == null ? new HashSet<>() : new HashSet<>(therapists);
   }
 
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
 

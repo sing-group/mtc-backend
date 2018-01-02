@@ -85,7 +85,7 @@ public class DefaultGamesMapper implements GamesMapper {
   }
 
   @Override
-  public GamesSession mapToGameSession(int id, GamesSessionEditionData data) {
+  public GamesSession mapToGameSession(long id, GamesSessionEditionData data) {
     final GamesSession session = mapToGameSession(data);
     
     session.setId(id);

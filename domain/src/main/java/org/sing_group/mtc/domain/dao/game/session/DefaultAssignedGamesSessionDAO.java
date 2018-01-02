@@ -41,7 +41,7 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
   @PersistenceContext
   private EntityManager em;
 
-  private DAOHelper<Integer, AssignedGamesSession> dh;
+  private DAOHelper<Long, AssignedGamesSession> dh;
 
   DefaultAssignedGamesSessionDAO() {}
 
@@ -52,11 +52,11 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
 
   @PostConstruct
   private void createDAOHelper() {
-    this.dh = DAOHelper.of(Integer.class, AssignedGamesSession.class, this.em);
+    this.dh = DAOHelper.of(Long.class, AssignedGamesSession.class, this.em);
   }
 
   @Override
-  public AssignedGamesSession get(int assignedId) {
+  public AssignedGamesSession get(long assignedId) {
     return this.dh.get(assignedId)
       .orElseThrow(() -> new IllegalArgumentException("Unknown assigned games session: " + assignedId));
   }
@@ -93,7 +93,7 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
   }
   
   @Override
-  public void delete(int sessionId) {
+  public void delete(long sessionId) {
     this.dh.removeByKey(sessionId);
   }
 }

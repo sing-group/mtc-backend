@@ -31,15 +31,15 @@ import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 
 public interface AssignedGamesSessionDAO {
-  public AssignedGamesSession get(int assignedId);
-
+  public AssignedGamesSession get(long assignedId);
+  
   public Stream<AssignedGamesSession> listByPatient(Patient patient, ListingOptions options);
+  
+  public Stream<AssignedGamesSession> listByTherapist(Therapist therapist, ListingOptions options);
 
   public AssignedGamesSession assignSession(Patient patient, GamesSession gamesSession, Date startDate, Date endDate);
 
   public AssignedGamesSession modify(AssignedGamesSession assigned);
 
-  public void delete(int sessionId);
-
-  public Stream<AssignedGamesSession> listByTherapist(Therapist therapist, ListingOptions options);
+  public void delete(long sessionId);
 }

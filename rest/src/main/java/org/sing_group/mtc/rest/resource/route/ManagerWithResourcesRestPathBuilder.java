@@ -32,7 +32,7 @@ public class ManagerWithResourcesRestPathBuilder extends ManagerRestPathBuilder 
     return new InstitutionRestPathBuilder(this.builder);
   }
   
-  public InstitutionRestPathBuilder institution(int id) {
+  public InstitutionRestPathBuilder institution(long id) {
     return new InstitutionRestPathBuilder(this.builder, id);
   }
   

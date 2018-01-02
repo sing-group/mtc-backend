@@ -47,31 +47,30 @@ import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.game.session.GameConfigurationForSession.GameConfigurationForSessionId;
 
 @Entity
-@Table(name = "session_game")
+@Table(name = "session_game_configuration")
 @IdClass(GameConfigurationForSessionId.class)
 public class GameConfigurationForSession implements Comparable<GameConfigurationForSession>, Serializable {
   private static final long serialVersionUID = 1L;
-
-  @Id
-  @Column(name = "gameOrder")
-  private int gameOrder;
-
+  
   @Id
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(
     name = "session",
     referencedColumnName = "id",
-    nullable = false, updatable = false, insertable = false,
+    nullable = false,
     foreignKey = @ForeignKey(name = "FK_sessiongame_gamesession")
   )
   private GamesSession session;
 
   @Id
+  @Column(name = "gameOrder")
+  private int gameOrder;
+
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(
     name = "game",
     referencedColumnName = "id",
-    nullable = false, updatable = false, insertable = false,
+    nullable = false,
     foreignKey = @ForeignKey(name = "FK_sessiongame_game")
   )
   private Game game;
@@ -81,9 +80,8 @@ public class GameConfigurationForSession implements Comparable<GameConfiguration
   @Column(name = "value", nullable = false)
   @CollectionTable(
     name = "session_game_param_value", joinColumns = {
-      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", nullable = false, updatable = false, insertable = false),
       @JoinColumn(name = "session", referencedColumnName = "session", nullable = false, updatable = false, insertable = false),
-      @JoinColumn(name = "game", referencedColumnName = "game", nullable = false, updatable = false, insertable = false)
+      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", nullable = false, updatable = false, insertable = false)
     },
     foreignKey = @ForeignKey(name = "FK_sessiongame_paramvalues")
   )
@@ -145,40 +143,40 @@ public class GameConfigurationForSession implements Comparable<GameConfiguration
   public static class GameConfigurationForSessionId implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private int session;
-    
-    private String game;
+    private long session;
     
     private int gameOrder;
     
     // For JPA
     GameConfigurationForSessionId() {}
     
-    public GameConfigurationForSessionId(int sessionId, String gameId, int gameOrder) {
-      this.session = sessionId;
-      this.game = gameId;
+    public GameConfigurationForSessionId(long session, int gameOrder) {
+      this.session = session;
       this.gameOrder = gameOrder;
     }
     
-    public int getSession() {
+    public long getSession() {
       return this.session;
     }
-
-    public String getGame() {
-      return this.game;
+    
+    public void setSession(long session) {
+      this.session = session;
     }
 
     public int getGameOrder() {
       return this.gameOrder;
+    }
+    
+    public void setGameOrder(int gameOrder) {
+      this.gameOrder = gameOrder;
     }
 
     @Override
     public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((game == null) ? 0 : game.hashCode());
       result = prime * result + gameOrder;
-      result = prime * result + session;
+      result = prime * result + (int) (session ^ (session >>> 32));
       return result;
     }
 
@@ -191,11 +189,6 @@ public class GameConfigurationForSession implements Comparable<GameConfiguration
       if (getClass() != obj.getClass())
         return false;
       GameConfigurationForSessionId other = (GameConfigurationForSessionId) obj;
-      if (game == null) {
-        if (other.game != null)
-          return false;
-      } else if (!game.equals(other.game))
-        return false;
       if (gameOrder != other.gameOrder)
         return false;
       if (session != other.session)

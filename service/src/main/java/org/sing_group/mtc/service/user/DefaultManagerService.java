@@ -117,7 +117,7 @@ public class DefaultManagerService implements ManagerService {
   
   @RolesAllowed({ "ADMIN", "MANAGER" })
   @Override
-  public Therapist changeInstitution(String therapistLogin, int institutionId) {
+  public Therapist changeInstitution(String therapistLogin, long institutionId) {
     final Institution institution = this.institutionDao.get(institutionId);
     final Therapist therapist = this.therapistDao.get(therapistLogin);
     

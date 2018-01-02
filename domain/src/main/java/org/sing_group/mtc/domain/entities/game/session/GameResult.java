@@ -48,44 +48,23 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
-import org.sing_group.mtc.domain.entities.game.Game;
-import org.sing_group.mtc.domain.entities.user.Patient;
-
 @Entity
 @Table(
   name = "game_result",
-  uniqueConstraints = @UniqueConstraint(columnNames = { "session", "game", "gameOrder", "assignmentDate", "patient" })
+  uniqueConstraints = @UniqueConstraint(columnNames = { "assignedSession", "gameOrder", "session" })
 )
 public class GameResult implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
-  private Integer id;
-  
-  @Column(name = "session")
-  private Integer session;
-
-  @Column(name = "game", length = 255, columnDefinition = "VARCHAR(255)")
-  private String game;
-
-  @Column(name = "gameOrder")
-  private Integer gameOrder;
-
-  @Temporal(TemporalType.DATE)
-  @Column(name = "assignmentDate")
-  private Date assignmentDate;
-
-  @Column(name = "patient", length = 100, nullable = false)
-  private String patient;
+  private Long id;
   
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumns(
-    value = {
-      @JoinColumn(name = "session", referencedColumnName = "session", insertable = false, updatable = false, nullable = false),
-      @JoinColumn(name = "patient", referencedColumnName = "patient", insertable = false, updatable = false, nullable = false),
-      @JoinColumn(name = "assignmentDate", referencedColumnName = "assignmentDate", insertable = false, updatable = false, nullable = false)
-    },
+    value = @JoinColumn(
+      name = "assignedSession", referencedColumnName = "id", nullable = false
+    ),
     foreignKey = @ForeignKey(name = "FK_gameresult_assignedsession")
   )
   private AssignedGamesSession assignedSession;
@@ -93,9 +72,8 @@ public class GameResult implements Serializable {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumns(
     value = {
-      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", insertable = false, updatable = false, nullable = false),
-      @JoinColumn(name = "session", referencedColumnName = "session", insertable = false, updatable = false, nullable = false),
-      @JoinColumn(name = "game", referencedColumnName = "game", insertable = false, updatable = false, nullable = false)
+      @JoinColumn(name = "session", referencedColumnName = "session", nullable = false),
+      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", nullable = false)
     },
     foreignKey = @ForeignKey(name = "FK_gameresult_sessiongame")
   )
@@ -116,13 +94,11 @@ public class GameResult implements Serializable {
   @MapKeyColumn(name = "result", nullable = false)
   @Column(name = "value", nullable = false)
   @CollectionTable(
-    name = "game_result_value", joinColumns = {
-      @JoinColumn(name = "session", referencedColumnName = "session", nullable = false, updatable = false, insertable = false),
-      @JoinColumn(name = "patient", referencedColumnName = "patient", nullable = false, updatable = false, insertable = false),
-      @JoinColumn(name = "assignmentDate", referencedColumnName = "assignmentDate", nullable = false, updatable = false, insertable = false),
-      @JoinColumn(name = "gameOrder", referencedColumnName = "gameOrder", nullable = false, updatable = false, insertable = false),
-      @JoinColumn(name = "game", referencedColumnName = "game", nullable = false, updatable = false, insertable = false)
-    },
+    name = "game_result_value",
+    joinColumns = @JoinColumn(
+      name = "gameResult", referencedColumnName = "id",
+      nullable = false, updatable = false, insertable = false
+    ),
     foreignKey = @ForeignKey(name = "FK_gameresult_resultvalues")
   )
   private Map<String, String> resultValues;
@@ -144,7 +120,7 @@ public class GameResult implements Serializable {
     this.setGameConfiguration(gameConfiguration);
   }
   
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
 
@@ -170,43 +146,17 @@ public class GameResult implements Serializable {
   
   public void setAssignedSession(AssignedGamesSession assignedSession) {
     if (assignedSession != null) {
-      if (assignedSession.getSession() == null) {
-        throw new IllegalArgumentException("assignedSession should have an assigned session");
-      }
-      
-      if (assignedSession.getAssignmentDate() == null) {
-        throw new IllegalArgumentException("assignedSession should have an assignment date");
-      }
-      
-      if (assignedSession.getPatient() == null) {
-        throw new IllegalArgumentException("assignedSession should have a patient");
-      }
-      
-      checkSameGameSession(this.assignedSession, gameConfiguration);
+      checkSameGameSession(assignedSession, this.gameConfiguration);
     }
     
     if (this.assignedSession != null) {
       this.assignedSession.directRemoveGameResult(this);
       this.assignedSession = null;
-      
-      if (this.gameConfiguration == null)
-        this.session = null;
-      
-      this.assignmentDate = null;
-      this.patient = null;
     }
     
     if (assignedSession != null) {
       this.assignedSession = assignedSession;
       this.assignedSession.directAddGameResult(this);
-      
-      this.session = this.assignedSession.getSession()
-        .map(GamesSession::getId)
-      .orElseThrow(IllegalStateException::new);
-      this.assignmentDate = this.assignedSession.getAssignmentDate();
-      this.patient = this.assignedSession.getPatient()
-        .map(Patient::getLogin)
-      .orElseThrow(IllegalStateException::new);
     }
   }
   
@@ -226,26 +176,10 @@ public class GameResult implements Serializable {
   
   public void setGameConfiguration(GameConfigurationForSession gameConfiguration) {
     if (gameConfiguration != null) {
-      if (gameConfiguration.getGame() == null) {
-        throw new IllegalArgumentException("gameConfiguration should have an assigned game");
-      }
-      
       checkSameGameSession(this.assignedSession, gameConfiguration);
     }
     
     this.gameConfiguration = gameConfiguration;
-    
-    if (this.gameConfiguration == null) {
-      this.gameOrder = null;
-      this.game = null;
-      
-      if (this.assignedSession == null)
-        this.session = null;
-    } else {
-      this.gameOrder = this.gameConfiguration.getGameOrder();
-      this.game = this.gameConfiguration.getGame().map(Game::getId).orElseThrow(IllegalStateException::new);
-      this.session = this.gameConfiguration.getSession().getId();
-    }
   }
   
   private static void checkSameGameSession(
@@ -259,8 +193,8 @@ public class GameResult implements Serializable {
       if (assignedSession.getSession() == null)
         throw new IllegalArgumentException("assignedSession should have an assigned session");
       
-      final int gsIdConfig = gameConfiguration.getSession().getId();
-      final int gsIdAssigned = assignedSession.getSession().map(GamesSession::getId).get();
+      final long gsIdConfig = gameConfiguration.getSession().getId();
+      final long gsIdAssigned = assignedSession.getSession().map(GamesSession::getId).get();
       
       if (gsIdConfig != gsIdAssigned) {
         throw new IllegalArgumentException("gameConfiguration should have the same session as the assignedSession");

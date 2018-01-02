@@ -50,7 +50,7 @@ import io.swagger.annotations.ApiModel;
 public class GamesSessionData implements Serializable {
   private static final long serialVersionUID = 1L;
   
-  private int id;
+  private long id;
 
   private UserUri therapist;
   
@@ -70,7 +70,7 @@ public class GamesSessionData implements Serializable {
   GamesSessionData() {}
 
   public GamesSessionData(
-    int id,
+    long id,
     URI therapistUri,
     String therapistLogin,
     GameConfigurationData[] gameConfiguration,
@@ -84,11 +84,11 @@ public class GamesSessionData implements Serializable {
     this.descriptionMessage = descriptionMessage;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -130,7 +130,7 @@ public class GamesSessionData implements Serializable {
     int result = 1;
     result = prime * result + ((descriptionMessage == null) ? 0 : descriptionMessage.hashCode());
     result = prime * result + Arrays.hashCode(gameConfiguration);
-    result = prime * result + id;
+    result = prime * result + (int) (id ^ (id >>> 32));
     result = prime * result + ((nameMessage == null) ? 0 : nameMessage.hashCode());
     result = prime * result + ((therapist == null) ? 0 : therapist.hashCode());
     return result;

@@ -243,7 +243,7 @@ public class DefaultManagerResource implements ManagerResource {
   @Override
   public Response getInstitution(
     @PathParam("login") String login,
-    @PathParam("id") int id
+    @PathParam("id") long id
   ) {
     final Manager manager = this.service.get(login);
     final Institution institution = manager.getInstitutions()

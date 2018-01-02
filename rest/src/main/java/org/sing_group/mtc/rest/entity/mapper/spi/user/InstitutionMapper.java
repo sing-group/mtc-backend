@@ -32,7 +32,7 @@ public interface InstitutionMapper {
 
   public Institution toInstitution(InstitutionEditionData data);
   
-  public Institution toInstitution(int id, InstitutionEditionData data);
+  public Institution toInstitution(long id, InstitutionEditionData data);
 
   public InstitutionEditionData toEditionData(Institution institution);
 }

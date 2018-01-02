@@ -26,9 +26,9 @@ import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 public interface GamesSessionDAO {
   public GamesSession persist(GamesSession session);
 
-  public GamesSession get(int sessionId);
+  public GamesSession get(long sessionId);
 
   public GamesSession modify(GamesSession session);
 
-  public void delete(int sessionId);
+  public void delete(long sessionId);
 }

@@ -32,10 +32,10 @@ public class GameResultRestPathBuilder implements RestPathBuilder {
     this.builder = builder.clone().path("game").path("result");
   }
 
-  public GameResultRestPathBuilder(UriBuilder builder, int id) {
+  public GameResultRestPathBuilder(UriBuilder builder, long id) {
     this(builder);
     
-    this.builder = this.builder.path(Integer.toString(id));
+    this.builder = this.builder.path(Long.toString(id));
   }
 
   @Override

@@ -44,7 +44,7 @@ public class TherapistCreationData extends TherapistEditionData {
   TherapistCreationData() {}
 
   public TherapistCreationData(
-    String login, String password, String email, String name, String surname, Integer institution
+    String login, String password, String email, String name, String surname, Long institution
   ) {
     super(password, email, name, surname, institution);
     

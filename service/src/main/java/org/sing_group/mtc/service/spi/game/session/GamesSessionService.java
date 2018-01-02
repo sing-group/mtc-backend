@@ -30,7 +30,7 @@ public interface GamesSessionService {
 
   public GamesSession create(GamesSession gameSession);
 
-  public GamesSession get(int sessionId);
+  public GamesSession get(long sessionId);
 
   public GamesSession modify(GamesSession mapToGameSession);
 

@@ -63,7 +63,7 @@ public class Patient extends User implements Serializable {
   private Therapist therapist;
 
   @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<AssignedGamesSession> assigned;
+  private Set<AssignedGamesSession> assignedGamesSessions;
 
   // Required for JPA
   Patient() {}
@@ -81,7 +81,7 @@ public class Patient extends User implements Serializable {
     
     this.setTherapist(therapist);
     
-    this.assigned = sessions == null ? new HashSet<>() : new HashSet<>(sessions);
+    this.assignedGamesSessions = sessions == null ? new HashSet<>() : new HashSet<>(sessions);
   }
 
   public Patient(String login, String password, Therapist therapist, Collection<AssignedGamesSession> sessions, boolean encodedPassword) {
@@ -89,7 +89,7 @@ public class Patient extends User implements Serializable {
     
     this.setTherapist(therapist);
     
-    this.assigned = sessions == null ? new HashSet<>() : new HashSet<>(sessions);
+    this.assignedGamesSessions = sessions == null ? new HashSet<>() : new HashSet<>(sessions);
   }
   
   public Therapist getTherapist() {
@@ -109,17 +109,17 @@ public class Patient extends User implements Serializable {
   }
   
   public Stream<AssignedGamesSession> getAssignedGameSessions() {
-    return this.assigned.stream();
+    return this.assignedGamesSessions.stream();
   }
   
   public boolean hasAssignedGameSession(AssignedGamesSession session) {
-    return this.assigned.contains(session);
+    return this.assignedGamesSessions.contains(session);
   }
   
   public boolean addAssignedGameSession(AssignedGamesSession session) {
     requireNonNull(session, "'session' can't be null");
     
-    if (this.assigned.add(session)) {
+    if (this.assignedGamesSessions.add(session)) {
       if (!session.getPatient().equals(Optional.of(this)))
         session.setPatient(this);
       
@@ -132,7 +132,7 @@ public class Patient extends User implements Serializable {
   public boolean removeAssignedGameSession(AssignedGamesSession session) {
     requireNonNull(session, "'session' can't be null");
 
-    if (this.assigned.remove(session)) {
+    if (this.assignedGamesSessions.remove(session)) {
       if (session.getPatient().equals(Optional.of(this)))
         session.setPatient(null);
       

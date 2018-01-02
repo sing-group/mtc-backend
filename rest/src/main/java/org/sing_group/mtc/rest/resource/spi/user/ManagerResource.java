@@ -43,7 +43,7 @@ public interface ManagerResource {
   
   public Response getInstitutions(String login, int start, int end, String sortField, SortDirection order);
 
-  public Response getInstitution(String login, int id);
+  public Response getInstitution(String login, long id);
 
   public Response getTherapists(String login, int start, int end, String sortField, SortDirection order);
 

@@ -49,13 +49,13 @@ public class AssignedGamesSessionCreationData implements Serializable {
   private Date endDate;
   
   @XmlElement(name = "gamesSessionId", required = true)
-  private int gamesSessionId;
+  private long gamesSessionId;
   
   AssignedGamesSessionCreationData() {}
     
   public AssignedGamesSessionCreationData(
     Date startDate, Date endDate,
-    int gamesSessionId
+    long gamesSessionId
   ) {
     this.startDate = startDate;
     this.endDate = endDate;
@@ -78,11 +78,11 @@ public class AssignedGamesSessionCreationData implements Serializable {
     this.endDate = endDate;
   }
 
-  public int getGamesSessionId() {
+  public long getGamesSessionId() {
     return gamesSessionId;
   }
 
-  public void setGamesSessionId(int gamesSessionId) {
+  public void setGamesSessionId(long gamesSessionId) {
     this.gamesSessionId = gamesSessionId;
   }
 
@@ -91,7 +91,7 @@ public class AssignedGamesSessionCreationData implements Serializable {
     final int prime = 31;
     int result = 1;
     result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
-    result = prime * result + gamesSessionId;
+    result = prime * result + (int) (gamesSessionId ^ (gamesSessionId >>> 32));
     result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
     return result;
   }

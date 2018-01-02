@@ -112,7 +112,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
     @ApiResponse(code = 400, message = "Unknown institution: {id}")
   )
   @Override
-  public Response get(@PathParam("id") int id) {
+  public Response get(@PathParam("id") long id) {
     final Institution institution = this.service.get(id);
     
     return Response
@@ -179,7 +179,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
   )
   @Override
   public Response update(
-    @PathParam("id") int id,
+    @PathParam("id") long id,
     InstitutionEditionData data
   ) {
     Institution institution = this.service.update(mapper.toInstitution(id, data));
@@ -208,7 +208,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
     @ApiResponse(code = 400, message = "Unknown institution: {id}")
   )
   @Override
-  public Response delete(@PathParam("id") int id) {
+  public Response delete(@PathParam("id") long id) {
     this.service.delete(id);
     
     return Response.ok().build();
@@ -224,7 +224,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
     @ApiResponse(code = 400, message = "Unknown institution: {id}")
   )
   @Override
-  public Response getManager(@PathParam("id") int id) {
+  public Response getManager(@PathParam("id") long id) {
     final Institution institution = this.service.get(id);
     final Manager manager = institution.getManager()
       .orElseThrow(() -> new IllegalArgumentException("No manager found for institution: " + id));
@@ -243,7 +243,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
   )
   @Override
   public Response listTherapists(
-    @PathParam("id") int id,
+    @PathParam("id") long id,
     @QueryParam("start") @DefaultValue("-1") int start,
     @QueryParam("end") @DefaultValue("-1") int end,
     @QueryParam("sort") String sortField,
@@ -273,7 +273,7 @@ public class DefaultInstitutionResource implements InstitutionResource {
   )
   @Override
   public Response getTherapists(
-    @PathParam("id") int id,
+    @PathParam("id") long id,
     @PathParam("login") String login
   ) {
     final Institution institution = this.service.get(id);

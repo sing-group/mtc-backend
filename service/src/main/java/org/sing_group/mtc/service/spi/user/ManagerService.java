@@ -48,5 +48,5 @@ public interface ManagerService {
 
   public Stream<Therapist> listTherapists(String login, ListingOptions options);
 
-  public Therapist changeInstitution(String therapistLogin, int institutionId);
+  public Therapist changeInstitution(String therapistLogin, long institutionId);
 }

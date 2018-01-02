@@ -127,7 +127,7 @@ public class DefaultPatientService implements PatientService {
   }
 
   @Override
-  public AssignedGamesSession assignSession(String login, int gamesSessionId, Date startDate, Date endDate) {
+  public AssignedGamesSession assignSession(String login, long gamesSessionId, Date startDate, Date endDate) {
     requireStringSize(login, 1, 100, "'login' should have a length between 1 and 100");
     requireNonNull(startDate, "'startDate' can't be null");
     requireNonNull(endDate, "'startDate' can't be null");

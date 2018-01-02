@@ -98,10 +98,10 @@ public class UsersDataset {
   
   public static Stream<User> users() {
     final List<Institution> institutions = asList(
-      new Institution(1, "Institution 1", null),
-      new Institution(2, "Institution 2", null),
-      new Institution(3, "Institution 3", null),
-      new Institution(4, "Institution 4", null)
+      new Institution(1L, "Institution 1", null),
+      new Institution(2L, "Institution 2", null),
+      new Institution(3L, "Institution 3", null),
+      new Institution(4L, "Institution 4", null)
     );
     
     final Manager manager = new Manager("manager", "manager@email.com", passwordOf("manager"), "Man", "Manager", institutions.subList(0, 2));
@@ -342,7 +342,7 @@ public class UsersDataset {
       .limit(end - start + 1);
   }
   
-  public static Institution institution(int id) {
+  public static Institution institution(long id) {
     return institutions()
       .filter(institution -> institution.getId().equals(id))
       .findFirst()

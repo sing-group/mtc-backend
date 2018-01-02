@@ -53,7 +53,7 @@ public class DefaultGamesSessionService implements GamesSessionService {
   }
 
   @Override
-  public GamesSession get(int sessionId) {
+  public GamesSession get(long sessionId) {
     final GamesSession gamesSession = this.sessionDao.get(sessionId);
     
     return this.securityManager.ifAuthorized(

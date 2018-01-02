@@ -27,19 +27,19 @@ import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.rest.entity.user.InstitutionEditionData;
 
 public interface InstitutionResource {
-  public Response get(int id);
+  public Response get(long id);
 
   public Response list(int start, int end, String sortField, SortDirection order);
 
   public Response create(InstitutionEditionData data);
 
-  public Response update(int id, InstitutionEditionData data);
+  public Response update(long id, InstitutionEditionData data);
 
-  public Response delete(int id);
+  public Response delete(long id);
 
-  public Response getManager(int id);
+  public Response getManager(long id);
 
-  public Response listTherapists(int id, int start, int end, String sortField, SortDirection order);
+  public Response listTherapists(long id, int start, int end, String sortField, SortDirection order);
 
-  public Response getTherapists(int id, String login);
+  public Response getTherapists(long id, String login);
 }

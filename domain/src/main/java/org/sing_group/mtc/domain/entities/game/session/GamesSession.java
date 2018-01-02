@@ -69,7 +69,7 @@ public class GamesSession implements Serializable {
   private static final String DESCRIPTION_SUFFIX = ".description";
 
   @Transient
-  private Integer id;
+  private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(
@@ -114,7 +114,7 @@ public class GamesSession implements Serializable {
   }
 
   public GamesSession(
-    int id,
+    long id,
     Therapist therapist,
     Map<I18NLocale, String> nameMessages,
     Map<I18NLocale, String> descriptionMessages
@@ -132,7 +132,7 @@ public class GamesSession implements Serializable {
   }
 
   public GamesSession(
-    int id,
+    long id,
     Therapist therapist,
     Map<I18NLocale, String> nameMessages,
     Map<I18NLocale, String> descriptionMessages,
@@ -148,11 +148,11 @@ public class GamesSession implements Serializable {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Access(AccessType.PROPERTY)
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
   
-  public void setId(Integer id) {
+  public void setId(Long id) {
     this.id = id;
     
     this.updateMessagesKey();
@@ -231,7 +231,7 @@ public class GamesSession implements Serializable {
   public boolean hasGameConfiguration(GameConfigurationForSession gameConfiguration) {
     return this.gameConfigurations.contains(gameConfiguration);
   }
-
+  
   public boolean addGameConfiguration(GameConfigurationForSession config) {
     requireNonNull(config, "config can't be null");
 
@@ -343,4 +343,31 @@ public class GamesSession implements Serializable {
     messages.entrySet().stream()
       .forEach(entry -> this.setMessage(entry.getKey(), key, entry.getValue()));
   }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    GamesSession other = (GamesSession) obj;
+    if (id == null) {
+      if (other.id != null)
+        return false;
+    } else if (!id.equals(other.id))
+      return false;
+    return true;
+  }
+  
+  
 }

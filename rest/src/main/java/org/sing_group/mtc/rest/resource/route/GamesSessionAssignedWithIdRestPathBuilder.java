@@ -24,8 +24,8 @@ package org.sing_group.mtc.rest.resource.route;
 import javax.ws.rs.core.UriBuilder;
 
 public class GamesSessionAssignedWithIdRestPathBuilder extends GamesSessionAssignedWithoutIdRestPathBuilder {
-  public GamesSessionAssignedWithIdRestPathBuilder(UriBuilder builder, int id) {
+  public GamesSessionAssignedWithIdRestPathBuilder(UriBuilder builder, long id) {
     super(builder);
-    this.builder.path(Integer.toString(id));
+    this.builder.path(Long.toString(id));
   }
 }

@@ -42,7 +42,7 @@ public interface GamesMapper {
 
   public GamesSession mapToGameSession(GamesSessionEditionData data);
   
-  public GamesSession mapToGameSession(int id, GamesSessionEditionData data);
+  public GamesSession mapToGameSession(long id, GamesSessionEditionData data);
 
   public GamesSessionEditionData mapToGameSessionEditionData(GamesSession modifiedSession);
 

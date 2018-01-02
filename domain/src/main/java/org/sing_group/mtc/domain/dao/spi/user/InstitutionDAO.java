@@ -28,7 +28,7 @@ import org.sing_group.mtc.domain.entities.user.Institution;
 import org.sing_group.mtc.domain.entities.user.Manager;
 
 public interface InstitutionDAO {
-  public Institution get(int id);
+  public Institution get(long id);
 
   public Stream<Institution> list(ListingOptions listingOptions);
 
@@ -40,5 +40,5 @@ public interface InstitutionDAO {
 
   public Institution update(Institution institution);
 
-  public void delete(int id);
+  public void delete(long id);
 }

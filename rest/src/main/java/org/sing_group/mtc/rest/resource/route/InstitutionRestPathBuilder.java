@@ -32,8 +32,8 @@ public class InstitutionRestPathBuilder implements RestPathBuilder {
     this.builder = builder.clone().path("institution");
   }
   
-  public InstitutionRestPathBuilder(UriBuilder builder, int id) {
-    this.builder = builder.clone().path("institution").path(Integer.toString(id));
+  public InstitutionRestPathBuilder(UriBuilder builder, long id) {
+    this.builder = builder.clone().path("institution").path(Long.toString(id));
   }
 
   @Override

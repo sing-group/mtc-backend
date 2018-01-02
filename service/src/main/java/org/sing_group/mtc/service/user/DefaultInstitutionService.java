@@ -63,7 +63,7 @@ public class DefaultInstitutionService implements InstitutionService {
   
   @RolesAllowed({ "MANAGER", "ADMIN", "THERAPIST" })
   @Override
-  public Institution get(int id) {
+  public Institution get(long id) {
     return this.securityGuard.ifAuthorized(
         checkThat.hasRole(RoleType.ADMIN),
         checkThat.hasLogin(() -> dao.get(id).getManager().map(Manager::getLogin).orElse("")),
@@ -106,13 +106,13 @@ public class DefaultInstitutionService implements InstitutionService {
   }
 
   @Override
-  public void delete(int id) {
+  public void delete(long id) {
     this.dao.delete(id);
   }
 
   @RolesAllowed({ "MANAGER", "ADMIN" })
   @Override
-  public Stream<Therapist> listTherapists(int id, ListingOptions options) {
+  public Stream<Therapist> listTherapists(long id, ListingOptions options) {
     return this.securityGuard.ifAuthorized(
         checkThat.hasRole(RoleType.ADMIN),
         checkThat.hasLogin(() -> dao.get(id).getManager().map(Manager::getLogin).orElse(""))

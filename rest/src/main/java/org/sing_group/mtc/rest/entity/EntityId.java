@@ -31,19 +31,19 @@ import io.swagger.annotations.ApiModel;
 @XmlAccessorType(XmlAccessType.FIELD)
 @ApiModel(value = "entity-id", description = "Identifier of an entity.")
 public class EntityId {
-  private int id;
+  private long id;
 
   EntityId() {}
   
-  public EntityId(int id) {
+  public EntityId(long id) {
     this.id = id;
   }
 
-  public int getId() {
+  public long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(long id) {
     this.id = id;
   }
 
@@ -51,7 +51,7 @@ public class EntityId {
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + id;
+    result = prime * result + (int) (id ^ (id >>> 32));
     return result;
   }
 

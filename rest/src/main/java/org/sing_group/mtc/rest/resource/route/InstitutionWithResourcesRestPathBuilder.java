@@ -24,7 +24,7 @@ package org.sing_group.mtc.rest.resource.route;
 import javax.ws.rs.core.UriBuilder;
 
 public class InstitutionWithResourcesRestPathBuilder extends InstitutionRestPathBuilder {
-  public InstitutionWithResourcesRestPathBuilder(UriBuilder builder, int id) {
+  public InstitutionWithResourcesRestPathBuilder(UriBuilder builder, long id) {
     super(builder, id);
   }
   

@@ -35,6 +35,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.sing_group.mtc.domain.entities.i18n.I18N.I18NId;
@@ -54,7 +55,8 @@ public class I18N implements Serializable {
   @Column(name = "messageKey", length = 64, columnDefinition = "VARCHAR(64)")
   private String key;
   
-  @Column(name = "value", length = 32768, nullable = false)
+  @Lob
+  @Column(name = "value", nullable = false)
   private String value;
   
   // For JPA

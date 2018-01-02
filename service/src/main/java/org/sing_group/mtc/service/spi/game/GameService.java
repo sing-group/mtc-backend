@@ -29,5 +29,5 @@ import org.sing_group.mtc.domain.entities.game.Game;
 public interface GameService {
 
   public Game getGame(String id);
-
+  
 }

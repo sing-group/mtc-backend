@@ -28,7 +28,7 @@ import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 
 public interface AssignedGamesSessionService {
 
-  public AssignedGamesSession get(int assignedId);
+  public AssignedGamesSession get(long assignedId);
 
   public AssignedGamesSession modify(AssignedGamesSession mapToAssignedGamesSession);
 

@@ -46,5 +46,5 @@ public interface PatientService {
 
   public Stream<AssignedGamesSession> listAssignedSessions(String login, ListingOptions options);
 
-  public AssignedGamesSession assignSession(String login, int gamesSessionId, Date startDate, Date endDate);
+  public AssignedGamesSession assignSession(String login, long gamesSessionId, Date startDate, Date endDate);
 }

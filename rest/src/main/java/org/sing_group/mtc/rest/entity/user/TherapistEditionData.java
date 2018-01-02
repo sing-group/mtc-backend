@@ -41,24 +41,24 @@ import io.swagger.annotations.ApiModel;
 public class TherapistEditionData extends IdentifiedUserEditionData {
   private static final long serialVersionUID = 1L;
   
-  private Integer institution;
+  private Long institution;
 
   TherapistEditionData() {
     super();
   }
   
-  public TherapistEditionData(String password, String email, String name, String surname, Integer institution) {
+  public TherapistEditionData(String password, String email, String name, String surname, Long institution) {
     super(password, email, name, surname, RoleType.THERAPIST);
     
     this.institution = institution;
   }
   
   @XmlElement(name = "institution", required = true)
-  public Integer getInstitution() {
+  public Long getInstitution() {
     return this.institution;
   }
   
-  public void setInstitution(Integer institution) {
+  public void setInstitution(Long institution) {
     this.institution = institution;
   }
 

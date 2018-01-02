@@ -24,22 +24,16 @@
 <dataset>
   <session id="1" therapist="therapist" />
 
-  <session_game game="recognition" gameOrder="1" session="1" />
-  <session_game game="recognition" gameOrder="2" session="1" />
+  <session_game_configuration game="recognition" gameOrder="1" session="1" />
+  <session_game_configuration game="recognition" gameOrder="2" session="1" />
 
-  <session_game_param_value param="diceShowTime" value="3"
-    game="recognition" gameOrder="1" session="1" />
-  <session_game_param_value param="maxRepetitions"
-    value="2" game="recognition" gameOrder="1" session="1" />
-  <session_game_param_value param="numOfStimuli" value="6"
-    game="recognition" gameOrder="1" session="1" />
+  <session_game_param_value param="diceShowTime" value="3" gameOrder="1" session="1" />
+  <session_game_param_value param="maxRepetitions" value="2" gameOrder="1" session="1" />
+  <session_game_param_value param="numOfStimuli" value="6" gameOrder="1" session="1" />
 
-  <session_game_param_value param="diceShowTime" value="5"
-    game="recognition" gameOrder="2" session="1" />
-  <session_game_param_value param="maxRepetitions"
-    value="1" game="recognition" gameOrder="2" session="1" />
-  <session_game_param_value param="numOfStimuli" value="8"
-    game="recognition" gameOrder="2" session="1" />
+  <session_game_param_value param="diceShowTime" value="5" gameOrder="2" session="1" />
+  <session_game_param_value param="maxRepetitions" value="1" gameOrder="2" session="1" />
+  <session_game_param_value param="numOfStimuli" value="8" gameOrder="2" session="1" />
 
   <i18n messageKey="session.1.name" locale="EN_US" value="Modified recognition" />
   <i18n messageKey="session.1.name" locale="ES_ES" value="Sesión 1" />
@@ -62,14 +56,11 @@
 
   <session id="2" therapist="therapist" />
 
-  <session_game game="recognition" gameOrder="1" session="2" />
+  <session_game_configuration game="recognition" gameOrder="1" session="2" />
 
-  <session_game_param_value param="diceShowTime" value="3"
-    game="recognition" gameOrder="1" session="2" />
-  <session_game_param_value param="maxRepetitions"
-    value="2" game="recognition" gameOrder="1" session="2" />
-  <session_game_param_value param="numOfStimuli" value="6"
-    game="recognition" gameOrder="1" session="2" />
+  <session_game_param_value param="diceShowTime" value="3" gameOrder="1" session="2" />
+  <session_game_param_value param="maxRepetitions" value="2" gameOrder="1" session="2" />
+  <session_game_param_value param="numOfStimuli" value="6" gameOrder="1" session="2" />
 
   <i18n messageKey="session.2.name" locale="EN_US" value="Second session" />
   <i18n messageKey="session.2.name" locale="ES_ES" value="Segunda sesión" />

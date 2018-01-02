@@ -35,18 +35,18 @@ VALUES ('recognition','diceShowTime',5);
 INSERT INTO `session` (`id`, `therapist`)
 VALUES (1,'therapist');
 
-INSERT INTO `session_game` (`game`, `gameOrder`, `session`)
+INSERT INTO `session_game_configuration` (`game`, `gameOrder`, `session`)
 VALUES ('recognition',1,1),
        ('verbalFluency',2,1),
        ('recognition',3,1);
 
-INSERT INTO `session_game_param_value` (`game`, `gameOrder`, `session`, `value`, `param`)
-VALUES ('recognition',1,1,3,'diceShowTime'),
-       ('recognition',1,1,2,'maxRepetitions'),
-       ('recognition',1,1,6,'numOfStimuli'),
-       ('recognition',3,1,3,'diceShowTime'),
-       ('recognition',3,1,2,'maxRepetitions'),
-       ('recognition',3,1,10,'numOfStimuli');
+INSERT INTO `session_game_param_value` (`gameOrder`, `session`, `value`, `param`)
+VALUES (1,1,3,'diceShowTime'),
+       (1,1,2,'maxRepetitions'),
+       (1,1,6,'numOfStimuli'),
+       (3,1,3,'diceShowTime'),
+       (3,1,2,'maxRepetitions'),
+       (3,1,10,'numOfStimuli');
 
 INSERT INTO `i18n` (`messageKey`, `locale`, `value`)
 VALUES ('session.1.description','EN_US','Recognition game.'),

@@ -38,7 +38,7 @@ public class DefaultInstitutionDAO implements InstitutionDAO {
   @PersistenceContext
   protected EntityManager em;
   
-  private DAOHelper<Integer, Institution> dh;
+  private DAOHelper<Long, Institution> dh;
 
   public DefaultInstitutionDAO() {
     super();
@@ -51,11 +51,11 @@ public class DefaultInstitutionDAO implements InstitutionDAO {
 
   @PostConstruct
   protected void createDAOHelper() {
-    this.dh = DAOHelper.of(Integer.class, Institution.class, this.em);
+    this.dh = DAOHelper.of(Long.class, Institution.class, this.em);
   }
 
   @Override
-  public Institution get(int name) {
+  public Institution get(long name) {
     return this.dh.get(name)
       .orElseThrow(() -> new IllegalArgumentException("Unknown institution: " + name));
   }
@@ -94,7 +94,7 @@ public class DefaultInstitutionDAO implements InstitutionDAO {
   }
 
   @Override
-  public void delete(int id) {
+  public void delete(long id) {
     this.dh.remove(this.get(id));
   }
 

@@ -21,14 +21,19 @@
  */
 package org.sing_group.mtc.service.game.session;
 
+import java.util.Optional;
+
 import javax.annotation.security.RolesAllowed;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.spi.game.session.GamesSessionDAO;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
+import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.service.security.SecurityGuard;
+import org.sing_group.mtc.service.security.check.SecurityCheck;
 import org.sing_group.mtc.service.security.check.SecurityCheckBuilder;
 import org.sing_group.mtc.service.spi.game.session.GamesSessionService;
 
@@ -52,13 +57,33 @@ public class DefaultGamesSessionService implements GamesSessionService {
     return this.sessionDao.persist(gameSession);
   }
 
+@RolesAllowed({"THERAPIST", "PATIENT"})
   @Override
   public GamesSession get(long sessionId) {
     final GamesSession gamesSession = this.sessionDao.get(sessionId);
     
     return this.securityManager.ifAuthorized(
-      checkThat.hasLogin(gamesSession.getTherapistLogin())
+      checkThat.hasLogin(gamesSession.getTherapistLogin()),
+      this.checkThatHasAssignedGamesSession(sessionId)
     ).call(() -> gamesSession);
+  }
+
+  private SecurityCheck checkThatHasAssignedGamesSession(long sessionId) {
+    try {
+      final GamesSession session = this.sessionDao.get(sessionId);
+      
+      final String[] patientLogins = session.getAssignedGamesSessions()
+        .map(AssignedGamesSession::getPatient)
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .map(Patient::getLogin)
+        .distinct()
+      .toArray(String[]::new);
+      
+      return this.checkThat.hasAnyLoginOf(patientLogins);
+    } catch (IllegalArgumentException iae) {
+      return SecurityCheck.forbidden();
+    }
   }
   
   @Override

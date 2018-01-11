@@ -28,4 +28,13 @@ public interface SecurityCheck {
   public static boolean eval(SecurityCheck check) {
     return check.check().isValid();
   }
+  
+  public static SecurityCheck forbidden() {
+    return new SecurityCheck() {
+      @Override
+      public SecurityCheckResult check() {
+        return SecurityCheckResult.invalid("Forbidden");
+      }
+    };
+  }
 }

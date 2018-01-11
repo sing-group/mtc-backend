@@ -257,13 +257,23 @@ public class DefaultTherapistResource implements TherapistResource {
     responseContainer = "List",
     response = GamesSessionData.class
   )
-  public Response listGamesSessions(@PathParam("login") String therapist) {
-    final GamesSessionData[] sessions = this.service.listGameSessions(therapist)
+  public Response listGamesSessions(
+    @PathParam("login") String therapist,
+    @QueryParam("start") @DefaultValue("-1") int start,
+    @QueryParam("end") @DefaultValue("-1") int end,
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
+  ) {
+    final ListingOptions options = new ListingOptions(start, end, sortField, order);
+    
+    final GamesSessionData[] sessions = this.service.listGamesSessions(therapist, options)
       .map(session -> gamesMapper.mapToGameSessionData(session, this.uriInfo.getBaseUriBuilder()))
     .toArray(GamesSessionData[]::new);
     
+    final long count = this.service.countGamesSessions(therapist);
+    
     return Response.ok(sessions)
-      .header("X-Total-Count", sessions.length)
+      .header("X-Total-Count", count)
     .build();
   }
   

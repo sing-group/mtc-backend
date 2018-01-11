@@ -45,5 +45,7 @@ public interface TherapistService {
 
   public GamesSession createGamesSession(String login, GamesSession gamesSession);
 
-  public Stream<GamesSession> listGameSessions(String login);
+  public Stream<GamesSession> listGamesSessions(String login, ListingOptions options);
+
+  public long countGamesSessions(String login);
 }

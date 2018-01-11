@@ -44,6 +44,6 @@ public interface TherapistResource {
 
   public Response createGamesSession(String login, GamesSessionEditionData data);
   
-  public Response listGamesSessions(String login);
+  public Response listGamesSessions(String login, int start, int end, String sortField, SortDirection order);
 
 }

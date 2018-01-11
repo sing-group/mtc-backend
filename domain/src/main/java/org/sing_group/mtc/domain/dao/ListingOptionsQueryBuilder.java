@@ -39,10 +39,10 @@ public class ListingOptionsQueryBuilder {
   
   public <T> CriteriaQuery<T> addOrder(CriteriaBuilder cb, CriteriaQuery<T> query, Root<T> root) {
     if (options.hasOrder()) {
-      final Path<Object> orderField = root.get(options.getOrder());
+      final Path<Object> orderField = root.get(options.getSortField());
       final Order order;
       
-      switch (options.getSort()) {
+      switch (options.getSortDirection()) {
         case ASC:
           order = cb.asc(orderField);
           break;
@@ -50,7 +50,7 @@ public class ListingOptionsQueryBuilder {
           order = cb.desc(orderField);
           break;
         default:
-          throw new IllegalStateException("Invalid sort direction: " + options.getSort());
+          throw new IllegalStateException("Invalid sort direction: " + options.getSortDirection());
       }
       
       return query.orderBy(order);

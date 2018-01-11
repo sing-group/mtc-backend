@@ -27,10 +27,10 @@ import static java.lang.Math.min;
 public class ListingOptions {
   private final int start;
   private final int end;
-  private final String order;
-  private final SortDirection sort;
+  private final String sortField;
+  private final SortDirection sortDirection;
   
-  public ListingOptions(int start, int end, String sort, SortDirection order) {
+  public ListingOptions(int start, int end, String sortField, SortDirection sortDirection) {
     if (min(start, end) < 0) {
       if (max(start, end) >= 0) {
         throw new IllegalArgumentException("start and end parameters should be positive or negative at the same time");
@@ -43,12 +43,12 @@ public class ListingOptions {
     this.start = start;
     this.end = end;
     
-    if (sort != null && (order == null || order == SortDirection.NONE)) {
+    if (sortField != null && (sortDirection == null || sortDirection == SortDirection.NONE)) {
       throw new IllegalArgumentException("An sort direction should be provided when using an order field");
     }
     
-    this.order = sort;
-    this.sort = order;
+    this.sortField = sortField;
+    this.sortDirection = sortDirection;
   }
 
   public int getStart() {
@@ -72,15 +72,15 @@ public class ListingOptions {
   }
   
   public boolean hasOrder() {
-    return this.order != null;
+    return this.sortField != null;
   }
 
-  public String getOrder() {
-    return this.order;
+  public String getSortField() {
+    return this.sortField;
   }
 
-  public SortDirection getSort() {
-    return sort;
+  public SortDirection getSortDirection() {
+    return sortDirection;
   }
   
 }

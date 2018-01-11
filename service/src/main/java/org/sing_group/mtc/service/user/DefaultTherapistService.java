@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.service.user;
 
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
@@ -28,6 +29,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.dao.ListingOptionsStreamQueryBuilder;
 import org.sing_group.mtc.domain.dao.spi.game.session.GamesSessionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.TherapistDAO;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
@@ -127,11 +129,42 @@ public class DefaultTherapistService implements TherapistService {
 
   @RolesAllowed({ "MANAGER", "THERAPIST" })
   @Override
-  public Stream<GamesSession> listGameSessions(String login) {
+  public Stream<GamesSession> listGamesSessions(String login, ListingOptions options) {
     return this.securityGuard.ifAuthorized(
         checkThat.hasRole(RoleType.MANAGER),
         checkThat.hasLoginAndRole(login, RoleType.THERAPIST)
       )
-    .call(() -> this.get(login).getSessions());
+    .call(() -> {
+      final Stream<GamesSession> sessions = this.get(login).getSessions();
+      
+      final ListingOptionsStreamQueryBuilder builder = new ListingOptionsStreamQueryBuilder(options);
+      
+      return builder.build(sessions, gamesSessionPropertyToGetter());
+    });
   }
+
+  @RolesAllowed({ "MANAGER", "THERAPIST" })
+  @Override
+  public long countGamesSessions(String login) {
+    return this.securityGuard.ifAuthorized(
+      checkThat.hasRole(RoleType.MANAGER),
+      checkThat.hasLoginAndRole(login, RoleType.THERAPIST)
+    )
+    .call(() -> {
+      return this.get(login).getSessions().count();
+    });
+  }
+
+  private Function<String, Function<GamesSession, Long>> gamesSessionPropertyToGetter() {
+    return (propertyName) -> {
+      switch(propertyName) {
+        case "id":
+          return GamesSession::getId;
+        default:
+          throw new IllegalArgumentException("Invalid property for GamesSession: " + propertyName);
+      }
+    };
+  }
+  
+  
 }

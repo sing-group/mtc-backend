@@ -26,7 +26,6 @@ import static java.util.Objects.requireNonNull;
 import java.security.Principal;
 
 import javax.inject.Inject;
-import javax.resource.spi.SecurityException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

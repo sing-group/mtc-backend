@@ -38,12 +38,12 @@ import org.sing_group.mtc.rest.entity.MapStringStringAdapter.MapStringString;
 
 public class MapStringStringAdapter extends XmlAdapter<MapStringString, Map<String, String>> {
   @Override
-  public Map<String, String> unmarshal(MapStringString v) throws Exception {
+  public Map<String, String> unmarshal(MapStringString v) {
     return v.toMap();
   }
 
   @Override
-  public MapStringString marshal(Map<String, String> v) throws Exception {
+  public MapStringString marshal(Map<String, String> v) {
     return new MapStringString(v);
   }
   

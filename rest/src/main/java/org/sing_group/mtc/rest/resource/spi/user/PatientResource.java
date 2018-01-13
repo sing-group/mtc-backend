@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
+import org.sing_group.mtc.rest.entity.game.session.GameResultData;
 import org.sing_group.mtc.rest.entity.user.PatientCreationData;
 import org.sing_group.mtc.rest.entity.user.PatientEditionData;
 
@@ -45,5 +46,9 @@ public interface PatientResource {
   public Response listAssignedSessions(String login, int start, int end, String sortField, SortDirection order);
 
   public Response assignSession(String login, AssignedGamesSessionCreationData creationData);
+  
+  public Response addGameResult(
+    String login, long assignedSessionId, int gameIndex, GameResultData result
+  );
 
 }

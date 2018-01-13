@@ -25,23 +25,20 @@ import java.net.URI;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class PatientRestPathBuilder implements RestPathBuilder {
+public class PatientAssignedGamesSessionRestPathBuilder implements RestPathBuilder {
   private final UriBuilder builder;
   
-  public PatientRestPathBuilder(UriBuilder builder) {
-    this.builder = builder.clone().path("patient");
+  public PatientAssignedGamesSessionRestPathBuilder(UriBuilder builder) {
+    this.builder = builder.clone().path("games-session").path("assigned");
   }
   
-  public PatientRestPathBuilder(UriBuilder builder, String login) {
-    this.builder = builder.clone().path("patient").path(login);
-  }
-  
-  public PatientAssignedGamesSessionRestPathBuilder assignedGamesSession() {
-    return new PatientAssignedGamesSessionRestPathBuilder(builder);
+  public GameInSessionRestPathBuilder game(int index) {
+    return new GameInSessionRestPathBuilder(this.builder, index);
   }
 
   @Override
   public URI build() {
     return this.builder.clone().build();
   }
+
 }

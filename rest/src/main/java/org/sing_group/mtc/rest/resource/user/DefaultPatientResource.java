@@ -51,6 +51,7 @@ import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
+import org.sing_group.mtc.rest.entity.game.session.GameResultData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.PatientCreationData;
@@ -253,6 +254,26 @@ public class DefaultPatientResource implements PatientResource {
     );
     
     return Response.created(pathBuilder.gamesSessionAssigned(assignedSession).build()).build();
+  }
+  
+  @POST
+  @Path("{login}/games-session/assigned/{assignedSessionId}/game/{gameIndex}/result")
+  @Override
+  public Response addGameResult(
+    @PathParam("login") String login,
+    @PathParam("assignedSessionId") long assignedSessionId,
+    @PathParam("gameIndex") int gameIndex,
+    GameResultData resultData
+  ) {
+    this.service.addGameResult(
+      assignedSessionId, gameIndex,
+      resultData.getStartDate(), resultData.getEndDate(),
+      resultData.getResults()
+    );
+    
+    return Response
+      .created(this.pathBuilder.patient(login).assignedGamesSession().game(gameIndex).result().build())
+    .build();
   }
   
   private PatientData toPatientData(Patient patient) {

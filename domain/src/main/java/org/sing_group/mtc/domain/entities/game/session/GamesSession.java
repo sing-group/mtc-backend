@@ -221,6 +221,12 @@ public class GamesSession implements Serializable {
     return this.gameConfigurations.stream();
   }
   
+  public GameInGamesSession getGameConfiguration(int index) {
+    final GameInGamesSession[] games = this.gameConfigurations.stream().toArray(GameInGamesSession[]::new);
+    
+    return games[index];
+  }
+  
   public void setGameConfigurations(Stream<GameInGamesSession> gameConfigurations) {
     this.gameConfigurations.stream().collect(toSet())
       .forEach(this::removeGameConfiguration);

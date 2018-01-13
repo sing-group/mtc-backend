@@ -2,7 +2,7 @@
  * #%L
  * REST
  * %%
- * Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
+ * Copyright (C) 2017 - 2018 Miguel Reboiro-Jato and Adolfo Piñón Blanco
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -21,27 +21,16 @@
  */
 package org.sing_group.mtc.rest.resource.route;
 
-import java.net.URI;
-
 import javax.ws.rs.core.UriBuilder;
 
-public class PatientRestPathBuilder implements RestPathBuilder {
+public class GameInSessionRestPathBuilder {
   private final UriBuilder builder;
-  
-  public PatientRestPathBuilder(UriBuilder builder) {
-    this.builder = builder.clone().path("patient");
-  }
-  
-  public PatientRestPathBuilder(UriBuilder builder, String login) {
-    this.builder = builder.clone().path("patient").path(login);
-  }
-  
-  public PatientAssignedGamesSessionRestPathBuilder assignedGamesSession() {
-    return new PatientAssignedGamesSessionRestPathBuilder(builder);
-  }
 
-  @Override
-  public URI build() {
-    return this.builder.clone().build();
+  public GameInSessionRestPathBuilder(UriBuilder builder, int index) {
+    this.builder = builder.clone().path("game").path(Integer.toString(index));
+  }
+  
+  public ResultRestPathBuilder result() {
+    return new ResultRestPathBuilder(builder);
   }
 }

@@ -24,6 +24,8 @@ package org.sing_group.mtc.domain.entities.game.session;
 import static java.util.Collections.emptySet;
 import static java.util.Objects.requireNonNull;
 import static javax.persistence.GenerationType.IDENTITY;
+import static org.sing_group.fluent.checker.Checks.requireBefore;
+import static org.sing_group.fluent.checker.Checks.requireNonEmpty;
 import static org.sing_group.fluent.checker.Checks.requireSameTimeOrAfter;
 import static org.sing_group.fluent.checker.Checks.requireSameTimeOrBefore;
 
@@ -31,6 +33,7 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -153,6 +156,10 @@ public class AssignedGamesSession implements Serializable {
     }
   }
 
+  public GameInGamesSession getGame(int gameIndex) {
+    return this.gamesSession.getGameConfiguration(gameIndex);
+  }
+
   public Optional<Patient> getPatient() {
     return Optional.ofNullable(patient);
   }
@@ -250,7 +257,35 @@ public class AssignedGamesSession implements Serializable {
     
     return calendar.getTime();
   }
+
+  public GameResult addGameResult(
+    GameInGamesSession game, Date startDate, Date endDate, Map<String, String> results
+  ) {
+    if (!this.hasGame(game)) {
+      throw new IllegalArgumentException("game does not belong to this session");
+    }
+    requireBefore(startDate, new Date(), "starDate should be a past date");
+    requireBefore(endDate, new Date(), "endDate should be a past date");
+    requireNonEmpty(results);
+    
+    final int countAttempts = (int) this.getResultsForGame(game).count();
+    
+    return new GameResult(countAttempts + 1, startDate, endDate, this, game, results);
+  }
   
+  private Stream<GameResult> getResultsForGame(GameInGamesSession game) {
+    if (!this.hasGame(game)) {
+      throw new IllegalArgumentException("game does not belong to this session");
+    }
+    
+    return this.gameResults.stream()
+      .filter(result ->  result.getGameConfiguration().map(game::equals).orElse(false));
+  }
+  
+  private boolean hasGame(GameInGamesSession game) {
+    return this.gamesSession.hasGameConfiguration(game);
+  }
+
   @Override
   public int hashCode() {
     final int prime = 31;

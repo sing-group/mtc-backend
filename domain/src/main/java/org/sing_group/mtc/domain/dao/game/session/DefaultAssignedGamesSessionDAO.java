@@ -22,6 +22,7 @@
 package org.sing_group.mtc.domain.dao.game.session;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
@@ -33,6 +34,8 @@ import org.sing_group.mtc.domain.dao.DAOHelper;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameInGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
@@ -95,5 +98,18 @@ public class DefaultAssignedGamesSessionDAO implements AssignedGamesSessionDAO {
   @Override
   public void delete(long sessionId) {
     this.dh.removeByKey(sessionId);
+  }
+  
+  @Override
+  public GameResult addGameResult(
+    long assignedSessionId, int gameIndex, Date startDate, Date endDate, Map<String, String> results
+  ) {
+    final AssignedGamesSession session = this.get(assignedSessionId);
+    final GameInGamesSession game = session.getGame(gameIndex);
+    final GameResult result = session.addGameResult(game, startDate, endDate, results);
+    
+    this.em.persist(result);
+    
+    return result;
   }
 }

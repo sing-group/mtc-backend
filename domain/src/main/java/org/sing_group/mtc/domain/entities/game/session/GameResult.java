@@ -21,6 +21,7 @@
  */
 package org.sing_group.mtc.domain.entities.game.session;
 
+import static java.util.Collections.emptyMap;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.sing_group.fluent.checker.Checks.requireAfter;
 import static org.sing_group.fluent.checker.Checks.requirePositive;
@@ -51,7 +52,9 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(
   name = "game_result",
-  uniqueConstraints = @UniqueConstraint(columnNames = { "assignedGamesSession", "gameOrder", "gamesSession" })
+  uniqueConstraints = @UniqueConstraint(columnNames = {
+    "assignedGamesSession", "gameOrder", "gamesSession", "attempt"
+  })
 )
 public class GameResult implements Serializable {
   private static final long serialVersionUID = 1L;
@@ -107,14 +110,21 @@ public class GameResult implements Serializable {
   GameResult() {}
   
   public GameResult(int attempt) {
-    this(attempt, null, null);
+    this(attempt, null, null, null, null, emptyMap());
   }
   
-  public GameResult(int attempt, AssignedGamesSession assignedSession, GameInGamesSession gameConfiguration) {
+  public GameResult(
+    int attempt,
+    Date start,
+    Date end,
+    AssignedGamesSession assignedSession,
+    GameInGamesSession gameConfiguration,
+    Map<String, String> results
+  ) {
     this.attempt = requirePositive(attempt, "attempt should be a positive number");
-    this.start = new Date();
-    this.end = null;
-    this.resultValues = new HashMap<>();
+    this.start = start;
+    this.end = end;
+    this.resultValues = new HashMap<>(results);
     
     this.setAssignedGamesSession(assignedSession);
     this.setGameConfiguration(gameConfiguration);

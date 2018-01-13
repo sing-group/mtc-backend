@@ -2,7 +2,7 @@
  * #%L
  * REST
  * %%
- * Copyright (C) 2017 Miguel Reboiro-Jato and Adolfo Piñón Blanco
+ * Copyright (C) 2017 - 2018 Miguel Reboiro-Jato and Adolfo Piñón Blanco
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -25,21 +25,13 @@ import java.net.URI;
 
 import javax.ws.rs.core.UriBuilder;
 
-public class PatientRestPathBuilder implements RestPathBuilder {
+public class ResultRestPathBuilder implements RestPathBuilder {
   private final UriBuilder builder;
-  
-  public PatientRestPathBuilder(UriBuilder builder) {
-    this.builder = builder.clone().path("patient");
-  }
-  
-  public PatientRestPathBuilder(UriBuilder builder, String login) {
-    this.builder = builder.clone().path("patient").path(login);
-  }
-  
-  public PatientAssignedGamesSessionRestPathBuilder assignedGamesSession() {
-    return new PatientAssignedGamesSessionRestPathBuilder(builder);
-  }
 
+  public ResultRestPathBuilder(UriBuilder builder) {
+    this.builder = builder.clone().path("result");
+  }
+  
   @Override
   public URI build() {
     return this.builder.clone().build();

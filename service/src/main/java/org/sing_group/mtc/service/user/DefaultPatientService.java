@@ -22,9 +22,12 @@
 package org.sing_group.mtc.service.user;
 
 import static java.util.Objects.requireNonNull;
+import static org.sing_group.fluent.checker.Checks.requireBefore;
+import static org.sing_group.fluent.checker.Checks.requireNonEmpty;
 import static org.sing_group.fluent.checker.Checks.requireStringSize;
 
 import java.util.Date;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.annotation.security.RolesAllowed;
@@ -36,6 +39,7 @@ import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
 import org.sing_group.mtc.domain.dao.spi.game.session.GamesSessionDAO;
 import org.sing_group.mtc.domain.dao.spi.user.PatientDAO;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.RoleType;
 import org.sing_group.mtc.domain.entities.user.Therapist;
@@ -72,6 +76,10 @@ public class DefaultPatientService implements PatientService {
     return this.checkThatIsTherapistOf(this.dao.get(patientLogin));
   }
 
+  private SecurityCheck checkThatIsPatientOfAssignedSession(long assignedSessionId) {
+    return checkThat.hasLogin(this.assignedSessionsDao.get(assignedSessionId).getPatientLogin());
+  }
+  
   @RolesAllowed({ "THERAPIST", "PATIENT" })
   @Override
   public Patient get(String login) {
@@ -140,5 +148,21 @@ public class DefaultPatientService implements PatientService {
       this.gamesSessionDao.get(gamesSessionId),
       startDate, endDate
     ));
+  }
+  
+  @RolesAllowed("PATIENT")
+  @Override
+  public GameResult addGameResult(
+    long assignedSessionId, int gameIndex, Date startDate, Date endDate, Map<String, String> results
+  ) {
+    requireBefore(startDate, new Date(), "'startDate' should be in the past");
+    requireBefore(endDate, new Date(), "'endDate' should be in the past");
+    requireNonEmpty(results);
+    
+    return this.securityGuard.ifAuthorized(
+      this.checkThatIsPatientOfAssignedSession(assignedSessionId)
+    ).call(() -> 
+      this.assignedSessionsDao.addGameResult(assignedSessionId, gameIndex, startDate, endDate, results)
+    );
   }
 }

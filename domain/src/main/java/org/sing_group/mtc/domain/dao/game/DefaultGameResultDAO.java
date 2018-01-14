@@ -25,15 +25,22 @@
 
 package org.sing_group.mtc.domain.dao.game;
 
+import java.util.stream.Stream;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.Default;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
 import org.sing_group.mtc.domain.dao.DAOHelper;
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.game.GameResultDAO;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GameResult;
 
 @Default
@@ -60,5 +67,14 @@ public class DefaultGameResultDAO implements GameResultDAO {
   public GameResult get(long id) {
     return this.dh.get(id)
       .orElseThrow(() -> new IllegalArgumentException("Unknown game result: " + id));
+  }
+  
+  @Override
+  public Stream<GameResult> listByAssignedGamesSession(
+    AssignedGamesSession assignedGamesSession, ListingOptions options
+  ) {
+    return this.dh.list(options, (CriteriaBuilder cb, Root<GameResult> root) -> new Predicate[] {
+      cb.equal(root.get("assignedGamesSession"), assignedGamesSession)
+    }).stream();
   }
 }

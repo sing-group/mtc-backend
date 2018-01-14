@@ -35,8 +35,10 @@ import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
 import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.dao.spi.game.GameResultDAO;
 import org.sing_group.mtc.domain.dao.spi.game.session.AssignedGamesSessionDAO;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.RoleType;
@@ -51,6 +53,9 @@ import org.sing_group.mtc.service.spi.game.session.AssignedGamesSessionService;
 public class DefaultAssignedGamesSessionService implements AssignedGamesSessionService {
   @Inject
   private AssignedGamesSessionDAO sessionDao;
+  
+  @Inject
+  private GameResultDAO resultsDao;
   
   @Inject
   private SecurityGuard securityManager;
@@ -113,5 +118,25 @@ public class DefaultAssignedGamesSessionService implements AssignedGamesSessionS
     this.securityManager.ifAuthorized(
       checkThat.hasLogin(this.get(sessionId).getTherapistLogin())
     ).run(() -> this.sessionDao.delete(sessionId));
+  }
+  
+  @Override
+  public Stream<GameResult> listResultsOf(int assignedId, ListingOptions options) {
+    final AssignedGamesSession assignedGamesSession = this.sessionDao.get(assignedId);
+    
+    return this.securityManager.ifAuthorized(
+      checkThat.hasLogin(assignedGamesSession.getPatientLogin()),
+      checkThat.hasLogin(assignedGamesSession.getTherapistLogin())
+    ).call(() -> this.resultsDao.listByAssignedGamesSession(assignedGamesSession, options));
+  }
+  
+  @Override
+  public long countResultsOf(int assignedId) {
+    final AssignedGamesSession assignedGamesSession = this.sessionDao.get(assignedId);
+    
+    return this.securityManager.ifAuthorized(
+      checkThat.hasLogin(assignedGamesSession.getPatientLogin()),
+      checkThat.hasLogin(assignedGamesSession.getTherapistLogin())
+    ).call(() -> assignedGamesSession.getGameResults().count());
   }
 }

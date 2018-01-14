@@ -49,4 +49,6 @@ public interface GamesSessionResource {
 
   public Response listAssigned(int start, int end, String sortField, SortDirection order);
 
+  public Response listAssignedResults(int assignedId, int start, int end, String sortField, SortDirection order);
+
 }

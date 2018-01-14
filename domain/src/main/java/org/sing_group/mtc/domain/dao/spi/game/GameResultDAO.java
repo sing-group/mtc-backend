@@ -25,8 +25,14 @@
 
 package org.sing_group.mtc.domain.dao.spi.game;
 
+import java.util.stream.Stream;
+
+import org.sing_group.mtc.domain.dao.ListingOptions;
+import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GameResult;
 
 public interface GameResultDAO {
   public GameResult get(long id);
+
+  public Stream<GameResult> listByAssignedGamesSession(AssignedGamesSession assignedGamesSession, ListingOptions options);
 }

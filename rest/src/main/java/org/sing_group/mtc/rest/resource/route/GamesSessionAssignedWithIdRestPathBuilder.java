@@ -32,4 +32,8 @@ public class GamesSessionAssignedWithIdRestPathBuilder extends GamesSessionAssig
     super(builder);
     this.builder.path(Long.toString(id));
   }
+  
+  public GameResultRestPathBuilder result() {
+    return new GameResultRestPathBuilder(this.builder);
+  }
 }

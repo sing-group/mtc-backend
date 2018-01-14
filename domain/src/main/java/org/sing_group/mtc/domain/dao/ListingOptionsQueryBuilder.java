@@ -30,6 +30,7 @@ import static java.util.Objects.requireNonNull;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.From;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
@@ -41,9 +42,24 @@ public class ListingOptionsQueryBuilder {
     this.options = requireNonNull(options, "options can't be null");
   }
   
+  private static <T> Path<Object> getField(Root<T> root, String fieldName) {
+    if (fieldName.contains(".")) {
+      final String[] fields = fieldName.split("\\.");
+      
+      From<?, ?> join = root;
+      for (int i = 0; i < fields.length - 1; i++) {
+        join = join.join(fields[i]);
+      }
+      
+      return join.get(fields[fields.length - 1]);
+    } else {
+      return root.get(fieldName);
+    }
+  }
+  
   public <T> CriteriaQuery<T> addOrder(CriteriaBuilder cb, CriteriaQuery<T> query, Root<T> root) {
     if (options.hasOrder()) {
-      final Path<Object> orderField = root.get(options.getSortField());
+      final Path<Object> orderField = getField(root, options.getSortField());
       final Order order;
       
       switch (options.getSortDirection()) {

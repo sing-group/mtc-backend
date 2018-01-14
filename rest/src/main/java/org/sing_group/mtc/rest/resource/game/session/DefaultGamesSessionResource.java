@@ -49,7 +49,9 @@ import javax.ws.rs.core.UriInfo;
 import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
+import org.sing_group.mtc.rest.entity.game.GameResultData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
@@ -259,5 +261,38 @@ public class DefaultGamesSessionResource implements GamesSessionResource {
     this.assignedService.delete(sessionId);
     
     return Response.ok().build();
+  }
+
+  @GET
+  @Path("assigned/{id: \\d+}/result")
+  @ApiOperation(
+    value = "List the game results of an assigned games session.",
+    response = GameResultData.class,
+    responseContainer = "List",
+    code = 200,
+    responseHeaders = @ResponseHeader(name = "X-Total-Count", description = "Total number of results in the assigned sessions.")
+  )
+  @ApiResponses(
+    @ApiResponse(code = 400, message = "Unknown session: {id}")
+  )
+  @Override
+  public Response listAssignedResults(
+    @PathParam("id") int assignedId,
+    @QueryParam("start") @DefaultValue("-1") int start,
+    @QueryParam("end") @DefaultValue("-1") int end,
+    @QueryParam("sort") String sortField,
+    @QueryParam("order") @DefaultValue("NONE") SortDirection order
+  ) {
+    final Stream<GameResult> results = this.assignedService.listResultsOf(assignedId, new ListingOptions(start, end, sortField, order));
+    
+    final GameResultData[] resultsData = results
+      .map(result -> this.gamesMapper.mapToGameResultData(result, this.uriInfo.getAbsolutePathBuilder()))
+    .toArray(GameResultData[]::new);
+    
+    final long total = this.assignedService.countResultsOf(assignedId);
+    
+    return Response.ok(resultsData)
+      .header("X-Total-Count", total)
+    .build();
   }
 }

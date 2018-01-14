@@ -1,87 +1,35 @@
-# MultiTasking Cubes
+# MultiTasking Cubes - Backend
 
-## Running the application
-The application has been configured to be easily run locally, by just invoking
-a Maven command.
+**MultiTasking Cubes (MTC)** is a project for developing a tool that may be used
+for cognitive rehabilitation, based on the therapeutic game Memomdado,
+developed by Adolfo Piñón Blanco [[1]](#ref1).
 
-To do so, Maven will download (if it is not already) a clean WildFly
-distribution to the `target` folder, configure it, start it and deploy the
-application on it.
+The **MTC Backend** project is the backend REST API that manages all the
+information used by the **MTC** and **MTC Administrator** projects.
 
-This makes very easy and straightforward to manually test the application.
+<a name="ref1">[1]</a> Piñón-Blanco, A. (2010). Memodado. ISBN 13: 
+978-84-608-1120-6. Cadiz: Universidad de Cádiz - Instituto de formación
+interdisciplinar.
 
-### Configure a local MySQL
-To execute the application you need a MySQL server running in `localhost` and
-using the default port (3306).
+## Contributors
+Development team:
+* Miguel Reboiro-Jato
 
-In this server you have to create a database named `mtc` accessible for the
-`mtc` user using the `mtcpass` password.
+Research team:
+* Miguel Reboiro-Jato
+* Adolfo Piñón Blanco
+* Hugo López-Fernández
+* Rosalía Laza Fidalgo
+* Reyes Pavón Rial
+* Francisco Otero Lamas
+* Adrián Varela Pomar
+* Carlos Spuch Calvar
+* Tania Rivera Baltanás
 
-This can be configured executing the follow SQL sentences in your MySQL:
+## License
+This software is distributed under a GNU GPLv3 license. Please, read the
+`LICENSE` file for more information.
 
-```SQL
-CREATE DATABASE mtc;
-GRANT ALL ON mtc.* TO mtc@localhost IDENTIFIED BY 'mtcpass';
-FLUSH PRIVILEGES;
-```
-
-Of course, this configuration can be changed in the POM file.
-
-### Building the application
-The application can be built with the following Maven command:
-
-```
-mvn clean install
-```
-
-This will build the application launching the tests on a **Wildfly 8.2.1**
-server. If you want to use a **WildFly 10.1.0** server, you can use the command:
-
-```
-mvn clean install -P wildfly10-embedded-h2,-wildfly-embedded-h2
-```
-
-### Starting the application
-The application can be started with the following Maven command:
-
-```
-mvn package wildfly:start wildfly:deploy-only -P wildfly-mysql-run,-wildfly-embedded-h2,-metadata-build
-```
-
-This will start a **WildFly 8.2.1**. If you want to use a **WildFly 10.1.0**
-server, you can use the command:
-
-```
-mvn package wildfly:start wildfly:deploy-only -P wildfly10-mysql-run,-wildfly-embedded-h2,-metadata-build
-```
-
-### Restarting the application
-Once it is running, the application can be re-started with the following Maven
-command:
-
-```
-mvn wildfly:shutdown wildfly:start wildfly:deploy-only -P wildfly-mysql-run,-wildfly-embedded-h2,-metadata-build
-```
-
-In case you are using the **WildFly 10.1.0** version, you should use the
-following command instead:
-
-```
-mvn wildfly:shutdown wildfly:start wildfly:deploy-only -P wildfly10-mysql-run,-wildfly-embedded-h2,-metadata-build
-```
-
-### Stopping the application
-The application can be stopped with the following Maven command:
-
-```
-mvn wildfly:shutdown
-```
-
-### REST API documentation
-The REST API is documented using the [Swagger](https://swagger.io/) framework.
-It can be browsed using the [Swagger UI](http://petstore.swagger.io/)
-application to access the following URL:
-
-```
-http://localhost:8080/mtc/rest/api/swagger.json
-```
+## Acknowledgements
+This project was partially funded by the INOU17-04 project from the Provincial
+Council of Ourense and the University of Vigo.

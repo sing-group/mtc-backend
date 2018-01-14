@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.sing_group</groupId>
   <artifactId>mtc</artifactId>
-  <version>0.1.0-SNAPSHOT</version>
+  <version>0.1.0</version>
   <packaging>pom</packaging>
 
   <name>MultiTasking Cubes</name>
@@ -22,10 +22,61 @@
     <contributor>
       <name>Adolfo Piñón Blanco</name>
       <organization>CLECE</organization>
-      <organizationUrl>https://www.clede.es</organizationUrl>
+      <organizationUrl>https://www.clece.es</organizationUrl>
       <email>apinon@clece.es</email>
       <roles>
         <role>MultiTasking Cubes creator</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Hugo López-Fernández</name>
+      <organization>SING Group - University of Vigo</organization>
+      <organizationUrl>https://www.sing-group.org/</organizationUrl>
+      <email>hlfernandez@uvigo.es</email>
+      <roles>
+        <role>Researcher</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Rosalía Laza Fidalgo</name>
+      <organization>SING Group - University of Vigo</organization>
+      <organizationUrl>https://www.sing-group.org/</organizationUrl>
+      <email>rlaza@uvigo.es</email>
+      <roles>
+        <role>Researcher</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Reyes Pavón Rial</name>
+      <organization>SING Group - University of Vigo</organization>
+      <organizationUrl>https://www.sing-group.org/</organizationUrl>
+      <email>pavon@uvigo.es</email>
+      <roles>
+        <role>Researcher</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Francisco Otero Lamas</name>
+      <roles>
+        <role>Researcher</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Adrián Varela Pomar</name>
+      <roles>
+        <role>Researcher</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Carlos Spuch Calvar</name>
+      <roles>
+        <role>Researcher</role>
+      </roles>
+    </contributor>
+    <contributor>
+      <name>Tania Rivera Baltanás</name>
+      <roles>
+        <role>Researcher</role>
       </roles>
     </contributor>
   </contributors>
@@ -91,7 +142,10 @@
 
     <!-- license-maven-plugin configuration -->
     <license.licenseName>gpl_v3</license.licenseName>
-    <license.copyrightOwners>Miguel Reboiro-Jato and Adolfo Piñón Blanco</license.copyrightOwners>
+    <license.copyrightOwners>Miguel Reboiro-Jato, Adolfo Piñón Blanco,
+    Hugo López-Fernández, Rosalía Laza Fidalgo, Reyes Pavón Rial,
+    Francisco Otero Lamas, Adrián Varela Pomar, Carlos Spuch Calvar,
+    and Tania Rivera Baltanás</license.copyrightOwners>
     <license.organizationName>SING Group (University of Vigo) and CLECE</license.organizationName>
     <license.addJavaLicenseAfterPackage>false</license.addJavaLicenseAfterPackage>
 
@@ -123,7 +177,7 @@
     <slf4j.version>1.5.11</slf4j.version>
 
     <!-- Plugins versions -->
-    <license-maven-plugin.version>1.8</license-maven-plugin.version>
+    <license-maven-plugin.version>1.14</license-maven-plugin.version>
     <maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>
     <maven.compiler.plugin.version>3.6.1</maven.compiler.plugin.version>
     <maven.ear.plugin.version>2.10.1</maven.ear.plugin.version>

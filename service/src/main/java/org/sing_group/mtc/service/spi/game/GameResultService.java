@@ -1,8 +1,11 @@
-/*
+/*-
  * #%L
  * Service
  * %%
- * Copyright (C) 2017 - 2018 Miguel Reboiro-Jato and Adolfo Piñón Blanco
+ * Copyright (C) 2017 - 2018 Miguel Reboiro-Jato, Adolfo Piñón Blanco,
+ *     Hugo López-Fernández, Rosalía Laza Fidalgo, Reyes Pavón Rial,
+ *     Francisco Otero Lamas, Adrián Varela Pomar, Carlos Spuch Calvar,
+ *     and Tania Rivera Baltanás
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -19,6 +22,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
+
 package org.sing_group.mtc.service.spi.game;
 
 import javax.ejb.Local;

@@ -267,10 +267,22 @@ public class UsersDataset {
     return users(RoleType.PATIENT);
   }
 
+  public static Stream<Patient> patientsOfTherapist(String therapistLogin) {
+    return UsersDataset.<Patient>users(RoleType.PATIENT)
+      .filter(patient -> patient.getTherapist().getLogin().equals(therapistLogin));
+  }
+
   public static <T extends Comparable<T>> Stream<Patient> patients(
     int start, int end, Function<Patient, T> getter, SortDirection sort
   ) {
     return filterUsers(patients(), start, end, getter, sort);
+  }
+
+  public static <T extends Comparable<T>> Stream<Patient> patientsOfTherapist(
+    String therapist, int start, int end, Function<Patient, T> getter, SortDirection sort
+  ) {
+    return patients(start, end, getter, sort)
+      .filter(patient -> patient.getTherapist().getLogin().equals(therapist));
   }
 
   private static <U extends User, T extends Comparable<T>> Stream<U> filterUsers(
@@ -367,6 +379,12 @@ public class UsersDataset {
   
   public static long countPatients() {
     return patients().count();
+  }
+  
+  public static long countPatientsOfTherapist(String therapistLogin) {
+    return patients()
+      .filter(patient -> patient.getTherapist().getLogin().equals(therapistLogin))
+    .count();
   }
   
   public static long countInstitutions() {

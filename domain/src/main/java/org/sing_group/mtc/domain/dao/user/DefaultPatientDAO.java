@@ -25,13 +25,20 @@
 
 package org.sing_group.mtc.domain.dao.user;
 
+import java.util.stream.Stream;
+
 import javax.enterprise.inject.Default;
 import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
 
+import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.spi.user.PatientDAO;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.domain.entities.user.Therapist;
 
 @Default
 @Transactional(value = TxType.MANDATORY)
@@ -50,4 +57,10 @@ implements PatientDAO {
     return Patient.class;
   }
 
+  @Override
+  public Stream<Patient> listByTherapist(Therapist therapist, ListingOptions listingOptions) {
+    return this.dh.list(listingOptions, (CriteriaBuilder cb, Root<Patient> root) -> new Predicate[] {
+      cb.equal(root.get("therapist"), therapist)
+    }).stream();
+  }
 }

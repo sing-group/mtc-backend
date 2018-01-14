@@ -30,14 +30,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.sing_group.mtc.domain.entities.UsersDataset.PATIENT_HTTP_BASIC_AUTH;
 import static org.sing_group.mtc.domain.entities.UsersDataset.THERAPIST_HTTP_BASIC_AUTH;
-import static org.sing_group.mtc.domain.entities.UsersDataset.countPatients;
+import static org.sing_group.mtc.domain.entities.UsersDataset.countPatientsOfTherapist;
 import static org.sing_group.mtc.domain.entities.UsersDataset.modifiedPatient;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newPasswordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.newPatient;
 import static org.sing_group.mtc.domain.entities.UsersDataset.passwordOf;
 import static org.sing_group.mtc.domain.entities.UsersDataset.patient;
 import static org.sing_group.mtc.domain.entities.UsersDataset.patientToDelete;
-import static org.sing_group.mtc.domain.entities.UsersDataset.patients;
+import static org.sing_group.mtc.domain.entities.UsersDataset.patientsOfTherapist;
+import static org.sing_group.mtc.domain.entities.UsersDataset.therapist;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.assignedGamesSessionsOfPatient;
 import static org.sing_group.mtc.domain.entities.game.session.GamesSessionDataset.newAssignedGamesSession;
 import static org.sing_group.mtc.http.util.HasHttpHeader.hasHttpHeader;
@@ -151,7 +152,8 @@ public class PatientResourceIntegrationTest {
   public void testList(
     @ArquillianResteasyResource(BASE_PATH) ResteasyWebTarget webTarget
   ) {
-    final Stream<Patient> patients = patients();
+    final String therapist = therapist().getLogin();
+    final Stream<Patient> patients = patientsOfTherapist(therapist);
     
     final Response response = webTarget
       .request()
@@ -159,7 +161,7 @@ public class PatientResourceIntegrationTest {
     .get();
     
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeader("X-Total-Count", countPatients()));
+    assertThat(response, hasHttpHeader("X-Total-Count", countPatientsOfTherapist(therapist)));
     assertThat(response, hasHttpHeaderContaining("Access-Control-Expose-Headers", "X-Total-Count"));
     
     final List<PatientData> userData = response.readEntity(PATIENT_DATA_LIST_TYPE);
@@ -194,7 +196,9 @@ public class PatientResourceIntegrationTest {
     final String sortField = "login";
     final SortDirection sortDirection = SortDirection.DESC;
     
-    final Stream<Patient> patients = patients(
+    final String therapist = therapist().getLogin();
+    final Stream<Patient> patients = patientsOfTherapist(
+      therapist,
       start, end, getter, sortDirection
     );
     
@@ -206,8 +210,9 @@ public class PatientResourceIntegrationTest {
       .request()
     .get();
     
+    
     assertThat(response, hasOkStatus());
-    assertThat(response, hasHttpHeader("X-Total-Count", countPatients()));
+    assertThat(response, hasHttpHeader("X-Total-Count", countPatientsOfTherapist(therapist)));
     
     final List<PatientData> patientData = response.readEntity(PATIENT_DATA_LIST_TYPE);
     

@@ -97,12 +97,16 @@ public class DefaultPatientService implements PatientService {
 
   @Override
   public Stream<Patient> list(ListingOptions listingOptions) {
-    return dao.list(listingOptions);
+    final Therapist therapist = this.securityGuard.getLoggedUser();
+    
+    return dao.listByTherapist(therapist, listingOptions);
   }
 
   @Override
   public long count() {
-    return this.dao.count();
+    final Therapist therapist = this.securityGuard.getLoggedUser();
+    
+    return therapist.getPatients().count();
   }
   
   @Override

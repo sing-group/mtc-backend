@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.sing_group</groupId>
     <artifactId>mtc</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
   </parent>
   <artifactId>mtc-domain</artifactId>
   <packaging>jar</packaging>

@@ -22,6 +22,7 @@
 package org.sing_group.mtc.domain.entities.game.session;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.unmodifiableMap;
 import static javax.persistence.GenerationType.IDENTITY;
 import static org.sing_group.fluent.checker.Checks.requireAfter;
 import static org.sing_group.fluent.checker.Checks.requirePositive;
@@ -48,6 +49,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
+
+import org.sing_group.mtc.domain.entities.game.Game;
 
 @Entity
 @Table(
@@ -93,7 +96,7 @@ public class GameResult implements Serializable {
   @Column(name = "end", nullable = true)
   private Date end;
 
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.EAGER)
   @MapKeyColumn(name = "result", nullable = false)
   @Column(name = "value", nullable = false)
   @CollectionTable(
@@ -192,6 +195,10 @@ public class GameResult implements Serializable {
     this.gameConfiguration = gameConfiguration;
   }
   
+  public Map<String, String> getResultValues() {
+    return unmodifiableMap(this.resultValues);
+  }
+  
   private static void checkSameGameSession(
     AssignedGamesSession assignedSession,
     GameInGamesSession gameConfiguration
@@ -210,6 +217,25 @@ public class GameResult implements Serializable {
         throw new IllegalArgumentException("gameConfiguration should have the same session as the assignedSession");
       }
     }
+  }
+  
+  public String getGameId() {
+    return this.getGameConfiguration()
+      .flatMap(GameInGamesSession::getGame)
+      .map(Game::getId)
+    .orElseThrow(() -> new IllegalStateException("gameId can't be retrieved if no game configuration is assigned"));
+  }
+  
+  public int getGameIndex() {
+    return this.assignedGamesSession.getGameIndex(this.getGameConfiguration().orElse(null));
+  }
+
+  public String getPatientLogin() {
+    return this.assignedGamesSession.getPatientLogin();
+  }
+
+  public String getTherapistLogin() {
+    return this.assignedGamesSession.getTherapistLogin();
   }
   
   @Override

@@ -226,6 +226,21 @@ public class GamesSession implements Serializable {
     
     return games[index];
   }
+
+  public int getGameConfigurationIndex(GameInGamesSession gameConfiguration) {
+    if (!this.hasGameConfiguration(gameConfiguration)) {
+      throw new IllegalArgumentException("gameConfiguration does not belong to this games session");
+    }
+
+    final GameInGamesSession[] games = this.gameConfigurations.stream().toArray(GameInGamesSession[]::new);
+    for (int i = 0; i < games.length; i++) {
+      if (games[i].equals(gameConfiguration)) {
+        return i;
+      }
+    }
+    
+    throw new IllegalStateException("gameConfiguration was unexpectedly not found");
+  }
   
   public void setGameConfigurations(Stream<GameInGamesSession> gameConfigurations) {
     this.gameConfigurations.stream().collect(toSet())
@@ -375,6 +390,5 @@ public class GamesSession implements Serializable {
       return false;
     return true;
   }
-  
   
 }

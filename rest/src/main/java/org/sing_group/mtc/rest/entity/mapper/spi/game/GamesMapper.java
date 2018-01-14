@@ -28,13 +28,15 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GameInGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.game.GameConfigurationData;
+import org.sing_group.mtc.rest.entity.game.GameResultData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionEditionData;
-import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 
@@ -59,5 +61,7 @@ public interface GamesMapper {
   public AssignedGamesSession mapToAssignedGamesSession(int sessionId, AssignedGamesSessionEditionData data);
   
   public AssignedGamesSessionCreationData mapToAssignedGamesSessionCreation(AssignedGamesSession assignedSession);
+
+  public GameResultData mapToGameResultData(GameResult result, UriBuilder uriBuilder);
 
 }

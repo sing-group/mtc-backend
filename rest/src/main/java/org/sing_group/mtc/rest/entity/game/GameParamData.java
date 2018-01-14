@@ -19,59 +19,63 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.entity.user;
+package org.sing_group.mtc.rest.entity.game;
 
 import java.io.Serializable;
-import java.net.URI;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import io.swagger.annotations.ApiModel;
 
-@XmlRootElement(name = "id-and-uri", namespace = "http://entity.resource.rest.mtc.sing-group.org")
+/**
+ * Game configuration parameter.
+ * 
+ * @author Miguel Reboiro-Jato
+ */
+@XmlRootElement(name = "game-param", namespace = "http://entity.resource.rest.mtc.sing-group.org")
 @XmlAccessorType(XmlAccessType.FIELD)
-@ApiModel(value = "id-and-uri", description = "URI and id of an entity.")
-public class IdAndUri implements Serializable {
+@ApiModel(value = "game-param", description = "Game configuration parameter.")
+public class GameParamData implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  @XmlElement(name = "id", required = true)
-  private long id;
+  @XmlAttribute(name = "key", required = true)
+  private String key;
 
-  @XmlElement(name = "uri", required = true)
-  private URI uri;
+  @XmlAttribute(name = "value", required = true)
+  private String value;
   
-  IdAndUri() {}
-
-  public IdAndUri(long id, URI uri) {
-    this.id = id;
-    this.uri = uri;
+  GameParamData() {}
+  
+  public GameParamData(String key, String value) {
+    this.key = key;
+    this.value = value;
   }
 
-  public long getId() {
-    return id;
+  public String getKey() {
+    return key;
   }
 
-  public void setId(long id) {
-    this.id = id;
+  public void setKey(String key) {
+    this.key = key;
   }
 
-  public URI getUri() {
-    return uri;
+  public String getValue() {
+    return value;
   }
 
-  public void setUri(URI uri) {
-    this.uri = uri;
+  public void setValue(String value) {
+    this.value = value;
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + (int) (id ^ (id >>> 32));
-    result = prime * result + ((uri == null) ? 0 : uri.hashCode());
+    result = prime * result + ((key == null) ? 0 : key.hashCode());
+    result = prime * result + ((value == null) ? 0 : value.hashCode());
     return result;
   }
 
@@ -83,13 +87,16 @@ public class IdAndUri implements Serializable {
       return false;
     if (getClass() != obj.getClass())
       return false;
-    IdAndUri other = (IdAndUri) obj;
-    if (id != other.id)
-      return false;
-    if (uri == null) {
-      if (other.uri != null)
+    GameParamData other = (GameParamData) obj;
+    if (key == null) {
+      if (other.key != null)
         return false;
-    } else if (!uri.equals(other.uri))
+    } else if (!key.equals(other.key))
+      return false;
+    if (value == null) {
+      if (other.value != null)
+        return false;
+    } else if (!value.equals(other.value))
       return false;
     return true;
   }

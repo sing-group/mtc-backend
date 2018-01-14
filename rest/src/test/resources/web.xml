@@ -23,7 +23,7 @@
   xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
   version="3.1">
-  <display-name>JavaEE Sample REST</display-name>
+  <display-name>MTC REST</display-name>
 
   <!-- servlet-mapping>
     <servlet-name>javax.ws.rs.core.Application</servlet-name>
@@ -91,6 +91,18 @@
     <auth-constraint>
       <role-name>ADMIN</role-name>
       <role-name>MANAGER</role-name>
+    </auth-constraint>
+  </security-constraint>
+  
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>game</web-resource-name>
+      <url-pattern>/api/game/*</url-pattern>
+      <http-method-omission>OPTIONS</http-method-omission>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>THERAPIST</role-name>
+      <role-name>PATIENT</role-name>
     </auth-constraint>
   </security-constraint>
 

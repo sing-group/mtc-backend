@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-package org.sing_group.mtc.rest.entity.game.session;
+package org.sing_group.mtc.rest.entity.game;
 
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toMap;

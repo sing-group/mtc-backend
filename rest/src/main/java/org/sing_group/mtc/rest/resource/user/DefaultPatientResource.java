@@ -49,9 +49,9 @@ import org.sing_group.mtc.domain.dao.ListingOptions;
 import org.sing_group.mtc.domain.dao.SortDirection;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.user.Patient;
+import org.sing_group.mtc.rest.entity.game.GameResultCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
-import org.sing_group.mtc.rest.entity.game.session.GameResultData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
 import org.sing_group.mtc.rest.entity.mapper.spi.user.UserMapper;
 import org.sing_group.mtc.rest.entity.user.PatientCreationData;
@@ -263,7 +263,7 @@ public class DefaultPatientResource implements PatientResource {
     @PathParam("login") String login,
     @PathParam("assignedSessionId") long assignedSessionId,
     @PathParam("gameIndex") int gameIndex,
-    GameResultData resultData
+    GameResultCreationData resultData
   ) {
     this.service.addGameResult(
       assignedSessionId, gameIndex,

@@ -35,6 +35,7 @@ import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.user.Institution;
+import org.sing_group.mtc.rest.entity.IdAndUri;
 import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 
 public class IsEqualToIdAndUri<T> extends IsEqualToEntity<T, IdAndUri> {

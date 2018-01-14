@@ -42,21 +42,23 @@ import javax.ws.rs.core.UriBuilder;
 import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.game.session.AssignedGamesSession;
 import org.sing_group.mtc.domain.entities.game.session.GameInGamesSession;
+import org.sing_group.mtc.domain.entities.game.session.GameResult;
 import org.sing_group.mtc.domain.entities.game.session.GamesSession;
 import org.sing_group.mtc.domain.entities.i18n.I18NLocale;
 import org.sing_group.mtc.domain.entities.i18n.LocalizedMessage;
 import org.sing_group.mtc.domain.entities.user.Patient;
 import org.sing_group.mtc.domain.entities.user.Therapist;
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.IdAndUri;
+import org.sing_group.mtc.rest.entity.game.GameConfigurationData;
+import org.sing_group.mtc.rest.entity.game.GameParamData;
+import org.sing_group.mtc.rest.entity.game.GameResultData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionCreationData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.AssignedGamesSessionEditionData;
-import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
-import org.sing_group.mtc.rest.entity.game.session.GameParamData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionData;
 import org.sing_group.mtc.rest.entity.game.session.GamesSessionEditionData;
 import org.sing_group.mtc.rest.entity.mapper.spi.game.GamesMapper;
-import org.sing_group.mtc.rest.entity.user.IdAndUri;
 import org.sing_group.mtc.rest.entity.user.UserUri;
 import org.sing_group.mtc.rest.resource.route.BaseRestPathBuilder;
 import org.sing_group.mtc.service.spi.game.GameService;
@@ -198,6 +200,26 @@ public class DefaultGamesMapper implements GamesMapper {
       assignedSession.getGamesSession()
         .map(GamesSession::getId)
       .orElseThrow(IllegalStateException::new)
+    );
+  }
+  
+  @Override
+  public GameResultData mapToGameResultData(GameResult result, UriBuilder uriBuilder) {
+    final BaseRestPathBuilder pathBuilder = new BaseRestPathBuilder(uriBuilder);
+    
+    final Long assignedGamesSessionId = result.getAssignedGamesSession()
+      .map(AssignedGamesSession::getId)
+    .orElseThrow(IllegalArgumentException::new);
+    
+    return new GameResultData(
+      result.getId(),
+      new IdAndUri(assignedGamesSessionId, pathBuilder.gamesSessionAssigned(assignedGamesSessionId).build()),
+      result.getGameId(),
+      result.getGameIndex(),
+      result.getAttempt(),
+      result.getStart(),
+      result.getEnd().orElseThrow(IllegalArgumentException::new),
+      result.getResultValues()
     );
   }
 }

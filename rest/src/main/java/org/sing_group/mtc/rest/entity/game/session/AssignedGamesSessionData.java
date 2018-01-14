@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.sing_group.mtc.rest.entity.DateToTimestampAdapter;
-import org.sing_group.mtc.rest.entity.user.IdAndUri;
+import org.sing_group.mtc.rest.entity.IdAndUri;
 import org.sing_group.mtc.rest.entity.user.UserUri;
 
 import io.swagger.annotations.ApiModel;

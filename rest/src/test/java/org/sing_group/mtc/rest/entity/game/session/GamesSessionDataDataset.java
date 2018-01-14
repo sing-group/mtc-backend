@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
+import org.sing_group.mtc.rest.entity.game.GameConfigurationData;
+import org.sing_group.mtc.rest.entity.game.GameParamData;
 
 public final class GamesSessionDataDataset {
   private GamesSessionDataDataset() {}

@@ -31,6 +31,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.sing_group.mtc.domain.entities.user.RoleType;
+import org.sing_group.mtc.rest.entity.IdAndUri;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

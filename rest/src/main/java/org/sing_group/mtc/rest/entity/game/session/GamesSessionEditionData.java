@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.sing_group.mtc.rest.entity.I18NLocaleData;
 import org.sing_group.mtc.rest.entity.MapI18NLocaleDataStringAdapter;
+import org.sing_group.mtc.rest.entity.game.GameConfigurationData;
 
 import io.swagger.annotations.ApiModel;
 

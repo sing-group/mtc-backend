@@ -160,6 +160,10 @@ public class AssignedGamesSession implements Serializable {
     return this.gamesSession.getGameConfiguration(gameIndex);
   }
 
+  public int getGameIndex(GameInGamesSession orElse) {
+    return this.gamesSession.getGameConfigurationIndex(orElse);
+  }
+
   public Optional<Patient> getPatient() {
     return Optional.ofNullable(patient);
   }

@@ -28,7 +28,7 @@ import org.hamcrest.Matcher;
 import org.sing_group.mtc.domain.entities.IsEqualToEntity;
 import org.sing_group.mtc.domain.entities.game.Game;
 import org.sing_group.mtc.domain.entities.game.session.GameInGamesSession;
-import org.sing_group.mtc.rest.entity.game.session.GameConfigurationData;
+import org.sing_group.mtc.rest.entity.game.GameConfigurationData;
 
 public class IsEqualToGameConfiguration extends IsEqualToEntity<GameInGamesSession, GameConfigurationData> {
 

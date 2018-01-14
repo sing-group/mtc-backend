@@ -134,8 +134,7 @@ public class GameInGamesSession implements Comparable<GameInGamesSession>, Seria
   @Override
   public int compareTo(GameInGamesSession o) {
     return Compare.objects(this, o)
-      .by(config -> config == null || config.getGamesSession() == null || config.getGamesSession().getId() == null ? -1 : config.getGamesSession().getId())
-      .thenBy(config -> config.gameOrder)
+      .by(GameInGamesSession::getGameOrder)
     .andGet();
   }
 

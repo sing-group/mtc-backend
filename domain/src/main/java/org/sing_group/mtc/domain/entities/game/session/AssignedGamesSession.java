@@ -28,7 +28,6 @@ package org.sing_group.mtc.domain.entities.game.session;
 import static java.util.Collections.emptySet;
 import static java.util.Objects.requireNonNull;
 import static javax.persistence.GenerationType.IDENTITY;
-import static org.sing_group.fluent.checker.Checks.requireBefore;
 import static org.sing_group.fluent.checker.Checks.requireNonEmpty;
 import static org.sing_group.fluent.checker.Checks.requireSameTimeOrAfter;
 import static org.sing_group.fluent.checker.Checks.requireSameTimeOrBefore;
@@ -272,8 +271,6 @@ public class AssignedGamesSession implements Serializable {
     if (!this.hasGame(game)) {
       throw new IllegalArgumentException("game does not belong to this session");
     }
-    requireBefore(startDate, new Date(), "starDate should be a past date");
-    requireBefore(endDate, new Date(), "endDate should be a past date");
     requireNonEmpty(results);
     
     final int countAttempts = (int) this.getResultsForGame(game).count();

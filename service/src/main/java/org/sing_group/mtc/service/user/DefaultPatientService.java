@@ -26,7 +26,6 @@
 package org.sing_group.mtc.service.user;
 
 import static java.util.Objects.requireNonNull;
-import static org.sing_group.fluent.checker.Checks.requireBefore;
 import static org.sing_group.fluent.checker.Checks.requireNonEmpty;
 import static org.sing_group.fluent.checker.Checks.requireStringSize;
 
@@ -163,8 +162,6 @@ public class DefaultPatientService implements PatientService {
   public GameResult addGameResult(
     long assignedSessionId, int gameIndex, Date startDate, Date endDate, Map<String, String> results
   ) {
-    requireBefore(startDate, new Date(), "'startDate' should be in the past");
-    requireBefore(endDate, new Date(), "'endDate' should be in the past");
     requireNonEmpty(results);
     
     return this.securityGuard.ifAuthorized(
